@@ -1,0 +1,15 @@
+{
+  "name": "STS",
+  "version": "0.0.1",
+  "description": "Seoul Tech Homepage",
+  "private": true,
+  "dependencies": {
+    "react": "latest",
+    "react-router-component": "latest",
+    "lodash": "~2.4.1",
+    "marked": "latest"
+  },
+  "devDependencies": {
+    "es6-loader": "^0.2.0"
+  }
+}

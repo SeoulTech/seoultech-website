@@ -5,7 +5,6 @@
   "private": true,
   "dependencies": {
     "react": "latest",
-    "react-router-component": "latest",
     "lodash": "~2.4.1",
     "marked": "latest"
   },

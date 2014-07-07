@@ -1,7 +1,5 @@
 var React = require('react'),
   $ = React.DOM,
-  Router = require('react-router-component'),
-  Link = Router.Link,
   _ = require('lodash'),
   index = require('../../content/target/index');
 
@@ -14,8 +12,8 @@ module.exports = React.createClass({
         return [
           $.h3(null, year),
           $.ul(null, _.map(index[path], function(entry) {
-            return $.li({key: entry}, 
-              Link({href: '/blog/' + year + '/' + entry}, entry))
+            return $.li({key: entry},
+              $.a({href: './#/blog/' + year + '/' + entry}, entry))
           }))
         ]
       }))

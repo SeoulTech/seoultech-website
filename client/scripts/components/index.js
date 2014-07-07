@@ -1,9 +1,6 @@
 var React = require('react'),
   $ = React.DOM,
-
-  Router = require('react-router-component'),
-
-  {Link, Location, Locations} = require('react-router-component'),
+  Pages = require('../util/router'),
 
   BlogIndex = require('./blogIndex'),
   BlogItem = require('./blogItem'),
@@ -18,11 +15,14 @@ var React = require('react'),
     getInitialState: function() {
       return JSON.parse(localStorage.getItem('state')) || {}
     },
-    
+
     // FIXME: refactor cacheData
     cacheData: function(event) {
       var _state = _.cloneDeep(this.state, true),
-        {component, id, data} = event.detail;
+        component = event.detail.component,
+        id = event.detail.id,
+        data = event.detail.data;
+        // {component, id, data} = event.detail;
 
       if (id) {
         _state[component] = _state[component] || {};
@@ -44,36 +44,29 @@ var React = require('react'),
       if (typeof localStorage != 'undefined') {
         localStorage.setItem('state', JSON.stringify(this.state))
       }
-
       return $.div(null, [
-        Link({key: 'link-to-blog', href: '/'}, 'Blog'),
-        Link({key: 'link-to-events', href: '/events/'}, 'Events'),
-        Link({key: 'link-to-about', href: '/about/'}, 'About'),
+        $.a({key: 'link-to-blog', href: './#'}, 'Blog'),
+        $.a({key: 'link-to-events', href: './#/events'}, 'Events'),
+        $.a({key: 'link-to-about', href: './#/about'}, 'About'),
         $.br(),
         $.img({
-          src: 'client/images/banner.png', 
+          src: 'client/images/banner.png',
           alt: 'Seoul Tech Society',
           className: 'main--logo'
         }),
-
-        
-        // route configuration
-        Locations({key: 'locations'},
-          Location({key: 'blog', path: '/', handler: BlogIndex}),
-          Location({key: 'blog-entry', path: '/blog/:year/:id', 
-            handler: BlogItem}),
-          Location({key: 'events', path: '/events/', handler: EventsIndex,
-            data: get(this.state, 'events')}),
-          Location({key: 'event', path: '/events/:id', handler: EventsItem,
-            data: {
-              'event': get(this.state, 'event'),
-              'rsvp': get(this.state, 'people')
-            }}),
-          Location({key: 'about', path: '/about/', handler: AboutPage}))
+        Pages({
+          '/': {handler: BlogIndex},
+          '/blog/:year/:id': {handler: BlogItem},
+          '/events': {handler: EventsIndex, data: get(this.state, 'events')},
+          '/events/:id': {handler: EventsItem, data: {
+            'event': get(this.state, 'event'),
+            'rsvp': get(this.state, 'people')}},
+          '/about': {handler: AboutPage}
+        })
       ])
     }
   })
 
-React.renderComponent(Index(), document.querySelector('.container'))
+React.renderComponent(Index(), document.querySelector('.wrapper'))
 
 module.exports = Index

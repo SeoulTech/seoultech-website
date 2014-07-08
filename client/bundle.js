@@ -54,8 +54,7 @@
 	  EventsItem = __webpack_require__(4),
 	  AboutPage = __webpack_require__(5),
 
-	  _ = __webpack_require__(11),
-	  get = __webpack_require__(7).get,
+	  _ = __webpack_require__(7),
 
 	  Index = React.createClass({
 	    getInitialState: function() {
@@ -84,7 +83,6 @@
 	        _.compose(this.setState.bind(this), this.cacheData), false)
 	    },
 	    render: function() {
-
 	      // FIXME: move following 3 lines somewhere else
 	      // to keep render side-effects free
 	      if (typeof localStorage != 'undefined') {
@@ -103,10 +101,10 @@
 	        Pages({
 	          '/': {handler: BlogIndex},
 	          '/blog/:year/:id': {handler: BlogItem},
-	          '/events': {handler: EventsIndex, data: get(this.state, 'events')},
+	          '/events': {handler: EventsIndex, data: _.get(this.state, 'events')},
 	          '/events/:id': {handler: EventsItem, data: {
-	            'event': get(this.state, 'event'),
-	            'rsvp': get(this.state, 'people')}},
+	            'event': _.get(this.state, 'event'),
+	            'rsvp': _.get(this.state, 'people')}},
 	          '/about': {handler: AboutPage}
 	        })
 	      ])
@@ -124,12 +122,14 @@
 
 	var React = __webpack_require__(10),
 	  $ = React.DOM,
-	  _ = __webpack_require__(11),
-	  index = __webpack_require__(12);
+	  _ = __webpack_require__(7),
+	  index = __webpack_require__(11);
+
+
 
 	module.exports = React.createClass({
 	  render: function() {
-	    return $.div(null, _(index).keys().reverse()
+	    return $.div(null, _.keys(index).reverse()
 	      .filter(RegExp.prototype.test.bind(/.*blog*/))
 	      .map(function(path) {
 	        var year = path.match(/[0-9]+/)
@@ -150,8 +150,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(10),
-	  $ = React.DOM,
-	  _ = __webpack_require__(11);
+	  $ = React.DOM;
 
 	module.exports = React.createClass({
 	  render: function() {
@@ -168,15 +167,14 @@
 
 	var React = __webpack_require__(10),
 	  $ = React.DOM,
-	  _ = __webpack_require__(11),
-	  fetch = __webpack_require__(8),
-	  get = __webpack_require__(7).get;
+	  _ = __webpack_require__(7),
+	  fetch = __webpack_require__(8);
 
 	module.exports = React.createClass({
-	  componentDidMount: _.partial(fetch, 'events'),
+	  componentWillMount: _.partial(fetch, 'events'),
 	  render: function() {
 	    return $.ul(null, [
-	      _.map(get(this.props, 'results'), function(d, i) {
+	      _.map(_.get(this.props, 'results'), function(d, i) {
 	        return $.li({key: d.id}, [
 	          $.span({key: 'date' + d.id}, '[' + new Date(d.time).toDateString() + '] '),
 	          $.a({key: 'name' + d.id, href: './#/events/' + d.id}, d.name),
@@ -194,9 +192,8 @@
 
 	var React = __webpack_require__(10),
 	  $ = React.DOM,
-	  _ = __webpack_require__(11),
-	  fetch = __webpack_require__(8),
-	  get = __webpack_require__(7).get;
+	  _ = __webpack_require__(7),
+	  fetch = __webpack_require__(8);
 
 	module.exports = React.createClass({
 	  componentDidMount: function() {
@@ -205,12 +202,12 @@
 	  },
 	  render: function() {
 	    return $.div(null, [
-	      $.h1({key: 'name'}, get(this.props.data, 'event',this.props.id, 'name')),
+	      $.h1({key: 'name'}, _.get(this.props.data, 'event',this.props.id, 'name')),
 	      $.div({key: 'description', dangerouslySetInnerHTML: {
-	        __html: get(this.props, 'event', this.props.id, 'description')}}),
+	        __html: _.get(this.props, 'event', this.props.id, 'description')}}),
 	      $.h3({key: 'h3'}, 'Attendees:'),
 	      $.ul({key: 'ul'}, [
-	        _.map(get(this.props.rsvp, this.props.id, 'results'), function(r, i) {
+	        _.map(_.get(this.props.rsvp, this.props.id, 'results'), function(r, i) {
 	          return $.li({key: i}, r.member.name)
 	        })
 	      ])
@@ -225,7 +222,7 @@
 
 	var React = __webpack_require__(10),
 	  $ = React.DOM,
-	  html = __webpack_require__(13);
+	  html = __webpack_require__(12);
 
 	module.exports = React.createClass({
 	  render: function() {
@@ -240,9 +237,7 @@
 
 	var React = __webpack_require__(10),
 	  $ = React.DOM,
-	  _ = __webpack_require__(11),
-	  maybe = __webpack_require__(7).maybe,
-	  get = __webpack_require__(7).get;
+	  _ = __webpack_require__(7);
 
 	module.exports = React.createClass({
 	  handleHashchange: function(props) {
@@ -254,7 +249,7 @@
 	          '(?:\\?([\\s\\S]*))?$')
 	      }
 
-	    return _(props).keys().concat({}).reduceRight(function(nextState, route) {
+	    return _.reduceRight(_.keys(props).concat({}), function(nextState, route) {
 	      var params = hash.match(routeToRegex(route)),
 	        getParamNames = function(route) {return route.match(paramRegex)},
 	        trimFirstEl = function(p) {return p.slice(1)},
@@ -262,14 +257,15 @@
 	        urlParams
 
 	      if (params) {
-	        otherProps = get(props, route, 'data'),
+	        otherProps = _.get(props, route, 'data'),
 	        urlParams = _.zipObject(
-	          maybe(getParamNames(route)).fmap(trimFirstEl).return(),
+	          _.maybe(getParamNames(route)).fmap(trimFirstEl).return(),
 	          _.compact(trimFirstEl(params)))
 
 	        return _.assign(nextState, {
-	          handler: get(props, route, 'handler'),
-	          props: _.merge(urlParams, otherProps)})
+	          handler: _.get(props, route, 'handler'),
+	          props: _.merge(urlParams, otherProps)
+	        })
 	      }
 
 	      return nextState
@@ -296,7 +292,7 @@
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var _ = __webpack_require__(11),
+	var _ = __webpack_require__(40),
 	  util = {
 	    get: function(/* obj, nested keys */) {
 	      return [].slice.call(arguments).reduce(function(obj, key) {
@@ -315,7 +311,22 @@
 	          return typeof value == 'function'? value() : value;
 	        }
 	      }
-	    }
+	    },
+
+	    // list of lodash methods used; either to make a custom lodash build
+	    // or replace lodash with something else
+	    assign: _.assign,
+	    cloneDeep: _.cloneDeep,
+	    compact: _.compact,
+	    compose: _.compose,
+	    filter: _.filter,
+	    isEmpty: _.isEmpty,
+	    keys: _.keys,
+	    map: _.map,
+	    merge: _.merge,
+	    partial: _.partial,
+	    reduceRight: _.reduceRight,
+	    zipObject: _.zipObject
 	  }
 
 	module.exports = util
@@ -384,56 +395,56 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./2013/angelhack-contest-in-seoul-dcamp-june-8th-2013": 15,
-		"./2013/angelhack-contest-in-seoul-dcamp-june-8th-2013.js": 15,
-		"./2013/data-recovery-basics-bob-training-centre-jan-2-2014": 16,
-		"./2013/data-recovery-basics-bob-training-centre-jan-2-2014.js": 16,
-		"./2013/digital-art-lecture-series-i-when-artists-become-geeks": 17,
-		"./2013/digital-art-lecture-series-i-when-artists-become-geeks.js": 17,
-		"./2013/first-friday-night-jam-meetup-follow-up": 18,
-		"./2013/first-friday-night-jam-meetup-follow-up.js": 18,
-		"./2013/first-friday-night-tech-jam-seoul-april-19": 19,
-		"./2013/first-friday-night-tech-jam-seoul-april-19.js": 19,
-		"./2013/google-i-o-extended-seoul-may-16-2013": 20,
-		"./2013/google-i-o-extended-seoul-may-16-2013.js": 20,
-		"./2013/linux-101-seoul-sydney-tafe-korea-sep-23": 21,
-		"./2013/linux-101-seoul-sydney-tafe-korea-sep-23.js": 21,
-		"./2013/promotion-chuseok-game-jam-w-joe-spradley-sep-18": 22,
-		"./2013/promotion-chuseok-game-jam-w-joe-spradley-sep-18.js": 22,
-		"./2013/review-of-digital-art-series-i-ii": 23,
-		"./2013/review-of-digital-art-series-i-ii.js": 23,
-		"./2013/review-of-team-up-for-anglehack": 24,
-		"./2013/review-of-team-up-for-anglehack.js": 24,
-		"./2013/seoul-tech-careers-lead-developer-cto-for-a-fashtech": 25,
-		"./2013/seoul-tech-careers-lead-developer-cto-for-a-fashtech.js": 25,
-		"./2013/seoul-tech-rises-to-samsung-challenge": 26,
-		"./2013/seoul-tech-rises-to-samsung-challenge.js": 26,
-		"./2013/special-guest-speaker-ffventures-john-frankel-seoul": 27,
-		"./2013/special-guest-speaker-ffventures-john-frankel-seoul.js": 27,
-		"./2013/stay-safe-in-the-cyberspace-dcamp-oct-18th-2013": 28,
-		"./2013/stay-safe-in-the-cyberspace-dcamp-oct-18th-2013.js": 28,
-		"./2013/team-up-for-angelhack-2-d-camp-may-28-2013": 29,
-		"./2013/team-up-for-angelhack-2-d-camp-may-28-2013.js": 29,
-		"./2013/team-up-for-angelhack-seoul-may-10": 30,
-		"./2013/team-up-for-angelhack-seoul-may-10.js": 30,
-		"./2013/upcoming-tech-events-in-korea-keeping-updated": 31,
-		"./2013/upcoming-tech-events-in-korea-keeping-updated.js": 31,
-		"./2013/upcoming-tech-events-in-seoul-on-may-2013": 32,
-		"./2013/upcoming-tech-events-in-seoul-on-may-2013.js": 32,
-		"./2014/launch-lab-where-ideas-take-off-june-28": 34,
-		"./2014/launch-lab-where-ideas-take-off-june-28.js": 34,
-		"./2014/popular-science-ehealth-trends-w-dr-ogan-gurel": 35,
-		"./2014/popular-science-ehealth-trends-w-dr-ogan-gurel.js": 35,
-		"./2014/promotion-techtalk-networking-vol-2-platoon-feb-19": 36,
-		"./2014/promotion-techtalk-networking-vol-2-platoon-feb-19.js": 36,
-		"./2014/promotion-wellness-it-festival-at-center-seoul-july": 37,
-		"./2014/promotion-wellness-it-festival-at-center-seoul-july.js": 37,
-		"./2014/seoul-hack-n-tell-night-2": 38,
-		"./2014/seoul-hack-n-tell-night-2.js": 38,
-		"./2014/seoul-tech-ver-1-0-art-party-platoon-kunsthalle": 39,
-		"./2014/seoul-tech-ver-1-0-art-party-platoon-kunsthalle.js": 39,
-		"./2014/the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp": 40,
-		"./2014/the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp.js": 40
+		"./2013/angelhack-contest-in-seoul-dcamp-june-8th-2013": 14,
+		"./2013/angelhack-contest-in-seoul-dcamp-june-8th-2013.js": 14,
+		"./2013/data-recovery-basics-bob-training-centre-jan-2-2014": 15,
+		"./2013/data-recovery-basics-bob-training-centre-jan-2-2014.js": 15,
+		"./2013/digital-art-lecture-series-i-when-artists-become-geeks": 16,
+		"./2013/digital-art-lecture-series-i-when-artists-become-geeks.js": 16,
+		"./2013/first-friday-night-jam-meetup-follow-up": 17,
+		"./2013/first-friday-night-jam-meetup-follow-up.js": 17,
+		"./2013/first-friday-night-tech-jam-seoul-april-19": 18,
+		"./2013/first-friday-night-tech-jam-seoul-april-19.js": 18,
+		"./2013/google-i-o-extended-seoul-may-16-2013": 19,
+		"./2013/google-i-o-extended-seoul-may-16-2013.js": 19,
+		"./2013/linux-101-seoul-sydney-tafe-korea-sep-23": 20,
+		"./2013/linux-101-seoul-sydney-tafe-korea-sep-23.js": 20,
+		"./2013/promotion-chuseok-game-jam-w-joe-spradley-sep-18": 21,
+		"./2013/promotion-chuseok-game-jam-w-joe-spradley-sep-18.js": 21,
+		"./2013/review-of-digital-art-series-i-ii": 22,
+		"./2013/review-of-digital-art-series-i-ii.js": 22,
+		"./2013/review-of-team-up-for-anglehack": 23,
+		"./2013/review-of-team-up-for-anglehack.js": 23,
+		"./2013/seoul-tech-careers-lead-developer-cto-for-a-fashtech": 24,
+		"./2013/seoul-tech-careers-lead-developer-cto-for-a-fashtech.js": 24,
+		"./2013/seoul-tech-rises-to-samsung-challenge": 25,
+		"./2013/seoul-tech-rises-to-samsung-challenge.js": 25,
+		"./2013/special-guest-speaker-ffventures-john-frankel-seoul": 26,
+		"./2013/special-guest-speaker-ffventures-john-frankel-seoul.js": 26,
+		"./2013/stay-safe-in-the-cyberspace-dcamp-oct-18th-2013": 27,
+		"./2013/stay-safe-in-the-cyberspace-dcamp-oct-18th-2013.js": 27,
+		"./2013/team-up-for-angelhack-2-d-camp-may-28-2013": 28,
+		"./2013/team-up-for-angelhack-2-d-camp-may-28-2013.js": 28,
+		"./2013/team-up-for-angelhack-seoul-may-10": 29,
+		"./2013/team-up-for-angelhack-seoul-may-10.js": 29,
+		"./2013/upcoming-tech-events-in-korea-keeping-updated": 30,
+		"./2013/upcoming-tech-events-in-korea-keeping-updated.js": 30,
+		"./2013/upcoming-tech-events-in-seoul-on-may-2013": 31,
+		"./2013/upcoming-tech-events-in-seoul-on-may-2013.js": 31,
+		"./2014/launch-lab-where-ideas-take-off-june-28": 33,
+		"./2014/launch-lab-where-ideas-take-off-june-28.js": 33,
+		"./2014/popular-science-ehealth-trends-w-dr-ogan-gurel": 34,
+		"./2014/popular-science-ehealth-trends-w-dr-ogan-gurel.js": 34,
+		"./2014/promotion-techtalk-networking-vol-2-platoon-feb-19": 35,
+		"./2014/promotion-techtalk-networking-vol-2-platoon-feb-19.js": 35,
+		"./2014/promotion-wellness-it-festival-at-center-seoul-july": 36,
+		"./2014/promotion-wellness-it-festival-at-center-seoul-july.js": 36,
+		"./2014/seoul-hack-n-tell-night-2": 37,
+		"./2014/seoul-hack-n-tell-night-2.js": 37,
+		"./2014/seoul-tech-ver-1-0-art-party-platoon-kunsthalle": 38,
+		"./2014/seoul-tech-ver-1-0-art-party-platoon-kunsthalle.js": 38,
+		"./2014/the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp": 39,
+		"./2014/the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp.js": 39
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -457,6 +468,170 @@
 
 /***/ },
 /* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = {"client/content/target/blog/2013/":["angelhack-contest-in-seoul-dcamp-june-8th-2013","data-recovery-basics-bob-training-centre-jan-2-2014","digital-art-lecture-series-i-when-artists-become-geeks","first-friday-night-jam-meetup-follow-up","first-friday-night-tech-jam-seoul-april-19","google-i-o-extended-seoul-may-16-2013","linux-101-seoul-sydney-tafe-korea-sep-23","promotion-chuseok-game-jam-w-joe-spradley-sep-18","review-of-digital-art-series-i-ii","review-of-team-up-for-anglehack","seoul-tech-careers-lead-developer-cto-for-a-fashtech","seoul-tech-rises-to-samsung-challenge","special-guest-speaker-ffventures-john-frankel-seoul","stay-safe-in-the-cyberspace-dcamp-oct-18th-2013","team-up-for-angelhack-2-d-camp-may-28-2013","team-up-for-angelhack-seoul-may-10","upcoming-tech-events-in-korea-keeping-updated","upcoming-tech-events-in-seoul-on-may-2013"],"client/content/target/blog/2014/":["launch-lab-where-ideas-take-off-june-28","popular-science-ehealth-trends-w-dr-ogan-gurel","promotion-techtalk-networking-vol-2-platoon-feb-19","promotion-wellness-it-festival-at-center-seoul-july","seoul-hack-n-tell-night-2","seoul-tech-ver-1-0-art-party-platoon-kunsthalle","the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp"],"client/content/target/pages/":["about"]}
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'about-us\'>About us</h1>\n<h2 id=\'-no-matter-what-anybody-tells-you-words-and-ideas-can-change-the-world-tom-schulman-dead-poets-society\'>&quot;No matter what anybody tells you, words and ideas can change the world.&quot; — Tom Schulman, Dead Poets Society</h2>\n<h3 id=\'who-we-are\'>Who we are</h3>\n<p>Seoul Tech Society is an international non-profit organization based in Seoul. It was founded in 2013 with aim to build and unite tech community all around Korea and beyond.</p>\n<h3 id=\'what-we-do\'>What we do</h3>\n<p>Technology is our passion so we hold open monthly meetings to collaborate on projects, learn from each other or share knowledge through conference-like sessions.  </p>\n<p>Our interests are not centered around a specific area, all digital technologies and IT related topics are honored and welcome: mobile &amp; wearable electronics, software, web, robotics, UX, Computer Science, Maths, etc.</p>\n<p>If you are an expat interested in the Seoul tech scene or a Korean netizen interested expanding abroad, come and join us for networking and discussion, and of course a few drinks.</p>\n<h3 id=\'how-to-apply-to-present\'>How to apply to present</h3>\n<p>A science, engineering or technology professional? Want to share your knowledge and passion? Need a stage to present your successful startup?</p>\n<p>If you would like to be one of our guest speakers and reach out to the international tech community of Seoul, drop us an email at contacts@seoultechsociety.org or RSVP on the next event, we’ll be glad to hear from you!</p>\n<p><a href=\'https://www.facebook.com/SeoulTechSociety\'>https://www.facebook.com/SeoulTechSociety</a></p>\n<p><a href=\'https://www.facebook.com/groups/SeoulTechSociety/\'>https://www.facebook.com/groups/SeoulTechSociety/</a></p>\n<p><a href=\'https://twitter.com/Seoul_Tech\'>https://twitter.com/Seoul_Tech</a></p>\n'
+
+/***/ },
+/* 13 */,
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'angelhack-contest-in-seoul-dcamp-june-8th-2013\'>AngelHack Contest in Seoul @DCAMP, June 8th 2013</h1>\n<p>Hey! What are you doing next weekend? You should check out the\n<a href=\'http://angelhack.co.kr/\' title=\'official angelhack korea site\'>AngelHack event @\nDCAMP</a> on June\n8th! \\\n\\\nOver 150 developers are expected to attend and have the chance to win\nsome of \\$100,000+ in prizes and the opportunity to be flown out to\nSilicon Valley to represent Seoul at our global demo day and mentored\nfor 10 weeks prior. </p>\n<p><strong>And you know what? You can use a promo code below to get 20% off the\nticket price!</strong></p>\n<p><strong>Promo code  is ”seoultechsociety&quot; and there are only 15 spots left.</strong></p>\n<p><a href=\'http://ahsp13seoul.eventbrite.com/\'>http://ahsp13seoul.eventbrite.com/</a> </p>\n<p><img src=\'http://media.tumblr.com/17ce6194a2e794032bf876bb935fec6d/tumblr_inline_mnk1ctERxk1qz4rgp.jpg\' alt=\'image\'></p>\n'
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'data-recovery-basics-bob-training-centre-jan-2-2014\'>Data recovery basics @BoB Training Centre, Jan 2, 2014</h1>\n<p>Have you ever deleted a file and then realized it was a crucial mistake\nthat you have ever made to your files? Come to Seoul Tech Society event\nand learn how to recover your data! </p>\n<p>RSVP <a href=\'http://www.meetup.com/seoul-tech-society/events/147208302/\'>http://www.meetup.com/seoul-tech-society/events/147208302/</a></p>\n<p><img src=\'https://31.media.tumblr.com/3443c12ddb0930ee894d06e75ac2b152/tumblr_inline_my5oh22IO81qz73mc.jpg\' alt=\'\'></p>\n<p><img src=\'https://31.media.tumblr.com/afa905a9688eef92fe958b09b71d3cdd/tumblr_inline_my5odbEkVb1qz73mc.jpg\' alt=\'\'></p>\n'
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'digital-art-lecture-series-i-when-artists-become-geeks-or-vice-versa-seoul-july-10\'>Digital Art Lecture Series I: When artists become geeks or vice versa @Seoul, July 10</h1>\n<p><a href=\'http://www.smellsdreamy.com\'>Digital artist</a>, educator and the Seoul\nTech Society member <a href=\'http://facebook.com/LuciaJeesunLee\'>Lucia Lee</a> will\ngive a series of lectures on digital art. \\</p>\n<p>The first lecture: Introduction to Digital Art  - When artists become\ngeeks or vice versa.</p>\n<p><img src=\'http://media.tumblr.com/74213c7b105c90f5e13036e5e00ce0c1/tumblr_inline_mp22gh44Pa1qz4rgp.jpg\' alt=\'image\'></p>\n<hr>\n<p><strong>Agenda:</strong> Lucia will walk you through to the magic world of digital\nart, providing examples of inspiring artists and projects in the field.\nGet yourself ready for full of visual and creative stimuli!</p>\n<p><strong>About Lucia :</strong> Lucia Jeesun Lee is an interdisciplinary artist\nworking primarily in digital media. Born and raised in South Korea, she\nmoved to New York as she began her studies at New York University, where\nshe garnered her Master’s Degree in Interactive Telecommunication in</p>\n<ol>\n<li>Her works have been featured in various venues in New York. She\nalso has worked as a video projection designer in off-off Broadway shows\nand as an adjunct professor/ instructor in Hostos Community College,\nStevens Institute of Technology, and Queens Museum of Art</li>\n</ol>\n<p>Location: <a href=\'http://hubseoul.net/\'>HUB Seoul </a> , <a href=\'https://maps.google.com/maps?q=Bongeunsa-ro+55-gil,+Gangnam-gu,+Seoul,+South+Korea&amp;hl=en&amp;sll=37.0625,-95.677068&amp;sspn=40.460237,78.662109&amp;hnear=Bongeunsa-ro+55-gil,+Gangnam-gu,+Seoul,+South+Korea&amp;t=m&amp;z=16\'>17 Bongeunsa-ro 55-gil,\nSeoul</a></p>\n<p>Time: 19.00-20.30</p>\n<p>RSVP to this event\nat <a href=\'http://www.meetup.com/seoul-tech-society/events/125183962/\'>http://www.meetup.com/seoul-tech-society/</a></p>\n'
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'first-friday-night-jam-meetup-follow-up\'>First Friday Night Jam meetup follow-up</h1>\n<p>Firstly a big thank you to all those of you who attended and supported\nthe event. It was our largest yet, with 20+ attendees and we’re pleased\nto see that true community grows.</p>\n<p>As planned this meetup consisted of two parts:</p>\n<p><strong>Free Talk at TOZ Sinchon</strong></p>\n<blockquote>\n<p>where we made a short presentation of the Seoul Tech Society itself</p>\n<p><strong><a href=\'http://www.slideshare.net/SeoulTechSociety/seoul-tech-society\' title=\'Introduction to Seoul Tech Society\'>Introduction to Seoul Tech\nSociety</a></strong></p>\n<p>\\</p>\n<p>and then had a discussion session on <em>“Modern Tech Opportunities in\nKorea”</em></p>\n<p><a href=\'http://www.slideshare.net/SeoulTechSociety/tech-opportunities-in-korea\'></a><a href=\'http://www.slideshare.net/SeoulTechSociety/tech-opportunities-in-korea\'>http://www.slideshare.net/SeoulTechSociety/tech-opportunities-in-korea</a>.</p>\n<p>A lot of good tech topics popped up so event 2 hours was not enough to\nget to the last slide.</p>\n</blockquote>\n<p><strong>Afterparty</strong></p>\n<blockquote>\n<p>The rest of the evening all of us spend together at the nearest pub,\nsocializing and discussing a truly broad range of topics: from Berlin\nstartup scene and mobile OS code bases up to Pushkin and international\naffairs.</p>\n</blockquote>\n<p>It was wonderful (and nobody expected that) to see what an international\ncrowd attended the event: people all over the Europe, South America, US\nand Republic of  Korea of course. That was the diversity we are up to!\nPeople with different backgrounds, cultures, languages got together to\nmeet others who are smart, educated, enthusiastic and young at their\nhearts to share skills, knowledge and passion in business and\ntechnology.</p>\n<p>Through the evening a few things were noted as missing: a <strong><a href=\'https://www.facebook.com/SeoulTechSociety\'>Seoul Tech\nSociety Facebook page</a></strong>\nwhich now exists, as the brand new twitter account\ndoes <strong><a href=\'https://twitter.com/Seoul_Tech\'>@Seoul_Tech</a></strong>, so feel free to\nfollow news and updates with the way which is more convenient to you.\nBoth channels will be used  to deliver news, updates, announce events\netc.</p>\n<p>We are also <em>exploring ways to work, share and interact</em> altogether as a\ncommunity: what is the most convenient way to exchange links, suggest\ndiscussion topics and speakers you are interested to listen to on our\nnext meetups?</p>\n<ul>\n<li>Would plain-old forum work for your?</li>\n<li>Is google+ too geeky</li>\n<li>or are we eager to get something reddit\\hacker’s news style these\nwebX.Y days?</li>\n</ul>\n<p>We’d like to know what you think!</p>\n<p><strong>\\\n</strong></p>\n<p>Stay tuned, drop us a few warm words at\n <strong>contacts[at]seoultechsociety.org</strong> and don’t forget to check our next\nevent:</p>\n<p><em>&quot;Team up for AngelHack @Seoul&quot;</em></p>\n<p><a href=\'http://www.meetup.com/seoul-tech-society/events/115904382/\'>http://www.meetup.com/seoul-tech-society/events/115904382/</a></p>\n<p>Seoul Tech Society team,</p>\n<p>FB       <a href=\'https://www.facebook.com/SeoulTechSociety\'>https://www.facebook.com/SeoulTechSociety</a></p>\n<p>Twitter <a href=\'https://twitter.com/Seoul_Tech\'>https://twitter.com/Seoul_Tech</a></p>\n<p><strong>\\\n\\\nP.S </strong>That was great to meet you all at First Friday Night Jam!</p>\n'
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'first-friday-night-tech-jam-seoul-april-19\'>First Friday Night Tech Jam @Seoul, April 19</h1>\n<p>Fun People, Great Connections, and New Tech.</p>\n<p>Seoul Tech Society presents a free talk  <em>“Modern Opportunities in\nKorea, Perspectives for Tech Professionals”</em></p>\n<p>Korea’s the most innovative country in the world, local enthusiasm for\ntechnology provides developers and designers with all possible\nchallenges.</p>\n<p>Let’s discuss  Asian tech landscape and true innovation opportunities\nthat exist today in Korea.</p>\n<p><strong>Schedule</strong> (Feel free to join or leave any time)</p>\n<p><em>7-7:30PM</em> Mix and Mingle.</p>\n<blockquote>\n<p>Meet other techies</p>\n</blockquote>\n<p><em>7:30-9PM</em> Discussion session</p>\n<blockquote>\n<p><em>“Modern Opportunities in Korea, Perspectives for Tech Professionals”</em></p>\n<p>What are you passionate about? Let us know!</p>\n</blockquote>\n<p><em>9-…PM </em>Party time</p>\n<blockquote>\n<p>Free time to get along with other members. We will move to the nearest\nbar for a pint of beer. Call to Nikolay (010-9426-7394) for the exact\nlocation.</p>\n</blockquote>\n<p><strong>Place</strong></p>\n<p>We’v reserved a room at TOZ: please make sure to take your name OFF the\nRSVP list if you are not able to attend (the cost of the meetup depends\non the room size, which depends on the number of people in attendance).</p>\n<p>TOZ provides a comfortable room for ~5,000won/person for 2.5hr with\nfree refreshments.</p>\n<p>Please <a href=\'http://www.meetup.com/computer-science-society/events/111470142/\'>RSVP on\nmeetup.com</a> in\ncase you plan to show up. </p>\n<p><strong>Directions: </strong><a href=\'https://maps.google.com/maps?q=37.556471,126.937097&amp;ll=37.556436,126.936927&amp;spn=0.001529,0.00327&amp;num=1&amp;t=m&amp;z=19\'>Sinchon\nTOZ</a></p>\n<p>18-55 Changcheon-dong, Seodaemun-gu, Seoul, South Korea, Seoul/</p>\n<p>Sinchon subway station (line 2), exit 3, go straight 50m until\nStarbucks, 4th floor in the building of Starbucks. Call to Nikolay\n(010-9426-7394) if any difficulties.</p>\n<p><strong>Update: </strong>Afterpaty place “Warawara”</p>\n<p>\\\nView <a href=\'https://maps.google.com/maps/ms?msa=0&amp;msid=216735581831034000805.0004dab3a83fd9e6d51ce&amp;ie=UTF8&amp;t=m&amp;ll=37.557847,126.938267&amp;spn=0.005954,0.009141&amp;z=16&amp;source=embed\'>45-1 Changcheon-dong (37\nMyeongmul-gil)</a>\nin a larger map</p>\n<p>Please call Nikolay in case if you get lost :)</p>\n'
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'google-i-o-extended-seoul-may-16-2013\'>Google I/O Extended @Seoul, May 16 2013</h1>\n<p>Watch sessions and connect with developers at Google I/O Extended in\nSeoul. \\\n<a href=\'https://developers.google.com/events/io/about\'>https://developers.google.com/events/io/about</a> </p>\n<p><strong>PLACE</strong></p>\n<p><a href=\'http://maps.google.com/maps?q=@37.499718,127.025670\' title=\'Lat: 37.499718 / Lon: 127.025670\'>TOZ\nGangnam</a> 1307-26\nSeocho-dong, Seocho-gu, Seoul</p>\n<p>TOZ provides a comfortable room for ~5,000won/person for 2.5hr with\nfree refreshments.</p>\n<p>Please <a href=\'http://www.meetup.com/computer-science-society/events/111470142/\'>RSVP on\nmeetup.com</a> if\nyou are planing to show up</p>\n<p><strong>SCHEDULE</strong> </p>\n<blockquote>\n<p>&quot;Best of&quot; keynote compilation</p>\n<p>Watch session video</p>\n<p>Talk</p>\n</blockquote>\n<p>(Feel free to join or leave any time)</p>\n'
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'linux-101-seoul-sydney-tafe-korea-sep-23\'>Linux 101 @Seoul Sydney TAFE Korea, Sep 23</h1>\n<p><strong>Linux 101 - Introduction to Linux </strong>by Raphael Chambers, the inspiring\nmember of the Seoul Tech Society. </p>\n<p>RSVP to this event at <a href=\'http://www.meetup.com/seoul-tech-society/\'>http://www.meetup.com/seoul-tech-society/</a></p>\n<p>Linux is a free and open source operating system which is gaining\nmomentum and is a great alternative to other more well marketed OS’s. </p>\n<p>In this talk I will cover some history and present some advantages (and\ndisadvantages) of the Linux OS, without getting too technical. Whats\ngood, whats new and how can we benefit from this awesome free operating\nsystem. </p>\n<p>Learn about the tech that is running the majority of web servers,\nmultiple embedded devices, and even your android phones. Browse the\nsource code, build your own distro, conquer the world… did I mention it\nwas free? </p>\n<p><strong>Location:</strong> Sydney TAFE Korea</p>\n<p>8th floor, Seoul Hyundai Occupational Training College.</p>\n<p>Near Dangsan (당산) station, green line exit 3. </p>\n<p>Sydney TAFE Korea provides us a comfortable space with a beautiful view\non the Hangan river.</p>\n<p>Don’t miss, there will be an afterparty…</p>\n'
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'promotion-chuseok-game-jam-w-joe-spradley-sep-18\'>Promotion: Chuseok Game Jam! w/ Joe Spradley, Sep 18</h1>\n<p><a href=\'https://www.facebook.com/events/197105527128041/\'>https://www.facebook.com/events/197105527128041/</a></p>\n<p>Follow the link and join Chuseok Game Jam hosted by our worthy member\nJoe Spradley and his startup PlayFluent.</p>\n<p><img src=\'http://media.tumblr.com/0c2a9d85114115491293f706d9271e8c/tumblr_inline_mt8loe6jYd1rjim2g.jpg\' alt=\'\'></p>\n<p>All details in the link, but for those who don’t know what a Game Jam\nis… They are going to try to make a few brand new games in a very short\namount of time. No pressure though because people of all skill levels\nwill be participating and the goal is simply to make something!</p>\n<p>Other Important Info:</p>\n<p>Wednesday 2pm - Friday 5pm is the official time but this is a causal +\nfun event so everyone is invited and can come participate as much or as\nlittle as desired. </p>\n<p>It’s FREE! + Saturday and Sunday night we will have some related social\nevents where you can show off your creation and play other games.\\^\\^</p>\n<p>Directions:</p>\n<p>Dangsan Station Exit 4. Turn left, walk down the street to the second\nbuilding. Enter and come to the 3rd Floor.</p>\n<p><a href=\'https://maps.google.com/maps?q=37.534866,126.903475&amp;num=1&amp;vpsrc=0&amp;ie=UTF8&amp;t=m&amp;z=19\'>https://maps.google.com/maps?q=37.534866,126.903475&amp;num=1&amp;vpsrc=0&amp;ie=UTF8&amp;t=m&amp;z=19</a></p>\n'
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'review-of-digital-art-series-i-ii-\'>Review of &quot;Digital Art Series I&amp;II&quot;</h1>\n<p>Recently, we had the honor of hosting two inspirational art lectures by\nthe internationally acclaimed and very creative media artist Lucia\nJeesun Lee (aka<a href=\'https://twitter.com/smellsdreamy\'>@smellsdreamy</a>).</p>\n<p>In the first lecture, ‘Introduction to Digital Art I - When artists\nbecome geeks or vice versa’, Lucia gave us a peek into the exciting and\ndiverse trends currently happening in digital art.  Her talk took\nattendees on a fascinating journey through this colorful area of\nconverging technologies.  Where Musicians, Designers, Entrepreneurs,\nFilmmakers, Writers, Architects, Hackers, Inventors, Engineers,\nUrbanists, Scientists, Choreographers as well as Magicians are currently\nfinding new ways to use technology in their practices.</p>\n<p>You can find the slides for ‘Introduction to Digital Art I’ here:\n<a href=\'https://www.dropbox.com/s/72oekls988u494w/digital_art_lecture_1_lucia_lee.ppt\'></a><a href=\'https://www.dropbox.com/s/72oekls988u494w/digital_art_lecture_1_lucia_lee.ppt\'>https://www.dropbox.com/s/72oekls988u494w/digital_art_lecture_1_lucia_lee.ppt</a></p>\n<p>The intrigued audience hurried to her second lecture, ’Introduction to\nDigital Art II - Mapping’, where she took them deeper into the curious\nworld of online digital mapping.   Lucia’s solid selection of artists\nand her thoughtful interpretations helped a very eager audience to see\nhow images of our modern, sometimes hectic world, once frozen in time\ncould be appropriated and transformed into expressive and highly\nunconventional pieces of contemporary art.  In addition, she kindly\nprovided some great resources for those looking to jump in and do their\nown projects.</p>\n<p>Both her lectures were enriched with lively discussions at the end as\nwell as a very enjoyable after-parties.</p>\n<p>These valuable events couldn’t have happened without the generous\nsupport of two great organizations, Hub Seoul and World Culture Open\nSeoul Office, who graciously opened up their wonderful venues to Seoul\nTech Society members.</p>\n<p><strong>Hub Seoul</strong>\\\n<img src=\'https://lh3.googleusercontent.com/9QPjmwC57S5muRmizwQHYCDqfgGYWVGF3xYdzF-4TmvtXrOk2TYUFVAAocRtFrfJobjAEiScUlWxwOD6MJF3a0Ty5d50fhET3uHx0nVq002nNTFkDoynfHRL\' alt=\'image\'>\\\n<strong>WCO</strong>\\\n<img src=\'https://lh5.googleusercontent.com/PqLzDtQvhxhCmQcSHB5gA226FEl7hGrXsXh8-rqmOo7jdqdEJBUuTq7unWYoB2IsCL_pUCDv3cLt8NAlINEu72HcB6qTRtl0yGZ4C4FrXaweETpvMn9iFJBr\' alt=\'image\'></p>\n<p><strong>Hub Seoul</strong> <a href=\'http://www.hubseoul.net\'>www.hubseoul.net</a> /\n<a href=\'http://www.facebook.com/hubseoul\'>www.facebook.com/hubseoul</a>\\\nis originally a quite co-working space, where everyone can find a handy\ncorner to concentrate on their project, for a reasonable fee.\\\nFor us, It smoothly transformed in a space, which welcomed our first\nevent. It was one of the reasons to give a successful start to these\nseries of lectures.</p>\n<p><strong>World Culture Open Seoul Office</strong> <a href=\'http://wcoseoul.org/xe/\'>http://wcoseoul.org/xe/</a>\\\nis the free space in the heart of Seoul for diverse cultural events. We\nare very thankful to WCO and glad that we contributed bringing culture\nand technologies closer to each other.</p>\n<p>We will look forward to hear more fascinating talks from Lucia and\ndiscover over welcoming spaces.</p>\n'
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'review-of-team-up-for-anglehack-\'>Review of &quot;Team up for AngleHack&quot;</h1>\n<p>It would be enough to say that this time event was SUPER fun &amp;\nchallenging.</p>\n<p>Review in a brief:</p>\n<ul>\n<li>~20 people attended</li>\n<li>11 cool project ideas were proposed</li>\n<li>3 most promising were chosen by voting</li>\n<li>..to be continue - a plan for one more meeting exists!</li>\n</ul>\n<p>Some juicy details for whose who interested:</p>\n<p>The event was popular far beyond the expectation - more than 90% of RSVP\nshowed up - ~20 highly skilled tech enthusiasts. The atmosphere was\ncreative and cheerful, we generated 11 project proposals to compete in\nAngelHack contest. After hectic discussions 3 the most promising ideas\nwere chosen so 3 teams will participate in the hackathon.</p>\n<p>Wish a good luck to our heroes!!</p>\n<p>To chill out our burning brains later on we threw an after-party with a\ncold beer or two.</p>\n<p>As so many people were involved, excited and committed we decided to\nmake one more meeting before the actual AngelHack contest.</p>\n<p>Special shout out goes to our\nfriends <a href=\'http://www.nflabs.com/\' title=\'NFLabs\'><strong>NFLabs</strong></a> who hosted this\nevent at their nice office at Gangnam and helped most generously with,\nhm, let us say “refreshments” and “stuff”.</p>\n'
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'seoul-tech-careers-lead-developer-cto-for-a-fashtech-startup-\'>Seoul Tech Careers: Lead Developer / CTO for a fashtech startup </h1>\n<p><img src=\'http://media.tumblr.com/3a0093657e210472d511353149c9ca2a/tumblr_inline_mxh2nwZ8LX1qz73mc.png\' alt=\'image\'></p>\n<p><strong>Lead Developer / CTO Candidate</strong></p>\n<p>Are you eager for an exciting opportunity to make your mark in\n“fashtech” the industry cross sector of fashion and technology?\\\nThis may be your chance.\\\nRed Carpet Closet is an upandcoming fashtech startup currently seeking\nan experienced fullstack web developer with ambitions to take the lead\nin building our ecommerce platform. We have big ideas that will\n“democratize fashion” for shoppers and designers but we need a talented\ntechnical superstar to bring these ideas to life!\\\nYou’ll work closely with the energetic founders, with international\nworking experience in leading global technology firms, who love the idea\nof working hard and playing harder.</p>\n<p>Role: FullStack Web Developer / Location: Seoul, South Korea\\\n(A candidate with the right fit and experience can be considered for the\nposition of CTO)</p>\n<p>Responsibilities</p>\n<ul>\n<li>Primary: Lead architecture of the whole site focus on initial site\ncoding and development (from frontend to backend)</li>\n<li>Secondary: Help shape the technology development roadmap for the\necommerce platform and advise in future technical hiring decisions</li>\n</ul>\n<p>Requirements</p>\n<ul>\n<li>No working restriction in South Korea (applicable to foreigners)</li>\n</ul>\n<p>Education\\</p>\n<ul>\n<li>Degree in Computer Science or Engineering (minimum)</li>\n</ul>\n<p>Experience / Skills</p>\n<ul>\n<li>Several years of programming experience; recent graduates with\npotential and a strong portfolio may also be considered</li>\n<li>Well versed in major web development and web application languages\n(backend APIs /code, e.g. python; front end code, e.g. HTML5, CSS3,\njavaScript)</li>\n<li>Strong knowledge of SQL and relational database design</li>\n<li>Proficiency with Korea’s crossbrowser, crossplatform issues, and W3C\nWeb standards</li>\n<li>Familiar with search engine optimization (SEO)</li>\n<li>Able to efficiently lead and coordinate a small team of designers\nand other developers</li>\n<li>Experience working with startups a plus</li>\n<li>Ecommerce experience a plus</li>\n</ul>\n<p>An ideal candidate would also possess the following:</p>\n<ul>\n<li>Creativity, drive, an obsessive eye for detail and rapid iteration,\nexperimentation skills</li>\n<li>Able to step back and see the big picture</li>\n<li>Ability to meet strict deadlines, efficiently juggle multiple hats\nand learn fast</li>\n<li>Good interpersonal and communication skills</li>\n</ul>\n<p>Compensation</p>\n<ul>\n<li>Open to negotiation.</li>\n</ul>\n<p>If you have what it takes, please reach out to Ellen at\nhr@redcarpetcloset.com. In your email, please include the following:</p>\n<ul>\n<li>Resume (English or Korean)</li>\n<li>Links to / examples of your portfolio that best reflect your web\ndevelopment skills; for projects that were joint collaborations,\nplease specify your role and involvement</li>\n<li>Tell us which is your favorite ecommerce website and your 3 reasons</li>\n</ul>\n<p>——————————————————————————————————————-\\\n개발자 / CTO 모집</p>\n<p>안녕하세요,</p>\n<p>레드카펫 클로젯의 ecommerce 플랫폼을 구축하기 위해, 능력있는 fullstack\n웹 개발자를 모십니다.\\\n저희의 수많은 아이디어를 현실로 이루어 지게 할 수있는 멋진 개발자. 바로\n당신을 레드카펫 클로젯 가족으로 초대하고 싶습니다.\\\n저희 레드카펫 클로젯은 초기 startup 기업이지만, 가능성이 높고 빠른\n성장이 기대됩니다. 글로벌 tech 회사에서 폭넓은 경험과 열정을 가진\nfounder들과 함께,\\\n레드카펫 클로젯의 성공을 만들어 갈 당신을 기다립니다.</p>\n<p>[모집분야]\\\nFullStack 웹 개발자 (경력 및 적임자가 CTO 포지션으로 전환 가능함)</p>\n<p>\\\n[업무영역]</p>\n<p>\\\n주요업무:</p>\n<ul>\n<li>사이트 구조 / ecommerce 플랫폼 구축 계획</li>\n<li>초기 단계부터 사이트 코딩 및 개발 (frontend/backend) 지원활동:</li>\n<li>레드카펫 ecommerce 플랫폼 개발 로드맵 계획</li>\n<li>기술 관련 포지션 채용 과정 지원</li>\n</ul>\n<p>[필수요건]</p>\n<ul>\n<li>한국에서 근무 제한 없음 (외국인 해당)</li>\n</ul>\n<p>교육\\</p>\n<ul>\n<li>CS/공대 경험/기술</li>\n<li>프로그래밍 경험 3년 이상 (잠재력 및 강한 포트폴리오를 가진\n졸업자라면 지원 가능함)</li>\n<li>주요웹개발및웹에플리케이션언어에능통 (예, backend API / code python;\nfrontend HTML, CSS3, javaScript 등)</li>\n<li>SQL 및 관계형 데이터베이스 설계에 대해 깊은 지식을 갖춘자</li>\n<li>한국과 국제의 Crossbrowser, crossplatform 이슈 및 W3C 웹 기준 능통한\n자</li>\n<li>Search engine optimization (SEO) 이해력이 높은자</li>\n<li>프로젝트 리드 경험자 우대</li>\n</ul>\n<p>[우대요건]</p>\n<ul>\n<li>스타트업 경험자</li>\n<li>Ecommerce 비지니스 및 플랫폼 관련 경험자</li>\n<li>창의력, 추진력, 빠른 반복 (iteration)/실험 (experimentation)에 대해\n섬세함을 갖춘자</li>\n<li>책임감이 강하며 배우고자 하는 마음을 강한자</li>\n<li>원활한 의사소통을 갖춘자</li>\n</ul>\n<p>[인센티브] 추 후 협상</p>\n<p>[지원방법]\\\n아래 서류를 준비하여 엘렌(Ellen)에게 hr@redcarpetcloset.com로 메일 송부\n부탁 드립니다.</p>\n<ul>\n<li>이력서(영문/국문문관)</li>\n<li>포트포리오(본인이 웹 개발자로써 제일 자랑하는 프로젝트 어떤 것인지\n표시해주시고 개인 프로젝트 아닌 경우, 본인이 역활이 무엇인지\n정확하게 알려주시기 바랍니다.)</li>\n<li>본인이 제일 마음에 들는 ecommerce 웹사이트 및 그 웹사이트 좋아하는\n3가지 이유</li>\n</ul>\n<p>많은 지원 부탁드립니다. 감사합니다!</p>\n'
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'seoul-tech-rises-to-samsung-challenge\'>Seoul Tech Rises To Samsung Challenge</h1>\n<p>In the space of two weeks, the WeeSeeTeam has gone on a hackathon\njourney which began at a Seoul Tech Society event\n@<a href=\'http://www.nflabs.com/\'>NFlabs</a> and has rapidly moved onto development\nat one of Samsung’s dedicated development centers in the heart of\nGangnam.</p>\n<p>In November, more than two dozen Seoul Tech Society members came\ntogether at NFLabs office space in Gangnam. Seven members discussed\nentering the final SAMSUNG App Challenge for 2013.  The contest aims to\naward innovative applications that showcase the Galaxy Note’s S-Pen. The\ngoal is ambitious: two winning teams have the potential to each get a\n\\$200,000 grand prize, and the WeeSee Team is now poised to come out a\nwinner.</p>\n<p>WeeSee is uniquely positioned because of its diversity and depth of\ntalent, which is typical of the Seoul Tech Society’s membership.\n Hailing from all around the world and from various professional\nbackgrounds, the WeeSee team has brought together a collegial group of\nvegetarians, gamers, entrepreneurs, and hackers.</p>\n<p>For the first few weeks the team had been meeting together in Mullae and\nHongdae, but later secured free office space complimentary of Samsung.\n The team has been finalizing the beta version of  their productivity\napp which aims to disrupt the way people collaborate and share notes.\nThe app developed by WeeSee will enter a crowded productivity category\nled by brands such as Evernote.  The app differentiates itself with its\nuse of the Samsung S-Pen stylus, and it allows users the ability to\nexperience more while working with others.</p>\n<p>Before submitting their application on December 31st, the team is\nsearching for additional members to join them in either a design or\ndevelopment role.  Requirements:</p>\n<p>The candidates can be a UX/UI Design specialist and/or a (mobile)\napplications developer who is familiar with any of the following:</p>\n<ul>\n<li><p>Mobile application development Samsung/Android</p>\n</li>\n<li><p>Photoshop</p>\n</li>\n<li><p>Android design guide principles</p>\n</li>\n<li><p>Action bar / status bar / navbar for current mobile applications</p>\n</li>\n<li><p>Icons for mobile apps</p>\n</li>\n<li><p>Branding and theme for Android / Samsung</p>\n</li>\n</ul>\n<p>If you think you can contribute to the team in any way, please feel free\nto send an e-mail to <a href=\'&#109;&#x61;&#x69;&#x6c;&#x74;&#x6f;&#58;&#x77;&#x65;&#x65;&#x73;&#101;&#101;&#116;&#x65;&#x61;&#x6d;&#x40;&#x67;&#x6d;&#97;&#x69;&#x6c;&#46;&#x63;&#x6f;&#109;\'>&#x77;&#x65;&#x65;&#x73;&#101;&#101;&#116;&#x65;&#x61;&#x6d;&#x40;&#x67;&#x6d;&#97;&#x69;&#x6c;&#46;&#x63;&#x6f;&#109;</a>  or follow this\n(<a href=\'http://www.meetup.com/seoul-tech-society/messages/boards/thread/40367552#113451732\'>link</a>).</p>\n<p>More info about the Samsung App Challenge here\n(<a href=\'http://developer.samsung.com/ssac2013/note/aboutTheChallenge.do\'>link</a>)</p>\n<p><img src=\'https://lh3.googleusercontent.com/xQIgrpMLSuyFnO75mQUeFOKR5lBiQ_kj08eO1IWmFNM7PYeVnMo6I-JpvmZyO9RkbVFk9Vndu3BSKd91t21IqB9-MilG5ENygc6lJDWdqE8ahOj2IxEhr-rQCQ\' alt=\'image\'></p>\n<p>Inception @ Mullae Art Center</p>\n<p><img src=\'https://lh3.googleusercontent.com/WVVUTctvcvzM8gIRTNB0LSMlkiYndtqXmhc60DMpy2s8Nq4olns-pslBj-5XMqtkoBf2n_K-D-_mKD8_tmxAtZBaI82weDNjaQ1gjoR47QaUfMZDmJvDrdtV7w\' alt=\'image\'></p>\n<p>Brainstorming  → App Deep Dive II  @ Insight Hongdae</p>\n<p><img src=\'https://lh3.googleusercontent.com/lLXIXgt9LDO0hiMHhvu6EG938CpKou4Qz1PWwvRTrh2DfwIjwslOUPGeA30WSVcsGeRIooRVCqTOR5IP8ZUUX4C8bYZqjzWK04wvHV2-vNk5BplJWfzQ4EFZdA\' alt=\'image\'></p>\n<p>Cheers: first milestone  @\nNFLabs<img src=\'https://lh6.googleusercontent.com/fCzX3pYGxn36vK8Nd53ZLhrE0bF75t1ul1cx8ZMhamRFhqfqO1cuByw1OQI_jzhzVfYAxYyKQPANcb_z7IP3KSX3WEUaqR1dDBRCDYKLmnsScu9sh7KB3vwm3w\' alt=\'image\'></p>\n<p>Our first demo @ Samsung Ocean</p>\n<p><img src=\'https://lh4.googleusercontent.com/OHz8t5pQ1sYzsg3t79s8-GxhF9s99SbiBUsHUhrmitN_rPdVFXFx9V1bODtjOML1nlAdfJKbwepCt24nbUfS7wbQ4AB9zhDSrFYywBpNYQGRaLsP8KMBJWSZ9Q\' alt=\'image\'></p>\n<p>Deep immersion for the best product   →  App Deep Dive I @ NFLabs</p>\n<p><img src=\'https://lh4.googleusercontent.com/N6fBPGlzAmwYUoc6SazOE4BteT0iGMSQ33W4_gS2mRYM0IPlW3rkDw43X8R7MAUJWX2vFJdX7VuVBCPYnhPMbkQXvJExRetw2xEb3bBrqBiNumYxIOWZPXF6-g\' alt=\'image\'></p>\n<pre><code>                                                          Jackson\n</code></pre><p><a href=\'https://plus.google.com/113799495386801196546\'>Google+</a></p>\n'
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'special-guest-speaker-ffventures-john-frankel-seoul-june-14\'>Special Guest Speaker: ffVentures&#39; John Frankel @Seoul, June 14</h1>\n<p>Our special guest speaker is John Frankel, who is a Partner at ff\nVenture Capital. John will give a lecture:</p>\n<p><em>“YOU ARE SO LUCKY! The next great entrepreneurial opportunity: the\nmassive white space right in front of you.”</em></p>\n<p><img src=\'http://media.tumblr.com/c3bd3547ab4d80edc2a3c5f0d2f8fe61/tumblr_inline_mm9qo8U9zC1qz4rgp.png\' alt=\'image\'></p>\n<p><strong>John Frankel (<a href=\'http://ffvc.com/team/john-frankel/\'>Source</a>)</strong></p>\n<p><strong><img src=\'http://media.tumblr.com/b9845c75bec9bd52b61e04f5004c8bfc/tumblr_inline_mm9qpkxgGf1qz4rgp.jpg\' alt=\'image\'></strong></p>\n<p>John Frankel has been an early-stage venture investor since 1999. Mr.\nFrankel was one of the earliest investors in Quigo Technologies, which\nwas purchased by AOL in December 2007, and in Cornerstone OnDemand (CSOD\non NASDAQ) which had a successful IPO in March 2011. He has also served\nand/or now serves on the boards of 500px, Apparel Media Group,\nAlerts.com, Centzy, ClearPath Immigration, Gobbler, Infochimps, Klout,\nPhone.com, Quigo Technologies, The Goldman Sachs Trust Company, and\nVoxy. He is also a Mentor with the Entrepreneurs Roundtable Accelerator\nprogram.</p>\n<p>In particular, he established Goldman’s Cayman offshore administration\nbusiness, their London global custody business, and reengineered their\nglobal prime brokerage business. In capital markets, he worked closely\nwith some of the world’s leading hedge funds, and developed a keen\nunderstanding of portfolio risk/return management. He started his\nbusiness career with Arthur Anderson &amp; Co. in the audit and insolvency\ndivisions.</p>\n<p>Mr. Frankel earned a Master of Arts from New College, Oxford where he\nstudied Mathematics, Philosophy and Logic, and is a Fellow Chartered\nAccountant of the Institute of Chartered Accountants in England and\nWales.</p>\n<p>Final agenda will be posted 5 to 7 days in advance of the meeting.</p>\n<p>RSVP to this event\nat <a href=\'http://www.meetup.com/seoul-tech-society/events/117773242/\'></a><a href=\'http://www.meetup.com/seoul-tech-society/events/117773242/\'>http://www.meetup.com/seoul-tech-society/events/117773242/</a></p>\n'
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'stay-safe-in-the-cyberspace-dcamp-oct-18th-2013\'>Stay safe in the cyberspace @DCAMP, Oct 18th 2013</h1>\n<p>Do you spend more and more time with your digital devices? So do\ncriminals who are finding new ways to take advantage of these\nhyper-connected technologies.\\\nOur honored guests Dr. Joshua James and Security Consultant Michał\nRzepka will guide you through the cyber world of white and black forces.</p>\n<p><strong>Featured</strong>\\\nBring your Windows laptop to practice being a cyber-sleuth with a\npractical lab on computer memory acquisition and analysis.\\\n<img src=\'http://3.bp.blogspot.com/_2hM3rrwU8kI/TPEkYiKDaLI/AAAAAAAAAx0/rExWBO8i1eo/s320/cyber-crime-and-identity-theft.jpg\' alt=\'image\'></p>\n<p>RSVP to this event\nat <a href=\'http://www.meetup.com/seoul-tech-society/events/144302832/\'>http://www.meetup.com/seoul-tech-society/events/144302832/</a></p>\n<p><strong>Agenda</strong>\\\n<strong><em>Web vulnerabilities - what [developers do for you to stay\ninsecure</em></strong>\\\nTalk about simple, old, known, yet still very popular weaknesses in web\napps that affect users - basically everyone, since we all use web.\\\n<strong><em>Cybercrime and digital forensics - what cyber cops do</em></strong>\\\nThis talk will give an overview of what cybercrime is, what cybercops\ndo, and how digital forensic investigations are conducted.\\\n<strong><em>Memory acquisition and analysis - hands on</em></strong>\\\nDuring this practical you will learn to take a copy of Random Access\nMemory and extract evidence of user activity, such as pictures, web\naddresses and passwords.</p>\n<p><strong>Speakers</strong>\\\nDr. Joshua James is a researcher with the Digital Forensics\nInvestigation Laboratory as well as a lecturer and researcher with\nUniversity College Dublin, Korea University, Korea National Police\nUniversity and Soon Chun Hyang University. Coming from a background in\nnetwork security and administration, his focus is now on the\nformalization and automation of digital forensic investigation methods,\nand the application of these methods in low cost, open source solutions\nfor digital investigators.\\\nMichał Rzepka was previously working as a Security Engineer in national\ncomputing center and taking part in several national and European\nprojects, Michał is currently working as a Security Consultant for the\nleading IT Security company in Northern Europe. His areas of experience\ninclude penetration testing, web application security assessing, as well\nas PCI DSS compliance.</p>\n'
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'team-up-for-angelhack-2-d-camp-may-28-2013\'>Team up for AngelHack#2 @D.Camp, May 28 2013</h1>\n<p>Guys, we are just a few weeks from AngleHack 2013 contest, let’s get\nprepared to take part and win!</p>\n<p><a href=\'http://seoultechsociety.org/post/49421013070/team-up-for-angelhack-seoul-may-10\'>Last time at\nNFLabs</a>\nit was a really productive session: we pre-selected three ideas and lots\nof stuff has been done by teams of devoted techies from that time so…</p>\n<p>Let’s get together once more at <a href=\'http://dreamcamp.co\'>D.Camp</a> (thanks to\ntheir support)  and review our progress, refine goals and tactics to get\nready for the show time! As usual please RSVP at <a href=\'http://www.meetup.com/seoul-tech-society/events/120815772/\'>Seoul Tech Society\nmeetup\npage</a>.</p>\n<p>So just to re-cap:</p>\n<p>This is the <em>second event</em> held by <em>Seoul Tech Society</em> in anticipation\nof <em>AngelHack 2013</em>. You can learn more about our previos event from our\n<a href=\'http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack\'>R</a><a href=\'http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack\'>eview\nof\n“</a><a href=\'http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack\'>Team\nup for AngelHack\n2013”</a>. </p>\n<p>To learn more about AngleHack itself and the registration process please\nrefer to the official event materials:</p>\n<ul>\n<li>Official site: <a href=\'http://angelhack.co.kr\'>http://angelhack.co.kr</a></li>\n<li>Dev invite presentation (ENG): <a href=\'http://goo.gl/XHOIk\'>http://goo.gl/XHOIk</a> </li>\n<li>Dev invite presentation (KR): <a href=\'http://goo.gl/It3M1\'>http://goo.gl/It3M1</a></li>\n<li>FB:\n<a href=\'http://www.facebook.com/pages/AngelHack-Seoul-Korea/133538800151630\'>http://www.facebook.com/pages/AngelHack-Seoul-Korea/133538800151630</a></li>\n</ul>\n'
+
+/***/ },
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'team-up-for-angelhack-seoul-may-10\'>Team up for AngelHack @Seoul, May 10</h1>\n<p><strong>Update 05/14/2013: </strong>review to <a href=\'http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack\'>Team up for\nAngelHack</a>\nwas added.</p>\n<p>Hey, <em>Seoul Tech Society</em>, let’s make a team and join AngelHack contest!</p>\n<p>Are you a designer, developer or entrepreneur? Do you have a cool idea,\nwant to team up and implement a new project?</p>\n<p><a href=\'http://www.meetup.com/seoul-tech-society/events/115904382/\'>RSVP this\nevent</a> to\nbrainstorm ideas and discuss details with those of you who are\ninterested.</p>\n<p><strong>Join this event if you :</strong></p>\n<ul>\n<li><p>curious about AngelHack</p>\n</li>\n<li><p>looking for a team to join, to discuss ideas for a project</p>\n</li>\n<li><p>want to participate in AngelHack@Seoul on 8-9 of June</p>\n</li>\n</ul>\n<p><strong>When :</strong>  Friday, May 10th 2013.</p>\n<p>7:00pm ~ 7:30pm -> Waiting for people, mingling</p>\n<p>7:30pm ~ 9:00pm -> Angelhack preparation</p>\n<p>\\</p>\n<p><strong>Place:</strong></p>\n<p>We will use NFLabs’s conference room.</p>\n<p>To get to NFLabs, go to exit 1 at gangnam station, walk straight\n(~150m) until a street corner with Seven Springs restaurant. Go into\nthis street, the building is the second after the motel on the left, 8th\nFloor: <a href=\'http://me2.do/Fe7IxuUM\'>Picture of the building</a></p>\n<p><strong>About AngelHack :</strong></p>\n<ul>\n<li><p><a href=\'http://angelhack.com/\'>http://angelhack.com/</a> </p>\n</li>\n<li><p>Korean Event website:\n<a href=\'http://onoffmix.com/event/14637\'></a><a href=\'http://onoffmix.com/event/14637\'>http://onoffmix.com/event/14637</a></p>\n</li>\n</ul>\n<p>It will take place at Seoul on June, 8-9. Registration is already open.\n(It is about 20,000 wons as an inscription fee).</p>\n<p>Contest includes real-time implementation of an idea, however the\ndesign, logo, wireframes, digital mockups can be made prior to this time\n(i.e at this meetup).</p>\n<p>Winners will get mentoring and be brought out to Silicon Valley to raise\ninvestment and introduce them to incubators.</p>\n<p>Check out previous awarded projects\n<a href=\'http://techcrunch.com/2012/07/13/angelhack-winners/\'></a><a href=\'http://techcrunch.com/2012/07/13/angelhack-winners/\'>http://techcrunch.com/2012/07/13/angelhack-winners/</a> :</p>\n<ul>\n<li><p>Appetas</p>\n</li>\n<li><p>GiveGo</p>\n</li>\n<li><p>ShareBrowse</p>\n</li>\n</ul>\n'
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'upcoming-tech-events-in-korea-keeping-updated-\'>Upcoming tech events in Korea (keeping updated)</h1>\n<p>Hey Seoul Techies, what are you up to these days?\\\nHere we will keep updating the list of technology oriented events for\nyou. Please, join any of them and share experience with the rest of us\nlater on.</p>\n<p>If you know any other upcoming events or something we’ve forgot to\nmention but you think it should be here - please let us\nknow:<strong><em>contacts[at]seoultechsociety.org</em></strong></p>\n<p><strong>POC2013</strong>\\\n<a href=\'http://www.powerofcommunity.net/\'>http://www.powerofcommunity.net</a>\\\n 5th - 8th Nov., The-K Seoul Hotel\\\n Learn from hackers and security experts from everywhere and participate\nin many coding and non-coding related events.</p>\n<p>!Early birds until 30th Sep. Even if you are a foreigner but stay in\nKorea, register as REGULAR.</p>\n<p><strong>2013 Electronics &amp; IT Industry Fair</strong>\\\n<strong>Creative Economy, Happiness of People, and IT</strong>\\\n<a href=\'http://www.eif.or.kr/main.it\'>http://www.eif.or.kr/main.it</a>\\\n7th Oct., 2013 - 8th Oct. 2013, Kintex\\\nCome to get ideas from a Gartner specialist as well as many others.\\\n<strong><em>7th Oct., Monday</em>, *</strong>10:00~12:30<em>\\\n</em>Creative Futures Forum*\\</p>\n<ul>\n<li>Opening speech : Minister of MSIP\\</li>\n<li>Keynote speech : Guru of IT\\</li>\n<li>Issue presentation &amp; Panel discussion\\\nTopic : Happiness of People by Creative Economy, and the Role of IT</li>\n</ul>\n<p><strong>*7th Oct., Monday, </strong>14:00~17:30<em>\\\n<strong>**8th Oct., Monday, </strong>10:00~17:30</em> <em>\\\n</em>IT Industry Prospect Conference*\\</p>\n<ul>\n<li>Track Ⅰ : Domestic &amp; Foreign Economy and IT industry Prospect\\\n(Andy Rowsell Jones(Gartner), President of KDI, ETRI, KISDI)\\<ul>\n<li>Track Ⅱ : Issue analysis and prospect in major field\\\n(SW&amp;IT service, Smart device, Global IT market forecast, Information\nsecurity, IT main parts and strategic markets)</li>\n</ul>\n</li>\n</ul>\n<p><strong>**8th Oct., Monday, </strong>14:00~17:50<em> </em>\\\n<em>Asian IT Policy Symposium</em>\\</p>\n<ul>\n<li>Sharing major IT policies and discussing cooperative\nplans, participating the director general of Korea, Brunei, Cambodia,\nLao, India, Philippines, Vietnam in IT policy</li>\n</ul>\n<p><strong>2013 ISACA Korea Conference, 6th Sep.</strong>\\\n<strong>IT Governance, Security and Privacy in the Big Data Era</strong>\\\n<a href=\'http://www.isaca.or.kr/\'>http://www.isaca.or.kr/</a> See the notice on the news board: “Invitation\n2013 ISACA Conference - 6th Sep…”. It’s in English.</p>\n<p><strong>Youth Forum for Seoul Conference on Cyberspace 2013</strong>\\\n<a href=\'http://www.seoulcyber2013.kr/en/event/youth.html\'>http://www.seoulcyber2013.kr/en/event/youth.html</a>\\\n2nd Sep., 2013</p>\n<p>The forum is devoted to broad topics on cyberspace: Economic growth and\nsocial and cultural benefits; Cybersecurity and cybercrime; and Capacity\nbuilding.</p>\n<p>Hurry up to register for free, space is limited for 250 attendees:\n<a href=\'http://www.seoulcyber2013yf.kr/y_step0.html\'>http://www.seoulcyber2013yf.kr/y_step0.html</a></p>\n<p><strong>Korea Games Conference 2013</strong>\\\n<a href=\'http://www.kgconf.com/kor/html/main.html\'>http://www.kgconf.com</a>\\\nSeptember 25 – 27, Seoul, Korea</p>\n<p>\\\n\\\n<em>Disclaimer: Seoul Tech Society is not affiliated by any of the\ncompanies mentioned above.</em></p>\n'
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'upcoming-tech-events-in-seoul-on-may-2013\'>Upcoming Tech events in Seoul on May 2013</h1>\n<p>Hey Seoul Techies, what are you up to this May?</p>\n<p>We’ve composed a list of technology oriented events this March for\nyou.Please join any of them and share experience with the rest of us\nlater on.</p>\n<hr>\n<p><strong>Facebook Mobile DevCon 2013</strong></p>\n<p><a href=\'https://developers.facebook.com/events/mobiledevcon/seoul/\'>https://developers.facebook.com/events/mobiledevcon/seoul/</a></p>\n<p><em>07/05/2013</em></p>\n<p><em>Facebook rejected all our applications to Mobile DevCon 2013 @Seoul,\nmotivating that “the space is extremely limited”.</em></p>\n<p>It is frustrating as we did not expect such thing from a big company in\nthe City with more then 30,000,000 population… </p>\n<p>Please let us know what is your experience here!</p>\n<hr>\n<p><strong>Google I\\O Extended 2013</strong></p>\n<p><a href=\'http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013\'></a><a href=\'http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013\'>http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013</a></p>\n<p><em>16/05/2013</em></p>\n<hr>\n<p><strong>Art &amp; Technology Performance - REPLICA</strong></p>\n<p><a href=\'http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043\'></a><a href=\'http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043\'>http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043</a></p>\n<p><em>17~18/05/2013</em></p>\n<hr>\n<p><strong>Amazon AWSome day @Seoul</strong></p>\n<p><a href=\'http://aws.amazon.com/apac/awsday/seoul/\'></a><a href=\'http://aws.amazon.com/apac/awsday/seoul/\'>http://aws.amazon.com/apac/awsday/seoul/</a>\\</p>\n<p><em>21/05/2013</em></p>\n<hr>\n<p>If you know any other upcoming events or something we’v forgot to\nmention but you think it should be here - please let us know:\n<strong><em>contacts[at]seoultechsociety.org</em></strong></p>\n<p>Disclaimer: Seoul Tech Society is not affiliated by any of the companies\nmentioned above.</p>\n'
+
+/***/ },
+/* 32 */,
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'launch-lab-where-ideas-take-off-june-28\'>Launch Lab, Where Ideas Take Off, June 28</h1>\n<p>RSVP <a href=\'http://www.meetup.com/seoul-tech-society/events/187283782/\'>http://www.meetup.com/seoul-tech-society/events/187283782/</a></p>\n<p><strong>What is LaunchLab? </strong></p>\n<p>As part of the Launch - Hack - Tell cycle of innovation, SeoulTech is\nproud to announce the “Launch Lab” series of meetups.  This is a new\ntype of event where researchers, entrepreneurs and innovators discuss\nand propose (any) project, and solicit ideas and help from other\nSeoulTech members.</p>\n<p><img src=\'https://31.media.tumblr.com/d2d8faf5fae269e0c4c0296c6247527e/tumblr_inline_n721u9ZQx21rjim2g.png\' alt=\'\'></p>\n<p><strong>Why? </strong></p>\n<p>Launch Lab helps members take one giant leap beyond networking. These\nevents allow members  to get involved with the creation of new ideas or\nstartups, while forging friendships and business partnerships to last a\nlifetime. </p>\n<p><strong>How? </strong></p>\n<p>The event features a group of speakers that give a 10 to 15 minute\npresentation of their idea. The audience then discusses the idea.\nAudience members can also choose to join or further contribute to the\nproject.</p>\n<p>Open discussion sessions will also be available, so if anyone gets\ninspired they can share and discuss their ideas with the group.</p>\n<p><strong>When?</strong></p>\n<p><em>June 28th, 2014</em></p>\n<p>13:00 - 17:00: Presentations + Discussion + Coffee/Beer/Snacks</p>\n<p>17:00 - 19:00: Dinner (possible group discount depending on number)</p>\n<p>19:00 - 21:00: Open Mic Music Session</p>\n<p><strong>Call for projects and proposals (and musicians)!</strong></p>\n<p>If you are a researcher, startup founder, entrepreneur, idea generator,\nor dreamer, sign up to be a speaker!</p>\n<p>If you want to play in the Open Mic night, please let us know. Guitar\nwill be provided.</p>\n<p><strong>Please email:</strong> Joshua [at] cybercrimetech.com</p>\n<p><strong>Where?</strong></p>\n<p><strong>Coffee Zaroo *</strong>Seoul Metro Bundang Line (Yellow), Jukjeon Station*</p>\n<p><em>Address in Korean:</em> 경기도 용인시 기흥구 보정1203-12 </p>\n<p><em>Address in English:</em> 1203-12 Bojeong-dong (11-16 Jukjeon-ro 43Beon-gil)\nGiheung-gu, Yongin-si, Gyeonggi-do</p>\n<p>Map: <a href=\'http://goo.gl/maps/vLy2S\'>http://goo.gl/maps/vLy2S</a></p>\n<p><strong>Note: This event is currently hosted outside of Seoul (Jukjeon -\naccessible by bus or Seoul Metro, 25 mins from Gangnam) - think as a\nhalf day picnic-style relaxing event. If we cannot get 20+ to RSVP, the\nmain event will be moved to Seoul. Please check the map before\nRSVPing.</strong></p>\n<p>On Twitter? Follow <a href=\'https://twitter.com/FutureTenseNow\'>@Seoul_Tech</a></p>\n<p>FB? Follow us <a href=\'https://www.facebook.com/SeoulTechSociety\'>https://www.facebook.com/SeoulTechSociety</a></p>\n'
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'popular-science-ehealth-trends-w-dr-ogan-gurel-march-16\'>Popular science: eHealth trends w/ Dr. Ogan Gurel, March 16</h1>\n<p>RSVP <a href=\'http://www.meetup.com/seoul-tech-society/events/169900682/\'>http://www.meetup.com/seoul-tech-society/events/169900682/</a></p>\n<p>Our speaker this time is <strong>Dr. Ogan Gurel</strong> (<a href=\'http://www.linkedin.com/profile/view?id=1531386\'>LinkedIn\nprofile</a>), a prominent\nresearcher and professional in the area\nof <a href=\'http://en.wikipedia.org/wiki/MHealth\'>mHealth</a> and <a href=\'http://www.nytimes.com/2012/10/09/science/redefining-medicine-with-apps-and-ipads-the-digital-doctor.html\'>digital\nmedicine</a>.\nHe will introduce us to the world of emerging eHealth technologies.</p>\n<p><img src=\'http://photos1.meetupstatic.com/photos/event/3/5/f/e/600_339973822.jpeg\' alt=\'image\'></p>\n<p>If you want to team-up with smart and creative people of Seoul Tech\nSociety, stay for the second part of the event! There will be a\nbrainstorming session where we can put newly acquired knowledge to work\nand come up with an idea of an eHealth application together. </p>\n<p><strong>Agenda </strong></p>\n<p>4pm–5pm: eHealth trends by Dr. Ogan Gurel</p>\n<p>5pm–6pm: brainstorming and teamup for an eHealth application</p>\n<p><strong>About Dr. Gurel </strong></p>\n<p>Dr. Gurel is a Director in the MOT Research Center / CTO Office at the\nSamsung Advanced Institute of Technology (SAIT).  He also holds an\nacademic appointment as a Visiting Professor at the Samsung Advanced\nInstitute for Health Sciences and Technology (SAIHST) of SungKyunKwan\nUniversity.  Previously he was VP &amp; Medical Director at Sg2 and an\nAssociate at Booz, Allen &amp; Hamilton where he consulted for both large\nand small clients spanning the healthcare services, health insurance,\nbiopharma and medical device sectors.  </p>\n<p>His expertise covers the healthcare industry widely, including the\nclinical, business, executive management, marketing and R&amp;D, with direct\nexperience along several verticals: medical devices, mobile health,\nhealthcare IT, medical imaging, and pharmaceuticals. His scientific\nresearch focuses on structural biology, specifically protein\nelectrodynamics and terahertz medicine. </p>\n<p>His computer science interests included work on microprocessor software\ndevelopment systems, followed by robot programming systems work.</p>\n<p><strong>Venue</strong></p>\n<p><a href=\'http://www.idea-factory.kr/index_english.html\'>Idea\nFactory</a>: Gangnam-gu,\nYeoksam-dong, 825-22, B2F Milim tower annex, Gangnam station exit 1</p>\n<p><img src=\'https://31.media.tumblr.com/61b49d90294cdb5b2e0ed6a6349f5843/tumblr_inline_n2bqcs9ZEm1rjim2g.jpg\' alt=\'\'></p>\n'
+
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'promotion-techtalk-networking-vol-2-platoon-feb-19\'>Promotion: TechTalk &amp; Networking vol.2 @Platoon, Feb 19</h1>\n<p><img src=\'https://31.media.tumblr.com/064ee0998c8f2807c9c7351e675e2919/tumblr_inline_n159hqxwmo1rjim2g.png\' alt=\'image\'></p>\n<p><strong>Agenda</strong></p>\n<p>7pm - 8pm   : get beer (FIFO) and mingle w/ techies</p>\n<p>8pm - 11pm : start of DrinkEntrepreneurs social networking event w/\ncollege startup societies, Seoul Tech Society and Israeli VCs.</p>\n<p>네트워크 파티 (대학 창업 모임인 Seoul Tech Society and Israeli VCs 함께\n참여)</p>\n'
+
+/***/ },
+/* 36 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'promotion-wellness-it-festival-at-center-seoul-july-10\'>Promotion: Wellness IT Festival @aT Center Seoul, July 10</h1>\n<p>Register here to <strong>view &amp; network</strong>: <a href=\'http://goo.gl/u9dHBl\'>http://goo.gl/u9dHBl</a></p>\n<p>Register here to <strong>exhibit</strong>: <a href=\'http://www.wita-festival.com/register\'>http://www.wita-festival.com/register</a>\n(<em>startups in Education, Culture, Social, Finance and Health areas</em>)</p>\n<p>Dear friends, we are glad to invite you to the Wellness IT Festival\norganized by our partner WiTA. </p>\n<p><img src=\'https://31.media.tumblr.com/01c6530579bf4765f81ada1a040cfd2a/tumblr_inline_n7rvukOEIA1rjim2g.png\' alt=\'\'></p>\n<p><strong>About</strong>: The Wellness IT Festival brings together experts,\nentrepreneurs, and attendees to a startup festival &amp; networking event\nand showcases the latest in wellness technology developed in South Korea\nand around the world.\\\n<a href=\'http://www.wita-festival.com/\'>http://www.wita-festival.com/</a></p>\n<p><strong>When</strong>: </p>\n<p>Festival (July 10):\\\nFREE admission for SeoulTech members and students.</p>\n<p>1st International Conference on Wellness IT &amp; Festival (July 9 - 10):\\\nIf you are interested in attending the full event, the ticket cost is\nW200,000 (50% discount will be provided to SeoulTech members).</p>\n<p><strong>Location</strong>: aT Center Seoul <a href=\'http://atcenter.at.or.kr/\'>http://atcenter.at.or.kr/</a></p>\n'
+
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'seoul-hack-n-te-ll-night-2\'>Seoul Hack&#39;n&#39;Te­ll night #2</h1>\n<p>RSVP <a href=\'http://www.meetup.com/seoul-tech-society/events/165322992/\'>http://www.meetup.com/seoul-tech-society/events/165322992/</a></p>\n<p><img src=\'https://31.media.tumblr.com/2fb91347a648b9dd43c850357ca82ee9/tumblr_inline_n19kgnZeDA1rjim2g.jpg\' alt=\'image\'></p>\n<p><strong>List of speakers: </strong></p>\n<hr>\n<p>• <strong>How to fail a Samsung App Challenge</strong> </p>\n<p>  Reflects the experience of a team hacking of Galaxy Note to create a\nproductivity app based on convergence of S-Pen, Chord and 2nd-screen\nSDKs. </p>\n<p><a href=\'http://seoultechsociety.org/post/70173415237/seoul-tech-rises-to-samsung-challenge\'>seoultechsociety.org/post/70173415237/seoul-tech-rises-to-samsung-challenge</a></p>\n<p>• <strong>BigData: Audit Log Manager prototype</strong></p>\n<p>   Taming big data through distributed processing and interactive\nvisualisation using hadoop and d3.js</p>\n<p>• <strong>Zeppelin: open source data analysis environment </strong></p>\n<p>   Lee Moon Soo, CTO of NFLabs will tell us how he spent this autumn:\ndesigning and implementing of the large scale data analysis\nenvironment <a href=\'https://github.com/NFLabs/zeppelin\'>github.com/NFLabs/zeppelin</a></p>\n<p>• <strong>Starting up a company:  developing and running a mobile app service\n“Mango Plate”</strong></p>\n<p>Danny Ryu, founder of <a href=\'http://www.mangoplate.com/\'>www.mangoplate.com</a></p>\n<p>• <strong>Library design: from idea to construction</strong></p>\n<p>Gorka Blas, architect will guide us through an award winning project of\nbuilding a library. </p>\n<p>• <strong>Building RFID reader on Raspberry PI from scratch, in 8 hours</strong>  </p>\n<p>If you’ve ever visited <a href=\'http://news.ycombinator.com/\'>Hacker News</a>,\nyou’ve almost certainly seen the “Show HN” or “Ask HN” posts. Well, it’s\ntime to get off the Internet and tell us about it face to face. We’ll\nprovide you with our honest feedback, you provide us with a great hack,\nor idea.</p>\n<p>We’ll give you 5 minutes to show off your tool, hack, library (did you\njust write a library to access the Meetup API in Go!?), whatever. We’re\nlanguage and software/hardware agnostic, so it’s all fair game.</p>\n<p>Your project doesn’t have to be a software project. We’re using a very\nbroad definition of hacking. Anything customized or personalized counts.\nPlease don’t feel shy.</p>\n<p>After you present, it’s an open forum. The audience will ask questions\nand provide feedback. We want to enable as much participation as\npossible at these meetups, so you’d better be able to take criticism and\ndish it out (all within reason of course).</p>\n'
+
+/***/ },
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'seoul-tech-ver-1-0-art-party-platoon-kunsthalle\'>SEOUL TECH VER 1.0 + ART PARTY 파티 @Platoon Kunsthalle</h1>\n<p>RSVP <a href=\'http://www.meetup.com/seoul-tech-society/events/169162582/\'>http://www.meetup.com/seoul-tech-society/events/169162582/</a></p>\n<p><img src=\'https://31.media.tumblr.com/114e328c9efe945c77b443d0cb938b4d/tumblr_inline_n2zxahIc3J1rjim2g.jpg\' alt=\'image\'></p>\n<p>This networking party w/ SeoulTech and art exhibit offers the perfect\nopportunity to shake off winter and connect with others who love tech,\nart, and ideas. New and non-members are cordially invited!</p>\n<p>Seoul Tech Society 와 함께하는 네트워킹 파티 및 전시는 봄을 맞이해\n테크놀로지와 예술, 그리고 아이디어를 사랑하는 사람들과 함께할 기회를\n마련합니다. 새로운, 그리고 비회원들도 모두 환영합니다!</p>\n<p>The worlds of art and technology are coming together to celebrate Seoul\nTech Society’s first anniversary. On April 4, Platoon Kunsthalle will be\ntransformed by “Memories of the City,” a collaboration of 15 young\ncreatives from media art, design and architecture led by media\nartist Lucia Jeesun Lee with Spanish architect Gorka Blas. </p>\n<p>Seoul Tech Society의 첫번째 생일을 기념하며 예술과 테크놀로지의 세계를\n하나로 모았습니다.  \\\n2014년 4월 4일, 플래툰 쿤스트할레는 미디어 아티스트 Lucia 이지선과\n스페인 건축가 Gorka Blas 의 기획에 의해 미디어 아트, 건축, 디자인 등\n다양한 분야의 15명의 젋은 창작자들의 협업으로 이루어진 결과물들로 채워질\n예정입니다.</p>\n<p><strong>WHEN: FRIDAY, APRIL 4 @ 7PM </strong>\\\n  \\\n<strong>About Art Director Team </strong>\\\nLucia 이지선 is a media artist working between New York and Seoul,\ngraduate of Master’s program in Interactive Telecommunication at NYU.\nShe has exhibited in The 13th Seoul International New Media Festival and\n3LD Art and Technology Center(New York). She has taught at the Queens\nMuseum of Art, Stevens Institute of Technology and Hostos\nCommunity College of New York. </p>\n<p>미디어 아티스트. 뉴욕대 Interactive Telecommunication Program 석사과정\n이후 제 13회 서울 국제 뉴미디어 축제, 3LD Art &amp; Technology Center 등\n뉴욕과 서울에서 전시 및 Queens Museum of Art, Stevens Institute of\nTechnology and Hostos Community College of New York 에서 강사로 활동 \\\n<a href=\'http://smellsdreamy.com/\'>smellsdreamy.com</a> / <a href=\'http://facebook.com/luciajeesunlee\'>facebook.com/luciajeesunlee</a></p>\n<p>Gorka Blas is an architect, born in Spain. He has worked for several\narchitectural practices in Madrid and London, including Zaha Hadid\nArchitects and Crab Architects among others. In 2012, he won UIA\nInternational Architecture competition for Daegu Gosan library in Korea\nand in 2013 he was awarded a special mention in the European 12\ncompetition. He has taught and given lectures both in Italy and Korea.\nHis project for the Daegu Gosan library is currently in  \\\nconstruction.</p>\n<p>스페인 태생의 건축가. Zaha Hadid Architects 및 Crab Architects 등\n마드리드와 런던에서 실무경력. ‘동대문디자인플라자&amp;파크’ 프로젝트 참여.\n2012년 대구 고산 공공 도서관 국제 건축 공모전 우승 (현재 준공 진행중).\n2013년 유럽 12 공모전에서 특별 표창 수상. 이태리 및 한국에서 강의 \\\n<a href=\'http://www.gorkablas.com/\'>www.gorkablas.com</a> </p>\n'
+
+/***/ },
+/* 39 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = '<h1 id=\'the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp-may-24\'>The Rise of Cryptocurrencies: Bitcoin &amp; Beyond, @DCamp, May 24</h1>\n<p>Interested in Bitcoin or other cryptocurrencies?Ever wondered how to\ntrade or spend Bitcoin in Korea? Is Bitcoin the currency of the future\nor a flop?                             </p>\n<p>Come join us at our <strong>&quot;The Rise Of Cryptocurrencies: Bitcoin &amp;\nBeyond&quot;</strong> event at <a href=\'http://dcamp.kr/about_en\'>D-Camp</a> on Saturday, May\n24!</p>\n<p><a href=\'http://www.seoultechsociety.org/\'>Seoul Tech Society</a>, <a href=\'http://www.meetup.com/Seoul-Bitcoin-Meetup-%EC%84%9C%EC%9A%B8-%EB%B9%84%ED%8A%B8%EC%BD%94%EC%9D%B8-%EB%AA%A8%EC%9E%84/\'>Seoul Bitcoin\nMeetup</a>,\nand lead Korean Bitcoin\nstartups <a href=\'https://www.korbit.co.kr/\'>Korbit</a> and <a href=\'https://www.coinplug.com/home.do\'>Coinplug</a> will\ncome together to discuss past, present, and future of cryptocurrencies. </p>\n<p>Great people and thought-provoking discussions are guaranteed!</p>\n<p><img src=\'https://31.media.tumblr.com/3d967e30abbb9ed61ed8a81dbaf98f0d/tumblr_inline_n5lxh3ORxj1qz73mc.png\' alt=\'\'></p>\n<p> <strong>Agenda</strong></p>\n<p><strong>13:00 Reception </strong></p>\n<p><strong>13:15 Introduction to Bitcoin</strong> </p>\n<p><em>Ruben Somsen, Seoul Bitcoin Meetup</em></p>\n<p><strong>13:40 The non-monetary applications of Bitcoin</strong></p>\n<p><em>Jason Park, Korbit </em> </p>\n<p><strong>14:20 Bitcoin adoption worldwide and Coinplug in Korea</strong></p>\n<p><em>Evelyn Chung, Coinplug</em>   </p>\n<p><strong>14:50 Political and philosophical ideas behind the creation\nof cryptocurrency</strong></p>\n<p><em>Terry Jang</em> </p>\n<p><strong>Hands-on part: </strong></p>\n<p><strong>15:30 Sending Money Abroad to and from Korea</strong></p>\n<p><em>Chris Williams</em> </p>\n<p><strong>15:45 Bitcoin Wallets on iOS </strong></p>\n<p><em>Jong Hun Kim </em></p>\n<p><strong>16:00 Getting paid as a freelancer in Bitcoin</strong></p>\n<p><em>Ben McDonald </em></p>\n<p><strong>16:15 Alternatives to Bitcoin: Alt Coins</strong></p>\n<p>Jeff Paik, bitPremierS</p>\n<p><strong>17:00 ~</strong>  <strong>After party and networking event</strong> (details will be\nannounced later)</p>\n<p>——————————————————————————————————</p>\n<p><strong>Speakers</strong></p>\n<p><strong>Ruben Somsen </strong></p>\n<p>Ruben is a freelance translator that has lived in Korea for three years.\nHe is the organizer of the Seoul Bitcoin Meetup and knows a lot about\nthe technical side of Bitcoin.</p>\n<p><strong>Jason Park, Korbit </strong></p>\n<p>Korbit is South Korea’s first and largest Bitcoin exchange and wallet\ncompany.  </p>\n<p><strong>Evelyn Chung, Coinplug</strong> </p>\n<p>Evelyn is Chief Marketing Officer of Coinplug, a Seoul-based Bitcoin\nstartup. Coinplug provides a Bitcoin exchange and wallet services, and\npayment processor targeting Korean and Asian markets. </p>\n<p><strong>Terry Jang </strong></p>\n<p>Terry is the owner of an e-commerce consulting company.</p>\n<p><strong>Chris Williams</strong> </p>\n<p>Chris is an English teacher who has lived and worked in Seoul for the\npast 2 years. Before that he lived in the UAE for 2 years. He became\ninterested in bitcoin because it allows people to send any amount of\nmoney, anywhere in the world, instantly, and for free. </p>\n<p><strong>Jong Hun Kim</strong> </p>\n<p>Jong Hun is a korean Bitcoin user. He’s not a tech savvy guy, but is\nreally interested in the bitcoin ecosystem and is currently researching\nand developing a Bitcoin fund. </p>\n<p><strong>Ben McDonald</strong> </p>\n<p>Ben is a freelance web developer from New Zealand living in Seoul. Ask\nhim anything about Bitcoin and he will give you an answer (after first\nasking Ruben what the answer is).</p>\n<p><strong>Jeff Paik</strong></p>\n<p>Jeff Paik is a writer for bitPremierS and co-founder of cryptocurrency\nadvisory group Coinvest.</p>\n<p>——————————————————————————————————</p>\n<p>On Twitter?\nFollow <a href=\'https://twitter.com/FutureTenseNow\'>@Seoul_Tech</a> and\nuse #CryptoCurrency.</p>\n<p>FB? Follow us <a href=\'https://www.facebook.com/SeoulTechSociety\'>https://www.facebook.com/SeoulTechSociety</a></p>\n<p><strong>Participants:  </strong></p>\n<p><a href=\'http://www.meetup.com/Seoul-Bitcoin-Meetup-%EC%84%9C%EC%9A%B8-%EB%B9%84%ED%8A%B8%EC%BD%94%EC%9D%B8-%EB%AA%A8%EC%9E%84/\'>Seoul Bitcoin\nMeetup</a> </p>\n<p><a href=\'https://www.coinplug.com/home.do\'>Coinplug</a> </p>\n<p><a href=\'https://www.korbit.co.kr/\'>Korbit</a> </p>\n<p><a href=\'http://www.bitpremiers.com/\'>bitPremierS</a></p>\n'
+
+/***/ },
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
@@ -7617,171 +7792,7 @@
 	  }
 	}.call(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)(module), (function() { return this; }())))
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = {"client/content/target/blog/2013/":["angelhack-contest-in-seoul-dcamp-june-8th-2013","data-recovery-basics-bob-training-centre-jan-2-2014","digital-art-lecture-series-i-when-artists-become-geeks","first-friday-night-jam-meetup-follow-up","first-friday-night-tech-jam-seoul-april-19","google-i-o-extended-seoul-may-16-2013","linux-101-seoul-sydney-tafe-korea-sep-23","promotion-chuseok-game-jam-w-joe-spradley-sep-18","review-of-digital-art-series-i-ii","review-of-team-up-for-anglehack","seoul-tech-careers-lead-developer-cto-for-a-fashtech","seoul-tech-rises-to-samsung-challenge","special-guest-speaker-ffventures-john-frankel-seoul","stay-safe-in-the-cyberspace-dcamp-oct-18th-2013","team-up-for-angelhack-2-d-camp-may-28-2013","team-up-for-angelhack-seoul-may-10","upcoming-tech-events-in-korea-keeping-updated","upcoming-tech-events-in-seoul-on-may-2013"],"client/content/target/blog/2014/":["launch-lab-where-ideas-take-off-june-28","popular-science-ehealth-trends-w-dr-ogan-gurel","promotion-techtalk-networking-vol-2-platoon-feb-19","promotion-wellness-it-festival-at-center-seoul-july","seoul-hack-n-tell-night-2","seoul-tech-ver-1-0-art-party-platoon-kunsthalle","the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp"],"client/content/target/pages/":["about"]}
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'about-us\'>About us</h1>\n<h2 id=\'-no-matter-what-anybody-tells-you-words-and-ideas-can-change-the-world-tom-schulman-dead-poets-society\'>&quot;No matter what anybody tells you, words and ideas can change the world.&quot; — Tom Schulman, Dead Poets Society</h2>\n<h3 id=\'who-we-are\'>Who we are</h3>\n<p>Seoul Tech Society is an international non-profit organization based in Seoul. It was founded in 2013 with aim to build and unite tech community all around Korea and beyond.</p>\n<h3 id=\'what-we-do\'>What we do</h3>\n<p>Technology is our passion so we hold open monthly meetings to collaborate on projects, learn from each other or share knowledge through conference-like sessions.  </p>\n<p>Our interests are not centered around a specific area, all digital technologies and IT related topics are honored and welcome: mobile &amp; wearable electronics, software, web, robotics, UX, Computer Science, Maths, etc.</p>\n<p>If you are an expat interested in the Seoul tech scene or a Korean netizen interested expanding abroad, come and join us for networking and discussion, and of course a few drinks.</p>\n<h3 id=\'how-to-apply-to-present\'>How to apply to present</h3>\n<p>A science, engineering or technology professional? Want to share your knowledge and passion? Need a stage to present your successful startup?</p>\n<p>If you would like to be one of our guest speakers and reach out to the international tech community of Seoul, drop us an email at contacts@seoultechsociety.org or RSVP on the next event, we’ll be glad to hear from you!</p>\n<p><a href=\'https://www.facebook.com/SeoulTechSociety\'>https://www.facebook.com/SeoulTechSociety</a></p>\n<p><a href=\'https://www.facebook.com/groups/SeoulTechSociety/\'>https://www.facebook.com/groups/SeoulTechSociety/</a></p>\n<p><a href=\'https://twitter.com/Seoul_Tech\'>https://twitter.com/Seoul_Tech</a></p>\n'
-
-/***/ },
-/* 14 */,
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'angelhack-contest-in-seoul-dcamp-june-8th-2013\'>AngelHack Contest in Seoul @DCAMP, June 8th 2013</h1>\n<p>Hey! What are you doing next weekend? You should check out the\n<a href=\'http://angelhack.co.kr/\' title=\'official angelhack korea site\'>AngelHack event @\nDCAMP</a> on June\n8th! \\\n\\\nOver 150 developers are expected to attend and have the chance to win\nsome of \\$100,000+ in prizes and the opportunity to be flown out to\nSilicon Valley to represent Seoul at our global demo day and mentored\nfor 10 weeks prior. </p>\n<p><strong>And you know what? You can use a promo code below to get 20% off the\nticket price!</strong></p>\n<p><strong>Promo code  is ”seoultechsociety&quot; and there are only 15 spots left.</strong></p>\n<p><a href=\'http://ahsp13seoul.eventbrite.com/\'>http://ahsp13seoul.eventbrite.com/</a> </p>\n<p><img src=\'http://media.tumblr.com/17ce6194a2e794032bf876bb935fec6d/tumblr_inline_mnk1ctERxk1qz4rgp.jpg\' alt=\'image\'></p>\n'
-
-/***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'data-recovery-basics-bob-training-centre-jan-2-2014\'>Data recovery basics @BoB Training Centre, Jan 2, 2014</h1>\n<p>Have you ever deleted a file and then realized it was a crucial mistake\nthat you have ever made to your files? Come to Seoul Tech Society event\nand learn how to recover your data! </p>\n<p>RSVP <a href=\'http://www.meetup.com/seoul-tech-society/events/147208302/\'>http://www.meetup.com/seoul-tech-society/events/147208302/</a></p>\n<p><img src=\'https://31.media.tumblr.com/3443c12ddb0930ee894d06e75ac2b152/tumblr_inline_my5oh22IO81qz73mc.jpg\' alt=\'\'></p>\n<p><img src=\'https://31.media.tumblr.com/afa905a9688eef92fe958b09b71d3cdd/tumblr_inline_my5odbEkVb1qz73mc.jpg\' alt=\'\'></p>\n'
-
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'digital-art-lecture-series-i-when-artists-become-geeks-or-vice-versa-seoul-july-10\'>Digital Art Lecture Series I: When artists become geeks or vice versa @Seoul, July 10</h1>\n<p><a href=\'http://www.smellsdreamy.com\'>Digital artist</a>, educator and the Seoul\nTech Society member <a href=\'http://facebook.com/LuciaJeesunLee\'>Lucia Lee</a> will\ngive a series of lectures on digital art. \\</p>\n<p>The first lecture: Introduction to Digital Art  - When artists become\ngeeks or vice versa.</p>\n<p><img src=\'http://media.tumblr.com/74213c7b105c90f5e13036e5e00ce0c1/tumblr_inline_mp22gh44Pa1qz4rgp.jpg\' alt=\'image\'></p>\n<hr>\n<p><strong>Agenda:</strong> Lucia will walk you through to the magic world of digital\nart, providing examples of inspiring artists and projects in the field.\nGet yourself ready for full of visual and creative stimuli!</p>\n<p><strong>About Lucia :</strong> Lucia Jeesun Lee is an interdisciplinary artist\nworking primarily in digital media. Born and raised in South Korea, she\nmoved to New York as she began her studies at New York University, where\nshe garnered her Master’s Degree in Interactive Telecommunication in</p>\n<ol>\n<li>Her works have been featured in various venues in New York. She\nalso has worked as a video projection designer in off-off Broadway shows\nand as an adjunct professor/ instructor in Hostos Community College,\nStevens Institute of Technology, and Queens Museum of Art</li>\n</ol>\n<p>Location: <a href=\'http://hubseoul.net/\'>HUB Seoul </a> , <a href=\'https://maps.google.com/maps?q=Bongeunsa-ro+55-gil,+Gangnam-gu,+Seoul,+South+Korea&amp;hl=en&amp;sll=37.0625,-95.677068&amp;sspn=40.460237,78.662109&amp;hnear=Bongeunsa-ro+55-gil,+Gangnam-gu,+Seoul,+South+Korea&amp;t=m&amp;z=16\'>17 Bongeunsa-ro 55-gil,\nSeoul</a></p>\n<p>Time: 19.00-20.30</p>\n<p>RSVP to this event\nat <a href=\'http://www.meetup.com/seoul-tech-society/events/125183962/\'>http://www.meetup.com/seoul-tech-society/</a></p>\n'
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'first-friday-night-jam-meetup-follow-up\'>First Friday Night Jam meetup follow-up</h1>\n<p>Firstly a big thank you to all those of you who attended and supported\nthe event. It was our largest yet, with 20+ attendees and we’re pleased\nto see that true community grows.</p>\n<p>As planned this meetup consisted of two parts:</p>\n<p><strong>Free Talk at TOZ Sinchon</strong></p>\n<blockquote>\n<p>where we made a short presentation of the Seoul Tech Society itself</p>\n<p><strong><a href=\'http://www.slideshare.net/SeoulTechSociety/seoul-tech-society\' title=\'Introduction to Seoul Tech Society\'>Introduction to Seoul Tech\nSociety</a></strong></p>\n<p>\\</p>\n<p>and then had a discussion session on <em>“Modern Tech Opportunities in\nKorea”</em></p>\n<p><a href=\'http://www.slideshare.net/SeoulTechSociety/tech-opportunities-in-korea\'></a><a href=\'http://www.slideshare.net/SeoulTechSociety/tech-opportunities-in-korea\'>http://www.slideshare.net/SeoulTechSociety/tech-opportunities-in-korea</a>.</p>\n<p>A lot of good tech topics popped up so event 2 hours was not enough to\nget to the last slide.</p>\n</blockquote>\n<p><strong>Afterparty</strong></p>\n<blockquote>\n<p>The rest of the evening all of us spend together at the nearest pub,\nsocializing and discussing a truly broad range of topics: from Berlin\nstartup scene and mobile OS code bases up to Pushkin and international\naffairs.</p>\n</blockquote>\n<p>It was wonderful (and nobody expected that) to see what an international\ncrowd attended the event: people all over the Europe, South America, US\nand Republic of  Korea of course. That was the diversity we are up to!\nPeople with different backgrounds, cultures, languages got together to\nmeet others who are smart, educated, enthusiastic and young at their\nhearts to share skills, knowledge and passion in business and\ntechnology.</p>\n<p>Through the evening a few things were noted as missing: a <strong><a href=\'https://www.facebook.com/SeoulTechSociety\'>Seoul Tech\nSociety Facebook page</a></strong>\nwhich now exists, as the brand new twitter account\ndoes <strong><a href=\'https://twitter.com/Seoul_Tech\'>@Seoul_Tech</a></strong>, so feel free to\nfollow news and updates with the way which is more convenient to you.\nBoth channels will be used  to deliver news, updates, announce events\netc.</p>\n<p>We are also <em>exploring ways to work, share and interact</em> altogether as a\ncommunity: what is the most convenient way to exchange links, suggest\ndiscussion topics and speakers you are interested to listen to on our\nnext meetups?</p>\n<ul>\n<li>Would plain-old forum work for your?</li>\n<li>Is google+ too geeky</li>\n<li>or are we eager to get something reddit\\hacker’s news style these\nwebX.Y days?</li>\n</ul>\n<p>We’d like to know what you think!</p>\n<p><strong>\\\n</strong></p>\n<p>Stay tuned, drop us a few warm words at\n <strong>contacts[at]seoultechsociety.org</strong> and don’t forget to check our next\nevent:</p>\n<p><em>&quot;Team up for AngelHack @Seoul&quot;</em></p>\n<p><a href=\'http://www.meetup.com/seoul-tech-society/events/115904382/\'>http://www.meetup.com/seoul-tech-society/events/115904382/</a></p>\n<p>Seoul Tech Society team,</p>\n<p>FB       <a href=\'https://www.facebook.com/SeoulTechSociety\'>https://www.facebook.com/SeoulTechSociety</a></p>\n<p>Twitter <a href=\'https://twitter.com/Seoul_Tech\'>https://twitter.com/Seoul_Tech</a></p>\n<p><strong>\\\n\\\nP.S </strong>That was great to meet you all at First Friday Night Jam!</p>\n'
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'first-friday-night-tech-jam-seoul-april-19\'>First Friday Night Tech Jam @Seoul, April 19</h1>\n<p>Fun People, Great Connections, and New Tech.</p>\n<p>Seoul Tech Society presents a free talk  <em>“Modern Opportunities in\nKorea, Perspectives for Tech Professionals”</em></p>\n<p>Korea’s the most innovative country in the world, local enthusiasm for\ntechnology provides developers and designers with all possible\nchallenges.</p>\n<p>Let’s discuss  Asian tech landscape and true innovation opportunities\nthat exist today in Korea.</p>\n<p><strong>Schedule</strong> (Feel free to join or leave any time)</p>\n<p><em>7-7:30PM</em> Mix and Mingle.</p>\n<blockquote>\n<p>Meet other techies</p>\n</blockquote>\n<p><em>7:30-9PM</em> Discussion session</p>\n<blockquote>\n<p><em>“Modern Opportunities in Korea, Perspectives for Tech Professionals”</em></p>\n<p>What are you passionate about? Let us know!</p>\n</blockquote>\n<p><em>9-…PM </em>Party time</p>\n<blockquote>\n<p>Free time to get along with other members. We will move to the nearest\nbar for a pint of beer. Call to Nikolay (010-9426-7394) for the exact\nlocation.</p>\n</blockquote>\n<p><strong>Place</strong></p>\n<p>We’v reserved a room at TOZ: please make sure to take your name OFF the\nRSVP list if you are not able to attend (the cost of the meetup depends\non the room size, which depends on the number of people in attendance).</p>\n<p>TOZ provides a comfortable room for ~5,000won/person for 2.5hr with\nfree refreshments.</p>\n<p>Please <a href=\'http://www.meetup.com/computer-science-society/events/111470142/\'>RSVP on\nmeetup.com</a> in\ncase you plan to show up. </p>\n<p><strong>Directions: </strong><a href=\'https://maps.google.com/maps?q=37.556471,126.937097&amp;ll=37.556436,126.936927&amp;spn=0.001529,0.00327&amp;num=1&amp;t=m&amp;z=19\'>Sinchon\nTOZ</a></p>\n<p>18-55 Changcheon-dong, Seodaemun-gu, Seoul, South Korea, Seoul/</p>\n<p>Sinchon subway station (line 2), exit 3, go straight 50m until\nStarbucks, 4th floor in the building of Starbucks. Call to Nikolay\n(010-9426-7394) if any difficulties.</p>\n<p><strong>Update: </strong>Afterpaty place “Warawara”</p>\n<p>\\\nView <a href=\'https://maps.google.com/maps/ms?msa=0&amp;msid=216735581831034000805.0004dab3a83fd9e6d51ce&amp;ie=UTF8&amp;t=m&amp;ll=37.557847,126.938267&amp;spn=0.005954,0.009141&amp;z=16&amp;source=embed\'>45-1 Changcheon-dong (37\nMyeongmul-gil)</a>\nin a larger map</p>\n<p>Please call Nikolay in case if you get lost :)</p>\n'
-
-/***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'google-i-o-extended-seoul-may-16-2013\'>Google I/O Extended @Seoul, May 16 2013</h1>\n<p>Watch sessions and connect with developers at Google I/O Extended in\nSeoul. \\\n<a href=\'https://developers.google.com/events/io/about\'>https://developers.google.com/events/io/about</a> </p>\n<p><strong>PLACE</strong></p>\n<p><a href=\'http://maps.google.com/maps?q=@37.499718,127.025670\' title=\'Lat: 37.499718 / Lon: 127.025670\'>TOZ\nGangnam</a> 1307-26\nSeocho-dong, Seocho-gu, Seoul</p>\n<p>TOZ provides a comfortable room for ~5,000won/person for 2.5hr with\nfree refreshments.</p>\n<p>Please <a href=\'http://www.meetup.com/computer-science-society/events/111470142/\'>RSVP on\nmeetup.com</a> if\nyou are planing to show up</p>\n<p><strong>SCHEDULE</strong> </p>\n<blockquote>\n<p>&quot;Best of&quot; keynote compilation</p>\n<p>Watch session video</p>\n<p>Talk</p>\n</blockquote>\n<p>(Feel free to join or leave any time)</p>\n'
-
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'linux-101-seoul-sydney-tafe-korea-sep-23\'>Linux 101 @Seoul Sydney TAFE Korea, Sep 23</h1>\n<p><strong>Linux 101 - Introduction to Linux </strong>by Raphael Chambers, the inspiring\nmember of the Seoul Tech Society. </p>\n<p>RSVP to this event at <a href=\'http://www.meetup.com/seoul-tech-society/\'>http://www.meetup.com/seoul-tech-society/</a></p>\n<p>Linux is a free and open source operating system which is gaining\nmomentum and is a great alternative to other more well marketed OS’s. </p>\n<p>In this talk I will cover some history and present some advantages (and\ndisadvantages) of the Linux OS, without getting too technical. Whats\ngood, whats new and how can we benefit from this awesome free operating\nsystem. </p>\n<p>Learn about the tech that is running the majority of web servers,\nmultiple embedded devices, and even your android phones. Browse the\nsource code, build your own distro, conquer the world… did I mention it\nwas free? </p>\n<p><strong>Location:</strong> Sydney TAFE Korea</p>\n<p>8th floor, Seoul Hyundai Occupational Training College.</p>\n<p>Near Dangsan (당산) station, green line exit 3. </p>\n<p>Sydney TAFE Korea provides us a comfortable space with a beautiful view\non the Hangan river.</p>\n<p>Don’t miss, there will be an afterparty…</p>\n'
-
-/***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'promotion-chuseok-game-jam-w-joe-spradley-sep-18\'>Promotion: Chuseok Game Jam! w/ Joe Spradley, Sep 18</h1>\n<p><a href=\'https://www.facebook.com/events/197105527128041/\'>https://www.facebook.com/events/197105527128041/</a></p>\n<p>Follow the link and join Chuseok Game Jam hosted by our worthy member\nJoe Spradley and his startup PlayFluent.</p>\n<p><img src=\'http://media.tumblr.com/0c2a9d85114115491293f706d9271e8c/tumblr_inline_mt8loe6jYd1rjim2g.jpg\' alt=\'\'></p>\n<p>All details in the link, but for those who don’t know what a Game Jam\nis… They are going to try to make a few brand new games in a very short\namount of time. No pressure though because people of all skill levels\nwill be participating and the goal is simply to make something!</p>\n<p>Other Important Info:</p>\n<p>Wednesday 2pm - Friday 5pm is the official time but this is a causal +\nfun event so everyone is invited and can come participate as much or as\nlittle as desired. </p>\n<p>It’s FREE! + Saturday and Sunday night we will have some related social\nevents where you can show off your creation and play other games.\\^\\^</p>\n<p>Directions:</p>\n<p>Dangsan Station Exit 4. Turn left, walk down the street to the second\nbuilding. Enter and come to the 3rd Floor.</p>\n<p><a href=\'https://maps.google.com/maps?q=37.534866,126.903475&amp;num=1&amp;vpsrc=0&amp;ie=UTF8&amp;t=m&amp;z=19\'>https://maps.google.com/maps?q=37.534866,126.903475&amp;num=1&amp;vpsrc=0&amp;ie=UTF8&amp;t=m&amp;z=19</a></p>\n'
-
-/***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'review-of-digital-art-series-i-ii-\'>Review of &quot;Digital Art Series I&amp;II&quot;</h1>\n<p>Recently, we had the honor of hosting two inspirational art lectures by\nthe internationally acclaimed and very creative media artist Lucia\nJeesun Lee (aka<a href=\'https://twitter.com/smellsdreamy\'>@smellsdreamy</a>).</p>\n<p>In the first lecture, ‘Introduction to Digital Art I - When artists\nbecome geeks or vice versa’, Lucia gave us a peek into the exciting and\ndiverse trends currently happening in digital art.  Her talk took\nattendees on a fascinating journey through this colorful area of\nconverging technologies.  Where Musicians, Designers, Entrepreneurs,\nFilmmakers, Writers, Architects, Hackers, Inventors, Engineers,\nUrbanists, Scientists, Choreographers as well as Magicians are currently\nfinding new ways to use technology in their practices.</p>\n<p>You can find the slides for ‘Introduction to Digital Art I’ here:\n<a href=\'https://www.dropbox.com/s/72oekls988u494w/digital_art_lecture_1_lucia_lee.ppt\'></a><a href=\'https://www.dropbox.com/s/72oekls988u494w/digital_art_lecture_1_lucia_lee.ppt\'>https://www.dropbox.com/s/72oekls988u494w/digital_art_lecture_1_lucia_lee.ppt</a></p>\n<p>The intrigued audience hurried to her second lecture, ’Introduction to\nDigital Art II - Mapping’, where she took them deeper into the curious\nworld of online digital mapping.   Lucia’s solid selection of artists\nand her thoughtful interpretations helped a very eager audience to see\nhow images of our modern, sometimes hectic world, once frozen in time\ncould be appropriated and transformed into expressive and highly\nunconventional pieces of contemporary art.  In addition, she kindly\nprovided some great resources for those looking to jump in and do their\nown projects.</p>\n<p>Both her lectures were enriched with lively discussions at the end as\nwell as a very enjoyable after-parties.</p>\n<p>These valuable events couldn’t have happened without the generous\nsupport of two great organizations, Hub Seoul and World Culture Open\nSeoul Office, who graciously opened up their wonderful venues to Seoul\nTech Society members.</p>\n<p><strong>Hub Seoul</strong>\\\n<img src=\'https://lh3.googleusercontent.com/9QPjmwC57S5muRmizwQHYCDqfgGYWVGF3xYdzF-4TmvtXrOk2TYUFVAAocRtFrfJobjAEiScUlWxwOD6MJF3a0Ty5d50fhET3uHx0nVq002nNTFkDoynfHRL\' alt=\'image\'>\\\n<strong>WCO</strong>\\\n<img src=\'https://lh5.googleusercontent.com/PqLzDtQvhxhCmQcSHB5gA226FEl7hGrXsXh8-rqmOo7jdqdEJBUuTq7unWYoB2IsCL_pUCDv3cLt8NAlINEu72HcB6qTRtl0yGZ4C4FrXaweETpvMn9iFJBr\' alt=\'image\'></p>\n<p><strong>Hub Seoul</strong> <a href=\'http://www.hubseoul.net\'>www.hubseoul.net</a> /\n<a href=\'http://www.facebook.com/hubseoul\'>www.facebook.com/hubseoul</a>\\\nis originally a quite co-working space, where everyone can find a handy\ncorner to concentrate on their project, for a reasonable fee.\\\nFor us, It smoothly transformed in a space, which welcomed our first\nevent. It was one of the reasons to give a successful start to these\nseries of lectures.</p>\n<p><strong>World Culture Open Seoul Office</strong> <a href=\'http://wcoseoul.org/xe/\'>http://wcoseoul.org/xe/</a>\\\nis the free space in the heart of Seoul for diverse cultural events. We\nare very thankful to WCO and glad that we contributed bringing culture\nand technologies closer to each other.</p>\n<p>We will look forward to hear more fascinating talks from Lucia and\ndiscover over welcoming spaces.</p>\n'
-
-/***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'review-of-team-up-for-anglehack-\'>Review of &quot;Team up for AngleHack&quot;</h1>\n<p>It would be enough to say that this time event was SUPER fun &amp;\nchallenging.</p>\n<p>Review in a brief:</p>\n<ul>\n<li>~20 people attended</li>\n<li>11 cool project ideas were proposed</li>\n<li>3 most promising were chosen by voting</li>\n<li>..to be continue - a plan for one more meeting exists!</li>\n</ul>\n<p>Some juicy details for whose who interested:</p>\n<p>The event was popular far beyond the expectation - more than 90% of RSVP\nshowed up - ~20 highly skilled tech enthusiasts. The atmosphere was\ncreative and cheerful, we generated 11 project proposals to compete in\nAngelHack contest. After hectic discussions 3 the most promising ideas\nwere chosen so 3 teams will participate in the hackathon.</p>\n<p>Wish a good luck to our heroes!!</p>\n<p>To chill out our burning brains later on we threw an after-party with a\ncold beer or two.</p>\n<p>As so many people were involved, excited and committed we decided to\nmake one more meeting before the actual AngelHack contest.</p>\n<p>Special shout out goes to our\nfriends <a href=\'http://www.nflabs.com/\' title=\'NFLabs\'><strong>NFLabs</strong></a> who hosted this\nevent at their nice office at Gangnam and helped most generously with,\nhm, let us say “refreshments” and “stuff”.</p>\n'
-
-/***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'seoul-tech-careers-lead-developer-cto-for-a-fashtech-startup-\'>Seoul Tech Careers: Lead Developer / CTO for a fashtech startup </h1>\n<p><img src=\'http://media.tumblr.com/3a0093657e210472d511353149c9ca2a/tumblr_inline_mxh2nwZ8LX1qz73mc.png\' alt=\'image\'></p>\n<p><strong>Lead Developer / CTO Candidate</strong></p>\n<p>Are you eager for an exciting opportunity to make your mark in\n“fashtech” the industry cross sector of fashion and technology?\\\nThis may be your chance.\\\nRed Carpet Closet is an upandcoming fashtech startup currently seeking\nan experienced fullstack web developer with ambitions to take the lead\nin building our ecommerce platform. We have big ideas that will\n“democratize fashion” for shoppers and designers but we need a talented\ntechnical superstar to bring these ideas to life!\\\nYou’ll work closely with the energetic founders, with international\nworking experience in leading global technology firms, who love the idea\nof working hard and playing harder.</p>\n<p>Role: FullStack Web Developer / Location: Seoul, South Korea\\\n(A candidate with the right fit and experience can be considered for the\nposition of CTO)</p>\n<p>Responsibilities</p>\n<ul>\n<li>Primary: Lead architecture of the whole site focus on initial site\ncoding and development (from frontend to backend)</li>\n<li>Secondary: Help shape the technology development roadmap for the\necommerce platform and advise in future technical hiring decisions</li>\n</ul>\n<p>Requirements</p>\n<ul>\n<li>No working restriction in South Korea (applicable to foreigners)</li>\n</ul>\n<p>Education\\</p>\n<ul>\n<li>Degree in Computer Science or Engineering (minimum)</li>\n</ul>\n<p>Experience / Skills</p>\n<ul>\n<li>Several years of programming experience; recent graduates with\npotential and a strong portfolio may also be considered</li>\n<li>Well versed in major web development and web application languages\n(backend APIs /code, e.g. python; front end code, e.g. HTML5, CSS3,\njavaScript)</li>\n<li>Strong knowledge of SQL and relational database design</li>\n<li>Proficiency with Korea’s crossbrowser, crossplatform issues, and W3C\nWeb standards</li>\n<li>Familiar with search engine optimization (SEO)</li>\n<li>Able to efficiently lead and coordinate a small team of designers\nand other developers</li>\n<li>Experience working with startups a plus</li>\n<li>Ecommerce experience a plus</li>\n</ul>\n<p>An ideal candidate would also possess the following:</p>\n<ul>\n<li>Creativity, drive, an obsessive eye for detail and rapid iteration,\nexperimentation skills</li>\n<li>Able to step back and see the big picture</li>\n<li>Ability to meet strict deadlines, efficiently juggle multiple hats\nand learn fast</li>\n<li>Good interpersonal and communication skills</li>\n</ul>\n<p>Compensation</p>\n<ul>\n<li>Open to negotiation.</li>\n</ul>\n<p>If you have what it takes, please reach out to Ellen at\nhr@redcarpetcloset.com. In your email, please include the following:</p>\n<ul>\n<li>Resume (English or Korean)</li>\n<li>Links to / examples of your portfolio that best reflect your web\ndevelopment skills; for projects that were joint collaborations,\nplease specify your role and involvement</li>\n<li>Tell us which is your favorite ecommerce website and your 3 reasons</li>\n</ul>\n<p>——————————————————————————————————————-\\\n개발자 / CTO 모집</p>\n<p>안녕하세요,</p>\n<p>레드카펫 클로젯의 ecommerce 플랫폼을 구축하기 위해, 능력있는 fullstack\n웹 개발자를 모십니다.\\\n저희의 수많은 아이디어를 현실로 이루어 지게 할 수있는 멋진 개발자. 바로\n당신을 레드카펫 클로젯 가족으로 초대하고 싶습니다.\\\n저희 레드카펫 클로젯은 초기 startup 기업이지만, 가능성이 높고 빠른\n성장이 기대됩니다. 글로벌 tech 회사에서 폭넓은 경험과 열정을 가진\nfounder들과 함께,\\\n레드카펫 클로젯의 성공을 만들어 갈 당신을 기다립니다.</p>\n<p>[모집분야]\\\nFullStack 웹 개발자 (경력 및 적임자가 CTO 포지션으로 전환 가능함)</p>\n<p>\\\n[업무영역]</p>\n<p>\\\n주요업무:</p>\n<ul>\n<li>사이트 구조 / ecommerce 플랫폼 구축 계획</li>\n<li>초기 단계부터 사이트 코딩 및 개발 (frontend/backend) 지원활동:</li>\n<li>레드카펫 ecommerce 플랫폼 개발 로드맵 계획</li>\n<li>기술 관련 포지션 채용 과정 지원</li>\n</ul>\n<p>[필수요건]</p>\n<ul>\n<li>한국에서 근무 제한 없음 (외국인 해당)</li>\n</ul>\n<p>교육\\</p>\n<ul>\n<li>CS/공대 경험/기술</li>\n<li>프로그래밍 경험 3년 이상 (잠재력 및 강한 포트폴리오를 가진\n졸업자라면 지원 가능함)</li>\n<li>주요웹개발및웹에플리케이션언어에능통 (예, backend API / code python;\nfrontend HTML, CSS3, javaScript 등)</li>\n<li>SQL 및 관계형 데이터베이스 설계에 대해 깊은 지식을 갖춘자</li>\n<li>한국과 국제의 Crossbrowser, crossplatform 이슈 및 W3C 웹 기준 능통한\n자</li>\n<li>Search engine optimization (SEO) 이해력이 높은자</li>\n<li>프로젝트 리드 경험자 우대</li>\n</ul>\n<p>[우대요건]</p>\n<ul>\n<li>스타트업 경험자</li>\n<li>Ecommerce 비지니스 및 플랫폼 관련 경험자</li>\n<li>창의력, 추진력, 빠른 반복 (iteration)/실험 (experimentation)에 대해\n섬세함을 갖춘자</li>\n<li>책임감이 강하며 배우고자 하는 마음을 강한자</li>\n<li>원활한 의사소통을 갖춘자</li>\n</ul>\n<p>[인센티브] 추 후 협상</p>\n<p>[지원방법]\\\n아래 서류를 준비하여 엘렌(Ellen)에게 hr@redcarpetcloset.com로 메일 송부\n부탁 드립니다.</p>\n<ul>\n<li>이력서(영문/국문문관)</li>\n<li>포트포리오(본인이 웹 개발자로써 제일 자랑하는 프로젝트 어떤 것인지\n표시해주시고 개인 프로젝트 아닌 경우, 본인이 역활이 무엇인지\n정확하게 알려주시기 바랍니다.)</li>\n<li>본인이 제일 마음에 들는 ecommerce 웹사이트 및 그 웹사이트 좋아하는\n3가지 이유</li>\n</ul>\n<p>많은 지원 부탁드립니다. 감사합니다!</p>\n'
-
-/***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'seoul-tech-rises-to-samsung-challenge\'>Seoul Tech Rises To Samsung Challenge</h1>\n<p>In the space of two weeks, the WeeSeeTeam has gone on a hackathon\njourney which began at a Seoul Tech Society event\n@<a href=\'http://www.nflabs.com/\'>NFlabs</a> and has rapidly moved onto development\nat one of Samsung’s dedicated development centers in the heart of\nGangnam.</p>\n<p>In November, more than two dozen Seoul Tech Society members came\ntogether at NFLabs office space in Gangnam. Seven members discussed\nentering the final SAMSUNG App Challenge for 2013.  The contest aims to\naward innovative applications that showcase the Galaxy Note’s S-Pen. The\ngoal is ambitious: two winning teams have the potential to each get a\n\\$200,000 grand prize, and the WeeSee Team is now poised to come out a\nwinner.</p>\n<p>WeeSee is uniquely positioned because of its diversity and depth of\ntalent, which is typical of the Seoul Tech Society’s membership.\n Hailing from all around the world and from various professional\nbackgrounds, the WeeSee team has brought together a collegial group of\nvegetarians, gamers, entrepreneurs, and hackers.</p>\n<p>For the first few weeks the team had been meeting together in Mullae and\nHongdae, but later secured free office space complimentary of Samsung.\n The team has been finalizing the beta version of  their productivity\napp which aims to disrupt the way people collaborate and share notes.\nThe app developed by WeeSee will enter a crowded productivity category\nled by brands such as Evernote.  The app differentiates itself with its\nuse of the Samsung S-Pen stylus, and it allows users the ability to\nexperience more while working with others.</p>\n<p>Before submitting their application on December 31st, the team is\nsearching for additional members to join them in either a design or\ndevelopment role.  Requirements:</p>\n<p>The candidates can be a UX/UI Design specialist and/or a (mobile)\napplications developer who is familiar with any of the following:</p>\n<ul>\n<li><p>Mobile application development Samsung/Android</p>\n</li>\n<li><p>Photoshop</p>\n</li>\n<li><p>Android design guide principles</p>\n</li>\n<li><p>Action bar / status bar / navbar for current mobile applications</p>\n</li>\n<li><p>Icons for mobile apps</p>\n</li>\n<li><p>Branding and theme for Android / Samsung</p>\n</li>\n</ul>\n<p>If you think you can contribute to the team in any way, please feel free\nto send an e-mail to <a href=\'&#109;&#x61;&#x69;&#x6c;&#x74;&#x6f;&#58;&#x77;&#x65;&#x65;&#x73;&#101;&#101;&#116;&#x65;&#x61;&#x6d;&#x40;&#x67;&#x6d;&#97;&#x69;&#x6c;&#46;&#x63;&#x6f;&#109;\'>&#x77;&#x65;&#x65;&#x73;&#101;&#101;&#116;&#x65;&#x61;&#x6d;&#x40;&#x67;&#x6d;&#97;&#x69;&#x6c;&#46;&#x63;&#x6f;&#109;</a>  or follow this\n(<a href=\'http://www.meetup.com/seoul-tech-society/messages/boards/thread/40367552#113451732\'>link</a>).</p>\n<p>More info about the Samsung App Challenge here\n(<a href=\'http://developer.samsung.com/ssac2013/note/aboutTheChallenge.do\'>link</a>)</p>\n<p><img src=\'https://lh3.googleusercontent.com/xQIgrpMLSuyFnO75mQUeFOKR5lBiQ_kj08eO1IWmFNM7PYeVnMo6I-JpvmZyO9RkbVFk9Vndu3BSKd91t21IqB9-MilG5ENygc6lJDWdqE8ahOj2IxEhr-rQCQ\' alt=\'image\'></p>\n<p>Inception @ Mullae Art Center</p>\n<p><img src=\'https://lh3.googleusercontent.com/WVVUTctvcvzM8gIRTNB0LSMlkiYndtqXmhc60DMpy2s8Nq4olns-pslBj-5XMqtkoBf2n_K-D-_mKD8_tmxAtZBaI82weDNjaQ1gjoR47QaUfMZDmJvDrdtV7w\' alt=\'image\'></p>\n<p>Brainstorming  → App Deep Dive II  @ Insight Hongdae</p>\n<p><img src=\'https://lh3.googleusercontent.com/lLXIXgt9LDO0hiMHhvu6EG938CpKou4Qz1PWwvRTrh2DfwIjwslOUPGeA30WSVcsGeRIooRVCqTOR5IP8ZUUX4C8bYZqjzWK04wvHV2-vNk5BplJWfzQ4EFZdA\' alt=\'image\'></p>\n<p>Cheers: first milestone  @\nNFLabs<img src=\'https://lh6.googleusercontent.com/fCzX3pYGxn36vK8Nd53ZLhrE0bF75t1ul1cx8ZMhamRFhqfqO1cuByw1OQI_jzhzVfYAxYyKQPANcb_z7IP3KSX3WEUaqR1dDBRCDYKLmnsScu9sh7KB3vwm3w\' alt=\'image\'></p>\n<p>Our first demo @ Samsung Ocean</p>\n<p><img src=\'https://lh4.googleusercontent.com/OHz8t5pQ1sYzsg3t79s8-GxhF9s99SbiBUsHUhrmitN_rPdVFXFx9V1bODtjOML1nlAdfJKbwepCt24nbUfS7wbQ4AB9zhDSrFYywBpNYQGRaLsP8KMBJWSZ9Q\' alt=\'image\'></p>\n<p>Deep immersion for the best product   →  App Deep Dive I @ NFLabs</p>\n<p><img src=\'https://lh4.googleusercontent.com/N6fBPGlzAmwYUoc6SazOE4BteT0iGMSQ33W4_gS2mRYM0IPlW3rkDw43X8R7MAUJWX2vFJdX7VuVBCPYnhPMbkQXvJExRetw2xEb3bBrqBiNumYxIOWZPXF6-g\' alt=\'image\'></p>\n<pre><code>                                                          Jackson\n</code></pre><p><a href=\'https://plus.google.com/113799495386801196546\'>Google+</a></p>\n'
-
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'special-guest-speaker-ffventures-john-frankel-seoul-june-14\'>Special Guest Speaker: ffVentures&#39; John Frankel @Seoul, June 14</h1>\n<p>Our special guest speaker is John Frankel, who is a Partner at ff\nVenture Capital. John will give a lecture:</p>\n<p><em>“YOU ARE SO LUCKY! The next great entrepreneurial opportunity: the\nmassive white space right in front of you.”</em></p>\n<p><img src=\'http://media.tumblr.com/c3bd3547ab4d80edc2a3c5f0d2f8fe61/tumblr_inline_mm9qo8U9zC1qz4rgp.png\' alt=\'image\'></p>\n<p><strong>John Frankel (<a href=\'http://ffvc.com/team/john-frankel/\'>Source</a>)</strong></p>\n<p><strong><img src=\'http://media.tumblr.com/b9845c75bec9bd52b61e04f5004c8bfc/tumblr_inline_mm9qpkxgGf1qz4rgp.jpg\' alt=\'image\'></strong></p>\n<p>John Frankel has been an early-stage venture investor since 1999. Mr.\nFrankel was one of the earliest investors in Quigo Technologies, which\nwas purchased by AOL in December 2007, and in Cornerstone OnDemand (CSOD\non NASDAQ) which had a successful IPO in March 2011. He has also served\nand/or now serves on the boards of 500px, Apparel Media Group,\nAlerts.com, Centzy, ClearPath Immigration, Gobbler, Infochimps, Klout,\nPhone.com, Quigo Technologies, The Goldman Sachs Trust Company, and\nVoxy. He is also a Mentor with the Entrepreneurs Roundtable Accelerator\nprogram.</p>\n<p>In particular, he established Goldman’s Cayman offshore administration\nbusiness, their London global custody business, and reengineered their\nglobal prime brokerage business. In capital markets, he worked closely\nwith some of the world’s leading hedge funds, and developed a keen\nunderstanding of portfolio risk/return management. He started his\nbusiness career with Arthur Anderson &amp; Co. in the audit and insolvency\ndivisions.</p>\n<p>Mr. Frankel earned a Master of Arts from New College, Oxford where he\nstudied Mathematics, Philosophy and Logic, and is a Fellow Chartered\nAccountant of the Institute of Chartered Accountants in England and\nWales.</p>\n<p>Final agenda will be posted 5 to 7 days in advance of the meeting.</p>\n<p>RSVP to this event\nat <a href=\'http://www.meetup.com/seoul-tech-society/events/117773242/\'></a><a href=\'http://www.meetup.com/seoul-tech-society/events/117773242/\'>http://www.meetup.com/seoul-tech-society/events/117773242/</a></p>\n'
-
-/***/ },
-/* 28 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'stay-safe-in-the-cyberspace-dcamp-oct-18th-2013\'>Stay safe in the cyberspace @DCAMP, Oct 18th 2013</h1>\n<p>Do you spend more and more time with your digital devices? So do\ncriminals who are finding new ways to take advantage of these\nhyper-connected technologies.\\\nOur honored guests Dr. Joshua James and Security Consultant Michał\nRzepka will guide you through the cyber world of white and black forces.</p>\n<p><strong>Featured</strong>\\\nBring your Windows laptop to practice being a cyber-sleuth with a\npractical lab on computer memory acquisition and analysis.\\\n<img src=\'http://3.bp.blogspot.com/_2hM3rrwU8kI/TPEkYiKDaLI/AAAAAAAAAx0/rExWBO8i1eo/s320/cyber-crime-and-identity-theft.jpg\' alt=\'image\'></p>\n<p>RSVP to this event\nat <a href=\'http://www.meetup.com/seoul-tech-society/events/144302832/\'>http://www.meetup.com/seoul-tech-society/events/144302832/</a></p>\n<p><strong>Agenda</strong>\\\n<strong><em>Web vulnerabilities - what [developers do for you to stay\ninsecure</em></strong>\\\nTalk about simple, old, known, yet still very popular weaknesses in web\napps that affect users - basically everyone, since we all use web.\\\n<strong><em>Cybercrime and digital forensics - what cyber cops do</em></strong>\\\nThis talk will give an overview of what cybercrime is, what cybercops\ndo, and how digital forensic investigations are conducted.\\\n<strong><em>Memory acquisition and analysis - hands on</em></strong>\\\nDuring this practical you will learn to take a copy of Random Access\nMemory and extract evidence of user activity, such as pictures, web\naddresses and passwords.</p>\n<p><strong>Speakers</strong>\\\nDr. Joshua James is a researcher with the Digital Forensics\nInvestigation Laboratory as well as a lecturer and researcher with\nUniversity College Dublin, Korea University, Korea National Police\nUniversity and Soon Chun Hyang University. Coming from a background in\nnetwork security and administration, his focus is now on the\nformalization and automation of digital forensic investigation methods,\nand the application of these methods in low cost, open source solutions\nfor digital investigators.\\\nMichał Rzepka was previously working as a Security Engineer in national\ncomputing center and taking part in several national and European\nprojects, Michał is currently working as a Security Consultant for the\nleading IT Security company in Northern Europe. His areas of experience\ninclude penetration testing, web application security assessing, as well\nas PCI DSS compliance.</p>\n'
-
-/***/ },
-/* 29 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'team-up-for-angelhack-2-d-camp-may-28-2013\'>Team up for AngelHack#2 @D.Camp, May 28 2013</h1>\n<p>Guys, we are just a few weeks from AngleHack 2013 contest, let’s get\nprepared to take part and win!</p>\n<p><a href=\'http://seoultechsociety.org/post/49421013070/team-up-for-angelhack-seoul-may-10\'>Last time at\nNFLabs</a>\nit was a really productive session: we pre-selected three ideas and lots\nof stuff has been done by teams of devoted techies from that time so…</p>\n<p>Let’s get together once more at <a href=\'http://dreamcamp.co\'>D.Camp</a> (thanks to\ntheir support)  and review our progress, refine goals and tactics to get\nready for the show time! As usual please RSVP at <a href=\'http://www.meetup.com/seoul-tech-society/events/120815772/\'>Seoul Tech Society\nmeetup\npage</a>.</p>\n<p>So just to re-cap:</p>\n<p>This is the <em>second event</em> held by <em>Seoul Tech Society</em> in anticipation\nof <em>AngelHack 2013</em>. You can learn more about our previos event from our\n<a href=\'http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack\'>R</a><a href=\'http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack\'>eview\nof\n“</a><a href=\'http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack\'>Team\nup for AngelHack\n2013”</a>. </p>\n<p>To learn more about AngleHack itself and the registration process please\nrefer to the official event materials:</p>\n<ul>\n<li>Official site: <a href=\'http://angelhack.co.kr\'>http://angelhack.co.kr</a></li>\n<li>Dev invite presentation (ENG): <a href=\'http://goo.gl/XHOIk\'>http://goo.gl/XHOIk</a> </li>\n<li>Dev invite presentation (KR): <a href=\'http://goo.gl/It3M1\'>http://goo.gl/It3M1</a></li>\n<li>FB:\n<a href=\'http://www.facebook.com/pages/AngelHack-Seoul-Korea/133538800151630\'>http://www.facebook.com/pages/AngelHack-Seoul-Korea/133538800151630</a></li>\n</ul>\n'
-
-/***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'team-up-for-angelhack-seoul-may-10\'>Team up for AngelHack @Seoul, May 10</h1>\n<p><strong>Update 05/14/2013: </strong>review to <a href=\'http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack\'>Team up for\nAngelHack</a>\nwas added.</p>\n<p>Hey, <em>Seoul Tech Society</em>, let’s make a team and join AngelHack contest!</p>\n<p>Are you a designer, developer or entrepreneur? Do you have a cool idea,\nwant to team up and implement a new project?</p>\n<p><a href=\'http://www.meetup.com/seoul-tech-society/events/115904382/\'>RSVP this\nevent</a> to\nbrainstorm ideas and discuss details with those of you who are\ninterested.</p>\n<p><strong>Join this event if you :</strong></p>\n<ul>\n<li><p>curious about AngelHack</p>\n</li>\n<li><p>looking for a team to join, to discuss ideas for a project</p>\n</li>\n<li><p>want to participate in AngelHack@Seoul on 8-9 of June</p>\n</li>\n</ul>\n<p><strong>When :</strong>  Friday, May 10th 2013.</p>\n<p>7:00pm ~ 7:30pm -> Waiting for people, mingling</p>\n<p>7:30pm ~ 9:00pm -> Angelhack preparation</p>\n<p>\\</p>\n<p><strong>Place:</strong></p>\n<p>We will use NFLabs’s conference room.</p>\n<p>To get to NFLabs, go to exit 1 at gangnam station, walk straight\n(~150m) until a street corner with Seven Springs restaurant. Go into\nthis street, the building is the second after the motel on the left, 8th\nFloor: <a href=\'http://me2.do/Fe7IxuUM\'>Picture of the building</a></p>\n<p><strong>About AngelHack :</strong></p>\n<ul>\n<li><p><a href=\'http://angelhack.com/\'>http://angelhack.com/</a> </p>\n</li>\n<li><p>Korean Event website:\n<a href=\'http://onoffmix.com/event/14637\'></a><a href=\'http://onoffmix.com/event/14637\'>http://onoffmix.com/event/14637</a></p>\n</li>\n</ul>\n<p>It will take place at Seoul on June, 8-9. Registration is already open.\n(It is about 20,000 wons as an inscription fee).</p>\n<p>Contest includes real-time implementation of an idea, however the\ndesign, logo, wireframes, digital mockups can be made prior to this time\n(i.e at this meetup).</p>\n<p>Winners will get mentoring and be brought out to Silicon Valley to raise\ninvestment and introduce them to incubators.</p>\n<p>Check out previous awarded projects\n<a href=\'http://techcrunch.com/2012/07/13/angelhack-winners/\'></a><a href=\'http://techcrunch.com/2012/07/13/angelhack-winners/\'>http://techcrunch.com/2012/07/13/angelhack-winners/</a> :</p>\n<ul>\n<li><p>Appetas</p>\n</li>\n<li><p>GiveGo</p>\n</li>\n<li><p>ShareBrowse</p>\n</li>\n</ul>\n'
-
-/***/ },
-/* 31 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'upcoming-tech-events-in-korea-keeping-updated-\'>Upcoming tech events in Korea (keeping updated)</h1>\n<p>Hey Seoul Techies, what are you up to these days?\\\nHere we will keep updating the list of technology oriented events for\nyou. Please, join any of them and share experience with the rest of us\nlater on.</p>\n<p>If you know any other upcoming events or something we’ve forgot to\nmention but you think it should be here - please let us\nknow:<strong><em>contacts[at]seoultechsociety.org</em></strong></p>\n<p><strong>POC2013</strong>\\\n<a href=\'http://www.powerofcommunity.net/\'>http://www.powerofcommunity.net</a>\\\n 5th - 8th Nov., The-K Seoul Hotel\\\n Learn from hackers and security experts from everywhere and participate\nin many coding and non-coding related events.</p>\n<p>!Early birds until 30th Sep. Even if you are a foreigner but stay in\nKorea, register as REGULAR.</p>\n<p><strong>2013 Electronics &amp; IT Industry Fair</strong>\\\n<strong>Creative Economy, Happiness of People, and IT</strong>\\\n<a href=\'http://www.eif.or.kr/main.it\'>http://www.eif.or.kr/main.it</a>\\\n7th Oct., 2013 - 8th Oct. 2013, Kintex\\\nCome to get ideas from a Gartner specialist as well as many others.\\\n<strong><em>7th Oct., Monday</em>, *</strong>10:00~12:30<em>\\\n</em>Creative Futures Forum*\\</p>\n<ul>\n<li>Opening speech : Minister of MSIP\\</li>\n<li>Keynote speech : Guru of IT\\</li>\n<li>Issue presentation &amp; Panel discussion\\\nTopic : Happiness of People by Creative Economy, and the Role of IT</li>\n</ul>\n<p><strong>*7th Oct., Monday, </strong>14:00~17:30<em>\\\n<strong>**8th Oct., Monday, </strong>10:00~17:30</em> <em>\\\n</em>IT Industry Prospect Conference*\\</p>\n<ul>\n<li>Track Ⅰ : Domestic &amp; Foreign Economy and IT industry Prospect\\\n(Andy Rowsell Jones(Gartner), President of KDI, ETRI, KISDI)\\<ul>\n<li>Track Ⅱ : Issue analysis and prospect in major field\\\n(SW&amp;IT service, Smart device, Global IT market forecast, Information\nsecurity, IT main parts and strategic markets)</li>\n</ul>\n</li>\n</ul>\n<p><strong>**8th Oct., Monday, </strong>14:00~17:50<em> </em>\\\n<em>Asian IT Policy Symposium</em>\\</p>\n<ul>\n<li>Sharing major IT policies and discussing cooperative\nplans, participating the director general of Korea, Brunei, Cambodia,\nLao, India, Philippines, Vietnam in IT policy</li>\n</ul>\n<p><strong>2013 ISACA Korea Conference, 6th Sep.</strong>\\\n<strong>IT Governance, Security and Privacy in the Big Data Era</strong>\\\n<a href=\'http://www.isaca.or.kr/\'>http://www.isaca.or.kr/</a> See the notice on the news board: “Invitation\n2013 ISACA Conference - 6th Sep…”. It’s in English.</p>\n<p><strong>Youth Forum for Seoul Conference on Cyberspace 2013</strong>\\\n<a href=\'http://www.seoulcyber2013.kr/en/event/youth.html\'>http://www.seoulcyber2013.kr/en/event/youth.html</a>\\\n2nd Sep., 2013</p>\n<p>The forum is devoted to broad topics on cyberspace: Economic growth and\nsocial and cultural benefits; Cybersecurity and cybercrime; and Capacity\nbuilding.</p>\n<p>Hurry up to register for free, space is limited for 250 attendees:\n<a href=\'http://www.seoulcyber2013yf.kr/y_step0.html\'>http://www.seoulcyber2013yf.kr/y_step0.html</a></p>\n<p><strong>Korea Games Conference 2013</strong>\\\n<a href=\'http://www.kgconf.com/kor/html/main.html\'>http://www.kgconf.com</a>\\\nSeptember 25 – 27, Seoul, Korea</p>\n<p>\\\n\\\n<em>Disclaimer: Seoul Tech Society is not affiliated by any of the\ncompanies mentioned above.</em></p>\n'
-
-/***/ },
-/* 32 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'upcoming-tech-events-in-seoul-on-may-2013\'>Upcoming Tech events in Seoul on May 2013</h1>\n<p>Hey Seoul Techies, what are you up to this May?</p>\n<p>We’ve composed a list of technology oriented events this March for\nyou.Please join any of them and share experience with the rest of us\nlater on.</p>\n<hr>\n<p><strong>Facebook Mobile DevCon 2013</strong></p>\n<p><a href=\'https://developers.facebook.com/events/mobiledevcon/seoul/\'>https://developers.facebook.com/events/mobiledevcon/seoul/</a></p>\n<p><em>07/05/2013</em></p>\n<p><em>Facebook rejected all our applications to Mobile DevCon 2013 @Seoul,\nmotivating that “the space is extremely limited”.</em></p>\n<p>It is frustrating as we did not expect such thing from a big company in\nthe City with more then 30,000,000 population… </p>\n<p>Please let us know what is your experience here!</p>\n<hr>\n<p><strong>Google I\\O Extended 2013</strong></p>\n<p><a href=\'http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013\'></a><a href=\'http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013\'>http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013</a></p>\n<p><em>16/05/2013</em></p>\n<hr>\n<p><strong>Art &amp; Technology Performance - REPLICA</strong></p>\n<p><a href=\'http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043\'></a><a href=\'http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043\'>http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043</a></p>\n<p><em>17~18/05/2013</em></p>\n<hr>\n<p><strong>Amazon AWSome day @Seoul</strong></p>\n<p><a href=\'http://aws.amazon.com/apac/awsday/seoul/\'></a><a href=\'http://aws.amazon.com/apac/awsday/seoul/\'>http://aws.amazon.com/apac/awsday/seoul/</a>\\</p>\n<p><em>21/05/2013</em></p>\n<hr>\n<p>If you know any other upcoming events or something we’v forgot to\nmention but you think it should be here - please let us know:\n<strong><em>contacts[at]seoultechsociety.org</em></strong></p>\n<p>Disclaimer: Seoul Tech Society is not affiliated by any of the companies\nmentioned above.</p>\n'
-
-/***/ },
-/* 33 */,
-/* 34 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'launch-lab-where-ideas-take-off-june-28\'>Launch Lab, Where Ideas Take Off, June 28</h1>\n<p>RSVP <a href=\'http://www.meetup.com/seoul-tech-society/events/187283782/\'>http://www.meetup.com/seoul-tech-society/events/187283782/</a></p>\n<p><strong>What is LaunchLab? </strong></p>\n<p>As part of the Launch - Hack - Tell cycle of innovation, SeoulTech is\nproud to announce the “Launch Lab” series of meetups.  This is a new\ntype of event where researchers, entrepreneurs and innovators discuss\nand propose (any) project, and solicit ideas and help from other\nSeoulTech members.</p>\n<p><img src=\'https://31.media.tumblr.com/d2d8faf5fae269e0c4c0296c6247527e/tumblr_inline_n721u9ZQx21rjim2g.png\' alt=\'\'></p>\n<p><strong>Why? </strong></p>\n<p>Launch Lab helps members take one giant leap beyond networking. These\nevents allow members  to get involved with the creation of new ideas or\nstartups, while forging friendships and business partnerships to last a\nlifetime. </p>\n<p><strong>How? </strong></p>\n<p>The event features a group of speakers that give a 10 to 15 minute\npresentation of their idea. The audience then discusses the idea.\nAudience members can also choose to join or further contribute to the\nproject.</p>\n<p>Open discussion sessions will also be available, so if anyone gets\ninspired they can share and discuss their ideas with the group.</p>\n<p><strong>When?</strong></p>\n<p><em>June 28th, 2014</em></p>\n<p>13:00 - 17:00: Presentations + Discussion + Coffee/Beer/Snacks</p>\n<p>17:00 - 19:00: Dinner (possible group discount depending on number)</p>\n<p>19:00 - 21:00: Open Mic Music Session</p>\n<p><strong>Call for projects and proposals (and musicians)!</strong></p>\n<p>If you are a researcher, startup founder, entrepreneur, idea generator,\nor dreamer, sign up to be a speaker!</p>\n<p>If you want to play in the Open Mic night, please let us know. Guitar\nwill be provided.</p>\n<p><strong>Please email:</strong> Joshua [at] cybercrimetech.com</p>\n<p><strong>Where?</strong></p>\n<p><strong>Coffee Zaroo *</strong>Seoul Metro Bundang Line (Yellow), Jukjeon Station*</p>\n<p><em>Address in Korean:</em> 경기도 용인시 기흥구 보정1203-12 </p>\n<p><em>Address in English:</em> 1203-12 Bojeong-dong (11-16 Jukjeon-ro 43Beon-gil)\nGiheung-gu, Yongin-si, Gyeonggi-do</p>\n<p>Map: <a href=\'http://goo.gl/maps/vLy2S\'>http://goo.gl/maps/vLy2S</a></p>\n<p><strong>Note: This event is currently hosted outside of Seoul (Jukjeon -\naccessible by bus or Seoul Metro, 25 mins from Gangnam) - think as a\nhalf day picnic-style relaxing event. If we cannot get 20+ to RSVP, the\nmain event will be moved to Seoul. Please check the map before\nRSVPing.</strong></p>\n<p>On Twitter? Follow <a href=\'https://twitter.com/FutureTenseNow\'>@Seoul_Tech</a></p>\n<p>FB? Follow us <a href=\'https://www.facebook.com/SeoulTechSociety\'>https://www.facebook.com/SeoulTechSociety</a></p>\n'
-
-/***/ },
-/* 35 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'popular-science-ehealth-trends-w-dr-ogan-gurel-march-16\'>Popular science: eHealth trends w/ Dr. Ogan Gurel, March 16</h1>\n<p>RSVP <a href=\'http://www.meetup.com/seoul-tech-society/events/169900682/\'>http://www.meetup.com/seoul-tech-society/events/169900682/</a></p>\n<p>Our speaker this time is <strong>Dr. Ogan Gurel</strong> (<a href=\'http://www.linkedin.com/profile/view?id=1531386\'>LinkedIn\nprofile</a>), a prominent\nresearcher and professional in the area\nof <a href=\'http://en.wikipedia.org/wiki/MHealth\'>mHealth</a> and <a href=\'http://www.nytimes.com/2012/10/09/science/redefining-medicine-with-apps-and-ipads-the-digital-doctor.html\'>digital\nmedicine</a>.\nHe will introduce us to the world of emerging eHealth technologies.</p>\n<p><img src=\'http://photos1.meetupstatic.com/photos/event/3/5/f/e/600_339973822.jpeg\' alt=\'image\'></p>\n<p>If you want to team-up with smart and creative people of Seoul Tech\nSociety, stay for the second part of the event! There will be a\nbrainstorming session where we can put newly acquired knowledge to work\nand come up with an idea of an eHealth application together. </p>\n<p><strong>Agenda </strong></p>\n<p>4pm–5pm: eHealth trends by Dr. Ogan Gurel</p>\n<p>5pm–6pm: brainstorming and teamup for an eHealth application</p>\n<p><strong>About Dr. Gurel </strong></p>\n<p>Dr. Gurel is a Director in the MOT Research Center / CTO Office at the\nSamsung Advanced Institute of Technology (SAIT).  He also holds an\nacademic appointment as a Visiting Professor at the Samsung Advanced\nInstitute for Health Sciences and Technology (SAIHST) of SungKyunKwan\nUniversity.  Previously he was VP &amp; Medical Director at Sg2 and an\nAssociate at Booz, Allen &amp; Hamilton where he consulted for both large\nand small clients spanning the healthcare services, health insurance,\nbiopharma and medical device sectors.  </p>\n<p>His expertise covers the healthcare industry widely, including the\nclinical, business, executive management, marketing and R&amp;D, with direct\nexperience along several verticals: medical devices, mobile health,\nhealthcare IT, medical imaging, and pharmaceuticals. His scientific\nresearch focuses on structural biology, specifically protein\nelectrodynamics and terahertz medicine. </p>\n<p>His computer science interests included work on microprocessor software\ndevelopment systems, followed by robot programming systems work.</p>\n<p><strong>Venue</strong></p>\n<p><a href=\'http://www.idea-factory.kr/index_english.html\'>Idea\nFactory</a>: Gangnam-gu,\nYeoksam-dong, 825-22, B2F Milim tower annex, Gangnam station exit 1</p>\n<p><img src=\'https://31.media.tumblr.com/61b49d90294cdb5b2e0ed6a6349f5843/tumblr_inline_n2bqcs9ZEm1rjim2g.jpg\' alt=\'\'></p>\n'
-
-/***/ },
-/* 36 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'promotion-techtalk-networking-vol-2-platoon-feb-19\'>Promotion: TechTalk &amp; Networking vol.2 @Platoon, Feb 19</h1>\n<p><img src=\'https://31.media.tumblr.com/064ee0998c8f2807c9c7351e675e2919/tumblr_inline_n159hqxwmo1rjim2g.png\' alt=\'image\'></p>\n<p><strong>Agenda</strong></p>\n<p>7pm - 8pm   : get beer (FIFO) and mingle w/ techies</p>\n<p>8pm - 11pm : start of DrinkEntrepreneurs social networking event w/\ncollege startup societies, Seoul Tech Society and Israeli VCs.</p>\n<p>네트워크 파티 (대학 창업 모임인 Seoul Tech Society and Israeli VCs 함께\n참여)</p>\n'
-
-/***/ },
-/* 37 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'promotion-wellness-it-festival-at-center-seoul-july-10\'>Promotion: Wellness IT Festival @aT Center Seoul, July 10</h1>\n<p>Register here to <strong>view &amp; network</strong>: <a href=\'http://goo.gl/u9dHBl\'>http://goo.gl/u9dHBl</a></p>\n<p>Register here to <strong>exhibit</strong>: <a href=\'http://www.wita-festival.com/register\'>http://www.wita-festival.com/register</a>\n(<em>startups in Education, Culture, Social, Finance and Health areas</em>)</p>\n<p>Dear friends, we are glad to invite you to the Wellness IT Festival\norganized by our partner WiTA. </p>\n<p><img src=\'https://31.media.tumblr.com/01c6530579bf4765f81ada1a040cfd2a/tumblr_inline_n7rvukOEIA1rjim2g.png\' alt=\'\'></p>\n<p><strong>About</strong>: The Wellness IT Festival brings together experts,\nentrepreneurs, and attendees to a startup festival &amp; networking event\nand showcases the latest in wellness technology developed in South Korea\nand around the world.\\\n<a href=\'http://www.wita-festival.com/\'>http://www.wita-festival.com/</a></p>\n<p><strong>When</strong>: </p>\n<p>Festival (July 10):\\\nFREE admission for SeoulTech members and students.</p>\n<p>1st International Conference on Wellness IT &amp; Festival (July 9 - 10):\\\nIf you are interested in attending the full event, the ticket cost is\nW200,000 (50% discount will be provided to SeoulTech members).</p>\n<p><strong>Location</strong>: aT Center Seoul <a href=\'http://atcenter.at.or.kr/\'>http://atcenter.at.or.kr/</a></p>\n'
-
-/***/ },
-/* 38 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'seoul-hack-n-te-ll-night-2\'>Seoul Hack&#39;n&#39;Te­ll night #2</h1>\n<p>RSVP <a href=\'http://www.meetup.com/seoul-tech-society/events/165322992/\'>http://www.meetup.com/seoul-tech-society/events/165322992/</a></p>\n<p><img src=\'https://31.media.tumblr.com/2fb91347a648b9dd43c850357ca82ee9/tumblr_inline_n19kgnZeDA1rjim2g.jpg\' alt=\'image\'></p>\n<p><strong>List of speakers: </strong></p>\n<hr>\n<p>• <strong>How to fail a Samsung App Challenge</strong> </p>\n<p>  Reflects the experience of a team hacking of Galaxy Note to create a\nproductivity app based on convergence of S-Pen, Chord and 2nd-screen\nSDKs. </p>\n<p><a href=\'http://seoultechsociety.org/post/70173415237/seoul-tech-rises-to-samsung-challenge\'>seoultechsociety.org/post/70173415237/seoul-tech-rises-to-samsung-challenge</a></p>\n<p>• <strong>BigData: Audit Log Manager prototype</strong></p>\n<p>   Taming big data through distributed processing and interactive\nvisualisation using hadoop and d3.js</p>\n<p>• <strong>Zeppelin: open source data analysis environment </strong></p>\n<p>   Lee Moon Soo, CTO of NFLabs will tell us how he spent this autumn:\ndesigning and implementing of the large scale data analysis\nenvironment <a href=\'https://github.com/NFLabs/zeppelin\'>github.com/NFLabs/zeppelin</a></p>\n<p>• <strong>Starting up a company:  developing and running a mobile app service\n“Mango Plate”</strong></p>\n<p>Danny Ryu, founder of <a href=\'http://www.mangoplate.com/\'>www.mangoplate.com</a></p>\n<p>• <strong>Library design: from idea to construction</strong></p>\n<p>Gorka Blas, architect will guide us through an award winning project of\nbuilding a library. </p>\n<p>• <strong>Building RFID reader on Raspberry PI from scratch, in 8 hours</strong>  </p>\n<p>If you’ve ever visited <a href=\'http://news.ycombinator.com/\'>Hacker News</a>,\nyou’ve almost certainly seen the “Show HN” or “Ask HN” posts. Well, it’s\ntime to get off the Internet and tell us about it face to face. We’ll\nprovide you with our honest feedback, you provide us with a great hack,\nor idea.</p>\n<p>We’ll give you 5 minutes to show off your tool, hack, library (did you\njust write a library to access the Meetup API in Go!?), whatever. We’re\nlanguage and software/hardware agnostic, so it’s all fair game.</p>\n<p>Your project doesn’t have to be a software project. We’re using a very\nbroad definition of hacking. Anything customized or personalized counts.\nPlease don’t feel shy.</p>\n<p>After you present, it’s an open forum. The audience will ask questions\nand provide feedback. We want to enable as much participation as\npossible at these meetups, so you’d better be able to take criticism and\ndish it out (all within reason of course).</p>\n'
-
-/***/ },
-/* 39 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'seoul-tech-ver-1-0-art-party-platoon-kunsthalle\'>SEOUL TECH VER 1.0 + ART PARTY 파티 @Platoon Kunsthalle</h1>\n<p>RSVP <a href=\'http://www.meetup.com/seoul-tech-society/events/169162582/\'>http://www.meetup.com/seoul-tech-society/events/169162582/</a></p>\n<p><img src=\'https://31.media.tumblr.com/114e328c9efe945c77b443d0cb938b4d/tumblr_inline_n2zxahIc3J1rjim2g.jpg\' alt=\'image\'></p>\n<p>This networking party w/ SeoulTech and art exhibit offers the perfect\nopportunity to shake off winter and connect with others who love tech,\nart, and ideas. New and non-members are cordially invited!</p>\n<p>Seoul Tech Society 와 함께하는 네트워킹 파티 및 전시는 봄을 맞이해\n테크놀로지와 예술, 그리고 아이디어를 사랑하는 사람들과 함께할 기회를\n마련합니다. 새로운, 그리고 비회원들도 모두 환영합니다!</p>\n<p>The worlds of art and technology are coming together to celebrate Seoul\nTech Society’s first anniversary. On April 4, Platoon Kunsthalle will be\ntransformed by “Memories of the City,” a collaboration of 15 young\ncreatives from media art, design and architecture led by media\nartist Lucia Jeesun Lee with Spanish architect Gorka Blas. </p>\n<p>Seoul Tech Society의 첫번째 생일을 기념하며 예술과 테크놀로지의 세계를\n하나로 모았습니다.  \\\n2014년 4월 4일, 플래툰 쿤스트할레는 미디어 아티스트 Lucia 이지선과\n스페인 건축가 Gorka Blas 의 기획에 의해 미디어 아트, 건축, 디자인 등\n다양한 분야의 15명의 젋은 창작자들의 협업으로 이루어진 결과물들로 채워질\n예정입니다.</p>\n<p><strong>WHEN: FRIDAY, APRIL 4 @ 7PM </strong>\\\n  \\\n<strong>About Art Director Team </strong>\\\nLucia 이지선 is a media artist working between New York and Seoul,\ngraduate of Master’s program in Interactive Telecommunication at NYU.\nShe has exhibited in The 13th Seoul International New Media Festival and\n3LD Art and Technology Center(New York). She has taught at the Queens\nMuseum of Art, Stevens Institute of Technology and Hostos\nCommunity College of New York. </p>\n<p>미디어 아티스트. 뉴욕대 Interactive Telecommunication Program 석사과정\n이후 제 13회 서울 국제 뉴미디어 축제, 3LD Art &amp; Technology Center 등\n뉴욕과 서울에서 전시 및 Queens Museum of Art, Stevens Institute of\nTechnology and Hostos Community College of New York 에서 강사로 활동 \\\n<a href=\'http://smellsdreamy.com/\'>smellsdreamy.com</a> / <a href=\'http://facebook.com/luciajeesunlee\'>facebook.com/luciajeesunlee</a></p>\n<p>Gorka Blas is an architect, born in Spain. He has worked for several\narchitectural practices in Madrid and London, including Zaha Hadid\nArchitects and Crab Architects among others. In 2012, he won UIA\nInternational Architecture competition for Daegu Gosan library in Korea\nand in 2013 he was awarded a special mention in the European 12\ncompetition. He has taught and given lectures both in Italy and Korea.\nHis project for the Daegu Gosan library is currently in  \\\nconstruction.</p>\n<p>스페인 태생의 건축가. Zaha Hadid Architects 및 Crab Architects 등\n마드리드와 런던에서 실무경력. ‘동대문디자인플라자&amp;파크’ 프로젝트 참여.\n2012년 대구 고산 공공 도서관 국제 건축 공모전 우승 (현재 준공 진행중).\n2013년 유럽 12 공모전에서 특별 표창 수상. 이태리 및 한국에서 강의 \\\n<a href=\'http://www.gorkablas.com/\'>www.gorkablas.com</a> </p>\n'
-
-/***/ },
-/* 40 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = '<h1 id=\'the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp-may-24\'>The Rise of Cryptocurrencies: Bitcoin &amp; Beyond, @DCamp, May 24</h1>\n<p>Interested in Bitcoin or other cryptocurrencies?Ever wondered how to\ntrade or spend Bitcoin in Korea? Is Bitcoin the currency of the future\nor a flop?                             </p>\n<p>Come join us at our <strong>&quot;The Rise Of Cryptocurrencies: Bitcoin &amp;\nBeyond&quot;</strong> event at <a href=\'http://dcamp.kr/about_en\'>D-Camp</a> on Saturday, May\n24!</p>\n<p><a href=\'http://www.seoultechsociety.org/\'>Seoul Tech Society</a>, <a href=\'http://www.meetup.com/Seoul-Bitcoin-Meetup-%EC%84%9C%EC%9A%B8-%EB%B9%84%ED%8A%B8%EC%BD%94%EC%9D%B8-%EB%AA%A8%EC%9E%84/\'>Seoul Bitcoin\nMeetup</a>,\nand lead Korean Bitcoin\nstartups <a href=\'https://www.korbit.co.kr/\'>Korbit</a> and <a href=\'https://www.coinplug.com/home.do\'>Coinplug</a> will\ncome together to discuss past, present, and future of cryptocurrencies. </p>\n<p>Great people and thought-provoking discussions are guaranteed!</p>\n<p><img src=\'https://31.media.tumblr.com/3d967e30abbb9ed61ed8a81dbaf98f0d/tumblr_inline_n5lxh3ORxj1qz73mc.png\' alt=\'\'></p>\n<p> <strong>Agenda</strong></p>\n<p><strong>13:00 Reception </strong></p>\n<p><strong>13:15 Introduction to Bitcoin</strong> </p>\n<p><em>Ruben Somsen, Seoul Bitcoin Meetup</em></p>\n<p><strong>13:40 The non-monetary applications of Bitcoin</strong></p>\n<p><em>Jason Park, Korbit </em> </p>\n<p><strong>14:20 Bitcoin adoption worldwide and Coinplug in Korea</strong></p>\n<p><em>Evelyn Chung, Coinplug</em>   </p>\n<p><strong>14:50 Political and philosophical ideas behind the creation\nof cryptocurrency</strong></p>\n<p><em>Terry Jang</em> </p>\n<p><strong>Hands-on part: </strong></p>\n<p><strong>15:30 Sending Money Abroad to and from Korea</strong></p>\n<p><em>Chris Williams</em> </p>\n<p><strong>15:45 Bitcoin Wallets on iOS </strong></p>\n<p><em>Jong Hun Kim </em></p>\n<p><strong>16:00 Getting paid as a freelancer in Bitcoin</strong></p>\n<p><em>Ben McDonald </em></p>\n<p><strong>16:15 Alternatives to Bitcoin: Alt Coins</strong></p>\n<p>Jeff Paik, bitPremierS</p>\n<p><strong>17:00 ~</strong>  <strong>After party and networking event</strong> (details will be\nannounced later)</p>\n<p>——————————————————————————————————</p>\n<p><strong>Speakers</strong></p>\n<p><strong>Ruben Somsen </strong></p>\n<p>Ruben is a freelance translator that has lived in Korea for three years.\nHe is the organizer of the Seoul Bitcoin Meetup and knows a lot about\nthe technical side of Bitcoin.</p>\n<p><strong>Jason Park, Korbit </strong></p>\n<p>Korbit is South Korea’s first and largest Bitcoin exchange and wallet\ncompany.  </p>\n<p><strong>Evelyn Chung, Coinplug</strong> </p>\n<p>Evelyn is Chief Marketing Officer of Coinplug, a Seoul-based Bitcoin\nstartup. Coinplug provides a Bitcoin exchange and wallet services, and\npayment processor targeting Korean and Asian markets. </p>\n<p><strong>Terry Jang </strong></p>\n<p>Terry is the owner of an e-commerce consulting company.</p>\n<p><strong>Chris Williams</strong> </p>\n<p>Chris is an English teacher who has lived and worked in Seoul for the\npast 2 years. Before that he lived in the UAE for 2 years. He became\ninterested in bitcoin because it allows people to send any amount of\nmoney, anywhere in the world, instantly, and for free. </p>\n<p><strong>Jong Hun Kim</strong> </p>\n<p>Jong Hun is a korean Bitcoin user. He’s not a tech savvy guy, but is\nreally interested in the bitcoin ecosystem and is currently researching\nand developing a Bitcoin fund. </p>\n<p><strong>Ben McDonald</strong> </p>\n<p>Ben is a freelance web developer from New Zealand living in Seoul. Ask\nhim anything about Bitcoin and he will give you an answer (after first\nasking Ruben what the answer is).</p>\n<p><strong>Jeff Paik</strong></p>\n<p>Jeff Paik is a writer for bitPremierS and co-founder of cryptocurrency\nadvisory group Coinvest.</p>\n<p>——————————————————————————————————</p>\n<p>On Twitter?\nFollow <a href=\'https://twitter.com/FutureTenseNow\'>@Seoul_Tech</a> and\nuse #CryptoCurrency.</p>\n<p>FB? Follow us <a href=\'https://www.facebook.com/SeoulTechSociety\'>https://www.facebook.com/SeoulTechSociety</a></p>\n<p><strong>Participants:  </strong></p>\n<p><a href=\'http://www.meetup.com/Seoul-Bitcoin-Meetup-%EC%84%9C%EC%9A%B8-%EB%B9%84%ED%8A%B8%EC%BD%94%EC%9D%B8-%EB%AA%A8%EC%9E%84/\'>Seoul Bitcoin\nMeetup</a> </p>\n<p><a href=\'https://www.coinplug.com/home.do\'>Coinplug</a> </p>\n<p><a href=\'https://www.korbit.co.kr/\'>Korbit</a> </p>\n<p><a href=\'http://www.bitpremiers.com/\'>bitPremierS</a></p>\n'
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)(module), (function() { return this; }())))
 
 /***/ },
 /* 41 */
@@ -7885,7 +7896,7 @@
 
 	module.exports = React;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 42 */
@@ -7912,11 +7923,11 @@
 
 	"use strict";
 
-	var DOMProperty = __webpack_require__(63);
+	var DOMProperty = __webpack_require__(84);
 
-	var escapeTextForBrowser = __webpack_require__(64);
-	var memoizeStringOnly = __webpack_require__(65);
-	var warning = __webpack_require__(66);
+	var escapeTextForBrowser = __webpack_require__(87);
+	var memoizeStringOnly = __webpack_require__(120);
+	var warning = __webpack_require__(82);
 
 	function shouldIgnoreValue(name, value) {
 	  return value == null ||
@@ -8073,7 +8084,7 @@
 
 	module.exports = DOMPropertyOperations;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 43 */
@@ -8099,9 +8110,9 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(67);
+	var EventConstants = __webpack_require__(63);
 
-	var invariant = __webpack_require__(68);
+	var invariant = __webpack_require__(64);
 
 	/**
 	 * Injected dependencies:
@@ -8294,7 +8305,7 @@
 
 	module.exports = EventPluginUtils;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 44 */
@@ -8320,10 +8331,10 @@
 
 	"use strict";
 
-	var PooledClass = __webpack_require__(69);
+	var PooledClass = __webpack_require__(65);
 
-	var invariant = __webpack_require__(68);
-	var traverseAllChildren = __webpack_require__(70);
+	var invariant = __webpack_require__(64);
+	var traverseAllChildren = __webpack_require__(66);
 
 	var twoArgumentPooler = PooledClass.twoArgumentPooler;
 	var threeArgumentPooler = PooledClass.threeArgumentPooler;
@@ -8433,7 +8444,7 @@
 
 	module.exports = ReactChildren;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 45 */
@@ -8460,13 +8471,13 @@
 	"use strict";
 
 	var ReactCurrentOwner = __webpack_require__(48);
-	var ReactOwner = __webpack_require__(71);
-	var ReactUpdates = __webpack_require__(72);
+	var ReactOwner = __webpack_require__(67);
+	var ReactUpdates = __webpack_require__(68);
 
-	var invariant = __webpack_require__(68);
-	var keyMirror = __webpack_require__(73);
-	var merge = __webpack_require__(74);
-	var monitorCodeUse = __webpack_require__(75);
+	var invariant = __webpack_require__(64);
+	var keyMirror = __webpack_require__(69);
+	var merge = __webpack_require__(70);
+	var monitorCodeUse = __webpack_require__(71);
 
 	/**
 	 * Every React component is in one of these life cycles.
@@ -9035,7 +9046,7 @@
 
 	module.exports = ReactComponent;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 46 */
@@ -9064,23 +9075,23 @@
 	var ReactComponent = __webpack_require__(45);
 	var ReactContext = __webpack_require__(47);
 	var ReactCurrentOwner = __webpack_require__(48);
-	var ReactErrorUtils = __webpack_require__(76);
-	var ReactOwner = __webpack_require__(71);
+	var ReactErrorUtils = __webpack_require__(74);
+	var ReactOwner = __webpack_require__(67);
 	var ReactPerf = __webpack_require__(55);
-	var ReactPropTransferer = __webpack_require__(77);
-	var ReactPropTypeLocations = __webpack_require__(78);
-	var ReactPropTypeLocationNames = __webpack_require__(79);
-	var ReactUpdates = __webpack_require__(72);
+	var ReactPropTransferer = __webpack_require__(75);
+	var ReactPropTypeLocations = __webpack_require__(76);
+	var ReactPropTypeLocationNames = __webpack_require__(77);
+	var ReactUpdates = __webpack_require__(68);
 
-	var instantiateReactComponent = __webpack_require__(80);
-	var invariant = __webpack_require__(68);
-	var keyMirror = __webpack_require__(73);
-	var merge = __webpack_require__(74);
-	var mixInto = __webpack_require__(81);
-	var monitorCodeUse = __webpack_require__(75);
-	var objMap = __webpack_require__(82);
-	var shouldUpdateReactComponent = __webpack_require__(83);
-	var warning = __webpack_require__(66);
+	var instantiateReactComponent = __webpack_require__(78);
+	var invariant = __webpack_require__(64);
+	var keyMirror = __webpack_require__(69);
+	var merge = __webpack_require__(70);
+	var mixInto = __webpack_require__(79);
+	var monitorCodeUse = __webpack_require__(71);
+	var objMap = __webpack_require__(80);
+	var shouldUpdateReactComponent = __webpack_require__(81);
+	var warning = __webpack_require__(82);
 
 	/**
 	 * Policies that describe methods in `ReactCompositeComponentInterface`.
@@ -10629,7 +10640,7 @@
 
 	module.exports = ReactCompositeComponent;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 47 */
@@ -10655,7 +10666,7 @@
 
 	"use strict";
 
-	var merge = __webpack_require__(74);
+	var merge = __webpack_require__(70);
 
 	/**
 	 * Keeps track of the current context.
@@ -10776,8 +10787,8 @@
 
 	var ReactDOMComponent = __webpack_require__(50);
 
-	var mergeInto = __webpack_require__(84);
-	var objMapKeyVal = __webpack_require__(85);
+	var mergeInto = __webpack_require__(72);
+	var objMapKeyVal = __webpack_require__(73);
 
 	/**
 	 * Creates a new React class that is idempotent and capable of containing other
@@ -10987,21 +10998,21 @@
 
 	"use strict";
 
-	var CSSPropertyOperations = __webpack_require__(86);
-	var DOMProperty = __webpack_require__(63);
+	var CSSPropertyOperations = __webpack_require__(83);
+	var DOMProperty = __webpack_require__(84);
 	var DOMPropertyOperations = __webpack_require__(42);
-	var ReactBrowserComponentMixin = __webpack_require__(87);
+	var ReactBrowserComponentMixin = __webpack_require__(85);
 	var ReactComponent = __webpack_require__(45);
-	var ReactEventEmitter = __webpack_require__(88);
+	var ReactEventEmitter = __webpack_require__(86);
 	var ReactMount = __webpack_require__(53);
 	var ReactMultiChild = __webpack_require__(54);
 	var ReactPerf = __webpack_require__(55);
 
-	var escapeTextForBrowser = __webpack_require__(64);
-	var invariant = __webpack_require__(68);
-	var keyOf = __webpack_require__(89);
-	var merge = __webpack_require__(74);
-	var mixInto = __webpack_require__(81);
+	var escapeTextForBrowser = __webpack_require__(87);
+	var invariant = __webpack_require__(64);
+	var keyOf = __webpack_require__(88);
+	var merge = __webpack_require__(70);
+	var mixInto = __webpack_require__(79);
 
 	var deleteListener = ReactEventEmitter.deleteListener;
 	var listenTo = ReactEventEmitter.listenTo;
@@ -11383,7 +11394,7 @@
 
 	module.exports = ReactDOMComponent;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 51 */
@@ -11409,39 +11420,39 @@
 
 	"use strict";
 
-	var ReactInjection = __webpack_require__(90);
+	var ReactInjection = __webpack_require__(89);
 
 	var ExecutionEnvironment = __webpack_require__(60);
 
-	var DefaultDOMPropertyConfig = __webpack_require__(91);
+	var DefaultDOMPropertyConfig = __webpack_require__(90);
 
-	var ChangeEventPlugin = __webpack_require__(92);
-	var ClientReactRootIndex = __webpack_require__(93);
-	var CompositionEventPlugin = __webpack_require__(94);
-	var DefaultEventPluginOrder = __webpack_require__(95);
-	var EnterLeaveEventPlugin = __webpack_require__(96);
-	var MobileSafariClickEventPlugin = __webpack_require__(97);
-	var ReactBrowserComponentMixin = __webpack_require__(87);
+	var ChangeEventPlugin = __webpack_require__(91);
+	var ClientReactRootIndex = __webpack_require__(92);
+	var CompositionEventPlugin = __webpack_require__(93);
+	var DefaultEventPluginOrder = __webpack_require__(94);
+	var EnterLeaveEventPlugin = __webpack_require__(95);
+	var MobileSafariClickEventPlugin = __webpack_require__(96);
+	var ReactBrowserComponentMixin = __webpack_require__(85);
 	var ReactComponentBrowserEnvironment =
-	  __webpack_require__(98);
-	var ReactEventTopLevelCallback = __webpack_require__(99);
+	  __webpack_require__(97);
+	var ReactEventTopLevelCallback = __webpack_require__(98);
 	var ReactDOM = __webpack_require__(49);
-	var ReactDOMButton = __webpack_require__(100);
-	var ReactDOMForm = __webpack_require__(101);
-	var ReactDOMImg = __webpack_require__(102);
-	var ReactDOMInput = __webpack_require__(103);
-	var ReactDOMOption = __webpack_require__(104);
-	var ReactDOMSelect = __webpack_require__(105);
-	var ReactDOMTextarea = __webpack_require__(106);
+	var ReactDOMButton = __webpack_require__(99);
+	var ReactDOMForm = __webpack_require__(100);
+	var ReactDOMImg = __webpack_require__(101);
+	var ReactDOMInput = __webpack_require__(102);
+	var ReactDOMOption = __webpack_require__(103);
+	var ReactDOMSelect = __webpack_require__(104);
+	var ReactDOMTextarea = __webpack_require__(105);
 	var ReactInstanceHandles = __webpack_require__(52);
 	var ReactMount = __webpack_require__(53);
-	var SelectEventPlugin = __webpack_require__(107);
-	var ServerReactRootIndex = __webpack_require__(108);
-	var SimpleEventPlugin = __webpack_require__(109);
+	var SelectEventPlugin = __webpack_require__(106);
+	var ServerReactRootIndex = __webpack_require__(107);
+	var SimpleEventPlugin = __webpack_require__(108);
 
-	var ReactDefaultBatchingStrategy = __webpack_require__(110);
+	var ReactDefaultBatchingStrategy = __webpack_require__(109);
 
-	var createFullPageComponent = __webpack_require__(111);
+	var createFullPageComponent = __webpack_require__(110);
 
 	function inject() {
 	  ReactInjection.EventEmitter.injectTopLevelCallbackCreator(
@@ -11505,7 +11516,7 @@
 	  if ("production" !== process.env.NODE_ENV) {
 	    var url = (ExecutionEnvironment.canUseDOM && window.location.href) || '';
 	    if ((/[?&]react_perf\b/).test(url)) {
-	      var ReactDefaultPerf = __webpack_require__(112);
+	      var ReactDefaultPerf = __webpack_require__(111);
 	      ReactDefaultPerf.start();
 	    }
 	  }
@@ -11515,7 +11526,7 @@
 	  inject: inject
 	};
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 52 */
@@ -11542,9 +11553,9 @@
 
 	"use strict";
 
-	var ReactRootIndex = __webpack_require__(113);
+	var ReactRootIndex = __webpack_require__(112);
 
-	var invariant = __webpack_require__(68);
+	var invariant = __webpack_require__(64);
 
 	var SEPARATOR = '.';
 	var SEPARATOR_LENGTH = SEPARATOR.length;
@@ -11860,7 +11871,7 @@
 
 	module.exports = ReactInstanceHandles;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 53 */
@@ -11886,16 +11897,16 @@
 
 	"use strict";
 
-	var DOMProperty = __webpack_require__(63);
-	var ReactEventEmitter = __webpack_require__(88);
+	var DOMProperty = __webpack_require__(84);
+	var ReactEventEmitter = __webpack_require__(86);
 	var ReactInstanceHandles = __webpack_require__(52);
 	var ReactPerf = __webpack_require__(55);
 
-	var containsNode = __webpack_require__(114);
-	var getReactRootElementInContainer = __webpack_require__(115);
-	var instantiateReactComponent = __webpack_require__(80);
-	var invariant = __webpack_require__(68);
-	var shouldUpdateReactComponent = __webpack_require__(83);
+	var containsNode = __webpack_require__(113);
+	var getReactRootElementInContainer = __webpack_require__(114);
+	var instantiateReactComponent = __webpack_require__(78);
+	var invariant = __webpack_require__(64);
+	var shouldUpdateReactComponent = __webpack_require__(81);
 
 	var SEPARATOR = ReactInstanceHandles.SEPARATOR;
 
@@ -12516,7 +12527,7 @@
 
 	module.exports = ReactMount;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 54 */
@@ -12544,11 +12555,11 @@
 	"use strict";
 
 	var ReactComponent = __webpack_require__(45);
-	var ReactMultiChildUpdateTypes = __webpack_require__(116);
+	var ReactMultiChildUpdateTypes = __webpack_require__(115);
 
-	var flattenChildren = __webpack_require__(117);
-	var instantiateReactComponent = __webpack_require__(80);
-	var shouldUpdateReactComponent = __webpack_require__(83);
+	var flattenChildren = __webpack_require__(116);
+	var instantiateReactComponent = __webpack_require__(78);
+	var shouldUpdateReactComponent = __webpack_require__(81);
 
 	/**
 	 * Updating children of a component may trigger recursive updates. The depth is
@@ -13046,7 +13057,7 @@
 
 	module.exports = ReactPerf;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 56 */
@@ -13073,10 +13084,10 @@
 	"use strict";
 
 	var ReactComponent = __webpack_require__(45);
-	var ReactPropTypeLocationNames = __webpack_require__(79);
+	var ReactPropTypeLocationNames = __webpack_require__(77);
 
-	var warning = __webpack_require__(66);
-	var createObjectFrom = __webpack_require__(118);
+	var warning = __webpack_require__(82);
+	var createObjectFrom = __webpack_require__(119);
 
 	/**
 	 * Collection of methods that allow declaration and validation of props that are
@@ -13412,7 +13423,7 @@
 
 	module.exports = Props;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 57 */
@@ -13440,12 +13451,12 @@
 
 	var ReactComponent = __webpack_require__(45);
 	var ReactInstanceHandles = __webpack_require__(52);
-	var ReactMarkupChecksum = __webpack_require__(119);
+	var ReactMarkupChecksum = __webpack_require__(117);
 	var ReactServerRenderingTransaction =
-	  __webpack_require__(120);
+	  __webpack_require__(118);
 
-	var instantiateReactComponent = __webpack_require__(80);
-	var invariant = __webpack_require__(68);
+	var instantiateReactComponent = __webpack_require__(78);
+	var invariant = __webpack_require__(64);
 
 	/**
 	 * @param {ReactComponent} component
@@ -13508,7 +13519,7 @@
 	  renderComponentToStaticMarkup: renderComponentToStaticMarkup
 	};
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 58 */
@@ -13536,11 +13547,11 @@
 	"use strict";
 
 	var DOMPropertyOperations = __webpack_require__(42);
-	var ReactBrowserComponentMixin = __webpack_require__(87);
+	var ReactBrowserComponentMixin = __webpack_require__(85);
 	var ReactComponent = __webpack_require__(45);
 
-	var escapeTextForBrowser = __webpack_require__(64);
-	var mixInto = __webpack_require__(81);
+	var escapeTextForBrowser = __webpack_require__(87);
+	var mixInto = __webpack_require__(79);
 
 	/**
 	 * Text nodes violate a couple assumptions that React makes about components:
@@ -13662,7 +13673,7 @@
 
 	var ReactComponent = __webpack_require__(45);
 
-	var invariant = __webpack_require__(68);
+	var invariant = __webpack_require__(64);
 
 	/**
 	 * Returns the first child in a collection of children and verifies that there
@@ -13685,7 +13696,7 @@
 
 	module.exports = onlyChild;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 60 */
@@ -13739,22 +13750,6 @@
 
 /***/ },
 /* 61 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = function(module) {
-		if(!module.webpackPolyfill) {
-			module.deprecate = function() {};
-			module.paths = [];
-			// module.parent = undefined by default
-			module.children = [];
-			module.webpackPolyfill = 1;
-		}
-		return module;
-	}
-
-
-/***/ },
-/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// shim for using process in browser
@@ -13823,7 +13818,1740 @@
 
 
 /***/ },
+/* 62 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = function(module) {
+		if(!module.webpackPolyfill) {
+			module.deprecate = function() {};
+			module.paths = [];
+			// module.parent = undefined by default
+			module.children = [];
+			module.webpackPolyfill = 1;
+		}
+		return module;
+	}
+
+
+/***/ },
 /* 63 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule EventConstants
+	 */
+
+	"use strict";
+
+	var keyMirror = __webpack_require__(69);
+
+	var PropagationPhases = keyMirror({bubbled: null, captured: null});
+
+	/**
+	 * Types of raw signals from the browser caught at the top level.
+	 */
+	var topLevelTypes = keyMirror({
+	  topBlur: null,
+	  topChange: null,
+	  topClick: null,
+	  topCompositionEnd: null,
+	  topCompositionStart: null,
+	  topCompositionUpdate: null,
+	  topContextMenu: null,
+	  topCopy: null,
+	  topCut: null,
+	  topDoubleClick: null,
+	  topDrag: null,
+	  topDragEnd: null,
+	  topDragEnter: null,
+	  topDragExit: null,
+	  topDragLeave: null,
+	  topDragOver: null,
+	  topDragStart: null,
+	  topDrop: null,
+	  topError: null,
+	  topFocus: null,
+	  topInput: null,
+	  topKeyDown: null,
+	  topKeyPress: null,
+	  topKeyUp: null,
+	  topLoad: null,
+	  topMouseDown: null,
+	  topMouseMove: null,
+	  topMouseOut: null,
+	  topMouseOver: null,
+	  topMouseUp: null,
+	  topPaste: null,
+	  topReset: null,
+	  topScroll: null,
+	  topSelectionChange: null,
+	  topSubmit: null,
+	  topTouchCancel: null,
+	  topTouchEnd: null,
+	  topTouchMove: null,
+	  topTouchStart: null,
+	  topWheel: null
+	});
+
+	var EventConstants = {
+	  topLevelTypes: topLevelTypes,
+	  PropagationPhases: PropagationPhases
+	};
+
+	module.exports = EventConstants;
+
+
+/***/ },
+/* 64 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule invariant
+	 */
+
+	"use strict";
+
+	/**
+	 * Use invariant() to assert state which your program assumes to be true.
+	 *
+	 * Provide sprintf-style format (only %s is supported) and arguments
+	 * to provide information about what broke and what you were
+	 * expecting.
+	 *
+	 * The invariant message will be stripped in production, but the invariant
+	 * will remain to ensure logic does not differ in production.
+	 */
+
+	var invariant = function(condition) {
+	  if (!condition) {
+	    var error = new Error(
+	      'Minified exception occured; use the non-minified dev environment for ' +
+	      'the full error message and additional helpful warnings.'
+	    );
+	    error.framesToPop = 1;
+	    throw error;
+	  }
+	};
+
+	if ("production" !== process.env.NODE_ENV) {
+	  invariant = function(condition, format, a, b, c, d, e, f) {
+	    if (format === undefined) {
+	      throw new Error('invariant requires an error message argument');
+	    }
+
+	    if (!condition) {
+	      var args = [a, b, c, d, e, f];
+	      var argIndex = 0;
+	      var error = new Error(
+	        'Invariant Violation: ' +
+	        format.replace(/%s/g, function() { return args[argIndex++]; })
+	      );
+	      error.framesToPop = 1; // we don't care about invariant's own frame
+	      throw error;
+	    }
+	  };
+	}
+
+	module.exports = invariant;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+
+/***/ },
+/* 65 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule PooledClass
+	 */
+
+	"use strict";
+
+	var invariant = __webpack_require__(64);
+
+	/**
+	 * Static poolers. Several custom versions for each potential number of
+	 * arguments. A completely generic pooler is easy to implement, but would
+	 * require accessing the `arguments` object. In each of these, `this` refers to
+	 * the Class itself, not an instance. If any others are needed, simply add them
+	 * here, or in their own files.
+	 */
+	var oneArgumentPooler = function(copyFieldsFrom) {
+	  var Klass = this;
+	  if (Klass.instancePool.length) {
+	    var instance = Klass.instancePool.pop();
+	    Klass.call(instance, copyFieldsFrom);
+	    return instance;
+	  } else {
+	    return new Klass(copyFieldsFrom);
+	  }
+	};
+
+	var twoArgumentPooler = function(a1, a2) {
+	  var Klass = this;
+	  if (Klass.instancePool.length) {
+	    var instance = Klass.instancePool.pop();
+	    Klass.call(instance, a1, a2);
+	    return instance;
+	  } else {
+	    return new Klass(a1, a2);
+	  }
+	};
+
+	var threeArgumentPooler = function(a1, a2, a3) {
+	  var Klass = this;
+	  if (Klass.instancePool.length) {
+	    var instance = Klass.instancePool.pop();
+	    Klass.call(instance, a1, a2, a3);
+	    return instance;
+	  } else {
+	    return new Klass(a1, a2, a3);
+	  }
+	};
+
+	var fiveArgumentPooler = function(a1, a2, a3, a4, a5) {
+	  var Klass = this;
+	  if (Klass.instancePool.length) {
+	    var instance = Klass.instancePool.pop();
+	    Klass.call(instance, a1, a2, a3, a4, a5);
+	    return instance;
+	  } else {
+	    return new Klass(a1, a2, a3, a4, a5);
+	  }
+	};
+
+	var standardReleaser = function(instance) {
+	  var Klass = this;
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    instance instanceof Klass,
+	    'Trying to release an instance into a pool of a different type.'
+	  ) : invariant(instance instanceof Klass));
+	  if (instance.destructor) {
+	    instance.destructor();
+	  }
+	  if (Klass.instancePool.length < Klass.poolSize) {
+	    Klass.instancePool.push(instance);
+	  }
+	};
+
+	var DEFAULT_POOL_SIZE = 10;
+	var DEFAULT_POOLER = oneArgumentPooler;
+
+	/**
+	 * Augments `CopyConstructor` to be a poolable class, augmenting only the class
+	 * itself (statically) not adding any prototypical fields. Any CopyConstructor
+	 * you give this may have a `poolSize` property, and will look for a
+	 * prototypical `destructor` on instances (optional).
+	 *
+	 * @param {Function} CopyConstructor Constructor that can be used to reset.
+	 * @param {Function} pooler Customizable pooler.
+	 */
+	var addPoolingTo = function(CopyConstructor, pooler) {
+	  var NewKlass = CopyConstructor;
+	  NewKlass.instancePool = [];
+	  NewKlass.getPooled = pooler || DEFAULT_POOLER;
+	  if (!NewKlass.poolSize) {
+	    NewKlass.poolSize = DEFAULT_POOL_SIZE;
+	  }
+	  NewKlass.release = standardReleaser;
+	  return NewKlass;
+	};
+
+	var PooledClass = {
+	  addPoolingTo: addPoolingTo,
+	  oneArgumentPooler: oneArgumentPooler,
+	  twoArgumentPooler: twoArgumentPooler,
+	  threeArgumentPooler: threeArgumentPooler,
+	  fiveArgumentPooler: fiveArgumentPooler
+	};
+
+	module.exports = PooledClass;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+
+/***/ },
+/* 66 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule traverseAllChildren
+	 */
+
+	"use strict";
+
+	var ReactInstanceHandles = __webpack_require__(52);
+	var ReactTextComponent = __webpack_require__(58);
+
+	var invariant = __webpack_require__(64);
+
+	var SEPARATOR = ReactInstanceHandles.SEPARATOR;
+	var SUBSEPARATOR = ':';
+
+	/**
+	 * TODO: Test that:
+	 * 1. `mapChildren` transforms strings and numbers into `ReactTextComponent`.
+	 * 2. it('should fail when supplied duplicate key', function() {
+	 * 3. That a single child and an array with one item have the same key pattern.
+	 * });
+	 */
+
+	var userProvidedKeyEscaperLookup = {
+	  '=': '=0',
+	  '.': '=1',
+	  ':': '=2'
+	};
+
+	var userProvidedKeyEscapeRegex = /[=.:]/g;
+
+	function userProvidedKeyEscaper(match) {
+	  return userProvidedKeyEscaperLookup[match];
+	}
+
+	/**
+	 * Generate a key string that identifies a component within a set.
+	 *
+	 * @param {*} component A component that could contain a manual key.
+	 * @param {number} index Index that is used if a manual key is not provided.
+	 * @return {string}
+	 */
+	function getComponentKey(component, index) {
+	  if (component && component.props && component.props.key != null) {
+	    // Explicit key
+	    return wrapUserProvidedKey(component.props.key);
+	  }
+	  // Implicit key determined by the index in the set
+	  return index.toString(36);
+	}
+
+	/**
+	 * Escape a component key so that it is safe to use in a reactid.
+	 *
+	 * @param {*} key Component key to be escaped.
+	 * @return {string} An escaped string.
+	 */
+	function escapeUserProvidedKey(text) {
+	  return ('' + text).replace(
+	    userProvidedKeyEscapeRegex,
+	    userProvidedKeyEscaper
+	  );
+	}
+
+	/**
+	 * Wrap a `key` value explicitly provided by the user to distinguish it from
+	 * implicitly-generated keys generated by a component's index in its parent.
+	 *
+	 * @param {string} key Value of a user-provided `key` attribute
+	 * @return {string}
+	 */
+	function wrapUserProvidedKey(key) {
+	  return '$' + escapeUserProvidedKey(key);
+	}
+
+	/**
+	 * @param {?*} children Children tree container.
+	 * @param {!string} nameSoFar Name of the key path so far.
+	 * @param {!number} indexSoFar Number of children encountered until this point.
+	 * @param {!function} callback Callback to invoke with each child found.
+	 * @param {?*} traverseContext Used to pass information throughout the traversal
+	 * process.
+	 * @return {!number} The number of children in this subtree.
+	 */
+	var traverseAllChildrenImpl =
+	  function(children, nameSoFar, indexSoFar, callback, traverseContext) {
+	    var subtreeCount = 0;  // Count of children found in the current subtree.
+	    if (Array.isArray(children)) {
+	      for (var i = 0; i < children.length; i++) {
+	        var child = children[i];
+	        var nextName = (
+	          nameSoFar +
+	          (nameSoFar ? SUBSEPARATOR : SEPARATOR) +
+	          getComponentKey(child, i)
+	        );
+	        var nextIndex = indexSoFar + subtreeCount;
+	        subtreeCount += traverseAllChildrenImpl(
+	          child,
+	          nextName,
+	          nextIndex,
+	          callback,
+	          traverseContext
+	        );
+	      }
+	    } else {
+	      var type = typeof children;
+	      var isOnlyChild = nameSoFar === '';
+	      // If it's the only child, treat the name as if it was wrapped in an array
+	      // so that it's consistent if the number of children grows
+	      var storageName =
+	        isOnlyChild ? SEPARATOR + getComponentKey(children, 0) : nameSoFar;
+	      if (children == null || type === 'boolean') {
+	        // All of the above are perceived as null.
+	        callback(traverseContext, null, storageName, indexSoFar);
+	        subtreeCount = 1;
+	      } else if (children.type && children.type.prototype &&
+	                 children.type.prototype.mountComponentIntoNode) {
+	        callback(traverseContext, children, storageName, indexSoFar);
+	        subtreeCount = 1;
+	      } else {
+	        if (type === 'object') {
+	          ("production" !== process.env.NODE_ENV ? invariant(
+	            !children || children.nodeType !== 1,
+	            'traverseAllChildren(...): Encountered an invalid child; DOM ' +
+	            'elements are not valid children of React components.'
+	          ) : invariant(!children || children.nodeType !== 1));
+	          for (var key in children) {
+	            if (children.hasOwnProperty(key)) {
+	              subtreeCount += traverseAllChildrenImpl(
+	                children[key],
+	                (
+	                  nameSoFar + (nameSoFar ? SUBSEPARATOR : SEPARATOR) +
+	                  wrapUserProvidedKey(key) + SUBSEPARATOR +
+	                  getComponentKey(children[key], 0)
+	                ),
+	                indexSoFar + subtreeCount,
+	                callback,
+	                traverseContext
+	              );
+	            }
+	          }
+	        } else if (type === 'string') {
+	          var normalizedText = new ReactTextComponent(children);
+	          callback(traverseContext, normalizedText, storageName, indexSoFar);
+	          subtreeCount += 1;
+	        } else if (type === 'number') {
+	          var normalizedNumber = new ReactTextComponent('' + children);
+	          callback(traverseContext, normalizedNumber, storageName, indexSoFar);
+	          subtreeCount += 1;
+	        }
+	      }
+	    }
+	    return subtreeCount;
+	  };
+
+	/**
+	 * Traverses children that are typically specified as `props.children`, but
+	 * might also be specified through attributes:
+	 *
+	 * - `traverseAllChildren(this.props.children, ...)`
+	 * - `traverseAllChildren(this.props.leftPanelChildren, ...)`
+	 *
+	 * The `traverseContext` is an optional argument that is passed through the
+	 * entire traversal. It can be used to store accumulations or anything else that
+	 * the callback might find relevant.
+	 *
+	 * @param {?*} children Children tree object.
+	 * @param {!function} callback To invoke upon traversing each child.
+	 * @param {?*} traverseContext Context for traversal.
+	 */
+	function traverseAllChildren(children, callback, traverseContext) {
+	  if (children !== null && children !== undefined) {
+	    traverseAllChildrenImpl(children, '', 0, callback, traverseContext);
+	  }
+	}
+
+	module.exports = traverseAllChildren;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+
+/***/ },
+/* 67 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule ReactOwner
+	 */
+
+	"use strict";
+
+	var emptyObject = __webpack_require__(121);
+	var invariant = __webpack_require__(64);
+
+	/**
+	 * ReactOwners are capable of storing references to owned components.
+	 *
+	 * All components are capable of //being// referenced by owner components, but
+	 * only ReactOwner components are capable of //referencing// owned components.
+	 * The named reference is known as a "ref".
+	 *
+	 * Refs are available when mounted and updated during reconciliation.
+	 *
+	 *   var MyComponent = React.createClass({
+	 *     render: function() {
+	 *       return (
+	 *         <div onClick={this.handleClick}>
+	 *           <CustomComponent ref="custom" />
+	 *         </div>
+	 *       );
+	 *     },
+	 *     handleClick: function() {
+	 *       this.refs.custom.handleClick();
+	 *     },
+	 *     componentDidMount: function() {
+	 *       this.refs.custom.initialize();
+	 *     }
+	 *   });
+	 *
+	 * Refs should rarely be used. When refs are used, they should only be done to
+	 * control data that is not handled by React's data flow.
+	 *
+	 * @class ReactOwner
+	 */
+	var ReactOwner = {
+
+	  /**
+	   * @param {?object} object
+	   * @return {boolean} True if `object` is a valid owner.
+	   * @final
+	   */
+	  isValidOwner: function(object) {
+	    return !!(
+	      object &&
+	      typeof object.attachRef === 'function' &&
+	      typeof object.detachRef === 'function'
+	    );
+	  },
+
+	  /**
+	   * Adds a component by ref to an owner component.
+	   *
+	   * @param {ReactComponent} component Component to reference.
+	   * @param {string} ref Name by which to refer to the component.
+	   * @param {ReactOwner} owner Component on which to record the ref.
+	   * @final
+	   * @internal
+	   */
+	  addComponentAsRefTo: function(component, ref, owner) {
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      ReactOwner.isValidOwner(owner),
+	      'addComponentAsRefTo(...): Only a ReactOwner can have refs. This ' +
+	      'usually means that you\'re trying to add a ref to a component that ' +
+	      'doesn\'t have an owner (that is, was not created inside of another ' +
+	      'component\'s `render` method). Try rendering this component inside of ' +
+	      'a new top-level component which will hold the ref.'
+	    ) : invariant(ReactOwner.isValidOwner(owner)));
+	    owner.attachRef(ref, component);
+	  },
+
+	  /**
+	   * Removes a component by ref from an owner component.
+	   *
+	   * @param {ReactComponent} component Component to dereference.
+	   * @param {string} ref Name of the ref to remove.
+	   * @param {ReactOwner} owner Component on which the ref is recorded.
+	   * @final
+	   * @internal
+	   */
+	  removeComponentAsRefFrom: function(component, ref, owner) {
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      ReactOwner.isValidOwner(owner),
+	      'removeComponentAsRefFrom(...): Only a ReactOwner can have refs. This ' +
+	      'usually means that you\'re trying to remove a ref to a component that ' +
+	      'doesn\'t have an owner (that is, was not created inside of another ' +
+	      'component\'s `render` method). Try rendering this component inside of ' +
+	      'a new top-level component which will hold the ref.'
+	    ) : invariant(ReactOwner.isValidOwner(owner)));
+	    // Check that `component` is still the current ref because we do not want to
+	    // detach the ref if another component stole it.
+	    if (owner.refs[ref] === component) {
+	      owner.detachRef(ref);
+	    }
+	  },
+
+	  /**
+	   * A ReactComponent must mix this in to have refs.
+	   *
+	   * @lends {ReactOwner.prototype}
+	   */
+	  Mixin: {
+
+	    construct: function() {
+	      this.refs = emptyObject;
+	    },
+
+	    /**
+	     * Lazily allocates the refs object and stores `component` as `ref`.
+	     *
+	     * @param {string} ref Reference name.
+	     * @param {component} component Component to store as `ref`.
+	     * @final
+	     * @private
+	     */
+	    attachRef: function(ref, component) {
+	      ("production" !== process.env.NODE_ENV ? invariant(
+	        component.isOwnedBy(this),
+	        'attachRef(%s, ...): Only a component\'s owner can store a ref to it.',
+	        ref
+	      ) : invariant(component.isOwnedBy(this)));
+	      var refs = this.refs === emptyObject ? (this.refs = {}) : this.refs;
+	      refs[ref] = component;
+	    },
+
+	    /**
+	     * Detaches a reference name.
+	     *
+	     * @param {string} ref Name to dereference.
+	     * @final
+	     * @private
+	     */
+	    detachRef: function(ref) {
+	      delete this.refs[ref];
+	    }
+
+	  }
+
+	};
+
+	module.exports = ReactOwner;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+
+/***/ },
+/* 68 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule ReactUpdates
+	 */
+
+	"use strict";
+
+	var ReactPerf = __webpack_require__(55);
+
+	var invariant = __webpack_require__(64);
+
+	var dirtyComponents = [];
+
+	var batchingStrategy = null;
+
+	function ensureBatchingStrategy() {
+	  ("production" !== process.env.NODE_ENV ? invariant(batchingStrategy, 'ReactUpdates: must inject a batching strategy') : invariant(batchingStrategy));
+	}
+
+	function batchedUpdates(callback, param) {
+	  ensureBatchingStrategy();
+	  batchingStrategy.batchedUpdates(callback, param);
+	}
+
+	/**
+	 * Array comparator for ReactComponents by owner depth
+	 *
+	 * @param {ReactComponent} c1 first component you're comparing
+	 * @param {ReactComponent} c2 second component you're comparing
+	 * @return {number} Return value usable by Array.prototype.sort().
+	 */
+	function mountDepthComparator(c1, c2) {
+	  return c1._mountDepth - c2._mountDepth;
+	}
+
+	function runBatchedUpdates() {
+	  // Since reconciling a component higher in the owner hierarchy usually (not
+	  // always -- see shouldComponentUpdate()) will reconcile children, reconcile
+	  // them before their children by sorting the array.
+
+	  dirtyComponents.sort(mountDepthComparator);
+
+	  for (var i = 0; i < dirtyComponents.length; i++) {
+	    // If a component is unmounted before pending changes apply, ignore them
+	    // TODO: Queue unmounts in the same list to avoid this happening at all
+	    var component = dirtyComponents[i];
+	    if (component.isMounted()) {
+	      // If performUpdateIfNecessary happens to enqueue any new updates, we
+	      // shouldn't execute the callbacks until the next render happens, so
+	      // stash the callbacks first
+	      var callbacks = component._pendingCallbacks;
+	      component._pendingCallbacks = null;
+	      component.performUpdateIfNecessary();
+	      if (callbacks) {
+	        for (var j = 0; j < callbacks.length; j++) {
+	          callbacks[j].call(component);
+	        }
+	      }
+	    }
+	  }
+	}
+
+	function clearDirtyComponents() {
+	  dirtyComponents.length = 0;
+	}
+
+	var flushBatchedUpdates = ReactPerf.measure(
+	  'ReactUpdates',
+	  'flushBatchedUpdates',
+	  function() {
+	    // Run these in separate functions so the JIT can optimize
+	    try {
+	      runBatchedUpdates();
+	    } finally {
+	      clearDirtyComponents();
+	    }
+	  }
+	);
+
+	/**
+	 * Mark a component as needing a rerender, adding an optional callback to a
+	 * list of functions which will be executed once the rerender occurs.
+	 */
+	function enqueueUpdate(component, callback) {
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    !callback || typeof callback === "function",
+	    'enqueueUpdate(...): You called `setProps`, `replaceProps`, ' +
+	    '`setState`, `replaceState`, or `forceUpdate` with a callback that ' +
+	    'isn\'t callable.'
+	  ) : invariant(!callback || typeof callback === "function"));
+	  ensureBatchingStrategy();
+
+	  if (!batchingStrategy.isBatchingUpdates) {
+	    component.performUpdateIfNecessary();
+	    callback && callback.call(component);
+	    return;
+	  }
+
+	  dirtyComponents.push(component);
+
+	  if (callback) {
+	    if (component._pendingCallbacks) {
+	      component._pendingCallbacks.push(callback);
+	    } else {
+	      component._pendingCallbacks = [callback];
+	    }
+	  }
+	}
+
+	var ReactUpdatesInjection = {
+	  injectBatchingStrategy: function(_batchingStrategy) {
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      _batchingStrategy,
+	      'ReactUpdates: must provide a batching strategy'
+	    ) : invariant(_batchingStrategy));
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      typeof _batchingStrategy.batchedUpdates === 'function',
+	      'ReactUpdates: must provide a batchedUpdates() function'
+	    ) : invariant(typeof _batchingStrategy.batchedUpdates === 'function'));
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      typeof _batchingStrategy.isBatchingUpdates === 'boolean',
+	      'ReactUpdates: must provide an isBatchingUpdates boolean attribute'
+	    ) : invariant(typeof _batchingStrategy.isBatchingUpdates === 'boolean'));
+	    batchingStrategy = _batchingStrategy;
+	  }
+	};
+
+	var ReactUpdates = {
+	  batchedUpdates: batchedUpdates,
+	  enqueueUpdate: enqueueUpdate,
+	  flushBatchedUpdates: flushBatchedUpdates,
+	  injection: ReactUpdatesInjection
+	};
+
+	module.exports = ReactUpdates;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+
+/***/ },
+/* 69 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule keyMirror
+	 * @typechecks static-only
+	 */
+
+	"use strict";
+
+	var invariant = __webpack_require__(64);
+
+	/**
+	 * Constructs an enumeration with keys equal to their value.
+	 *
+	 * For example:
+	 *
+	 *   var COLORS = keyMirror({blue: null, red: null});
+	 *   var myColor = COLORS.blue;
+	 *   var isColorValid = !!COLORS[myColor];
+	 *
+	 * The last line could not be performed if the values of the generated enum were
+	 * not equal to their keys.
+	 *
+	 *   Input:  {key1: val1, key2: val2}
+	 *   Output: {key1: key1, key2: key2}
+	 *
+	 * @param {object} obj
+	 * @return {object}
+	 */
+	var keyMirror = function(obj) {
+	  var ret = {};
+	  var key;
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    obj instanceof Object && !Array.isArray(obj),
+	    'keyMirror(...): Argument must be an object.'
+	  ) : invariant(obj instanceof Object && !Array.isArray(obj)));
+	  for (key in obj) {
+	    if (!obj.hasOwnProperty(key)) {
+	      continue;
+	    }
+	    ret[key] = key;
+	  }
+	  return ret;
+	};
+
+	module.exports = keyMirror;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+
+/***/ },
+/* 70 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule merge
+	 */
+
+	"use strict";
+
+	var mergeInto = __webpack_require__(72);
+
+	/**
+	 * Shallow merges two structures into a return value, without mutating either.
+	 *
+	 * @param {?object} one Optional object with properties to merge from.
+	 * @param {?object} two Optional object with properties to merge from.
+	 * @return {object} The shallow extension of one by two.
+	 */
+	var merge = function(one, two) {
+	  var result = {};
+	  mergeInto(result, one);
+	  mergeInto(result, two);
+	  return result;
+	};
+
+	module.exports = merge;
+
+
+/***/ },
+/* 71 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule monitorCodeUse
+	 */
+
+	"use strict";
+
+	var invariant = __webpack_require__(64);
+
+	/**
+	 * Provides open-source compatible instrumentation for monitoring certain API
+	 * uses before we're ready to issue a warning or refactor. It accepts an event
+	 * name which may only contain the characters [a-z0-9_] and an optional data
+	 * object with further information.
+	 */
+
+	function monitorCodeUse(eventName, data) {
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    eventName && !/[^a-z0-9_]/.test(eventName),
+	    'You must provide an eventName using only the characters [a-z0-9_]'
+	  ) : invariant(eventName && !/[^a-z0-9_]/.test(eventName)));
+	}
+
+	module.exports = monitorCodeUse;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+
+/***/ },
+/* 72 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule mergeInto
+	 * @typechecks static-only
+	 */
+
+	"use strict";
+
+	var mergeHelpers = __webpack_require__(122);
+
+	var checkMergeObjectArg = mergeHelpers.checkMergeObjectArg;
+
+	/**
+	 * Shallow merges two structures by mutating the first parameter.
+	 *
+	 * @param {object} one Object to be merged into.
+	 * @param {?object} two Optional object with properties to merge from.
+	 */
+	function mergeInto(one, two) {
+	  checkMergeObjectArg(one);
+	  if (two != null) {
+	    checkMergeObjectArg(two);
+	    for (var key in two) {
+	      if (!two.hasOwnProperty(key)) {
+	        continue;
+	      }
+	      one[key] = two[key];
+	    }
+	  }
+	}
+
+	module.exports = mergeInto;
+
+
+/***/ },
+/* 73 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule objMapKeyVal
+	 */
+
+	"use strict";
+
+	/**
+	 * Behaves the same as `objMap` but invokes func with the key first, and value
+	 * second. Use `objMap` unless you need this special case.
+	 * Invokes func as:
+	 *
+	 *   func(key, value, iteration)
+	 *
+	 * @param {?object} obj Object to map keys over
+	 * @param {!function} func Invoked for each key/val pair.
+	 * @param {?*} context
+	 * @return {?object} Result of mapping or null if obj is falsey
+	 */
+	function objMapKeyVal(obj, func, context) {
+	  if (!obj) {
+	    return null;
+	  }
+	  var i = 0;
+	  var ret = {};
+	  for (var key in obj) {
+	    if (obj.hasOwnProperty(key)) {
+	      ret[key] = func.call(context, key, obj[key], i++);
+	    }
+	  }
+	  return ret;
+	}
+
+	module.exports = objMapKeyVal;
+
+
+/***/ },
+/* 74 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule ReactErrorUtils
+	 * @typechecks
+	 */
+
+	"use strict";
+
+	var ReactErrorUtils = {
+	  /**
+	   * Creates a guarded version of a function. This is supposed to make debugging
+	   * of event handlers easier. To aid debugging with the browser's debugger,
+	   * this currently simply returns the original function.
+	   *
+	   * @param {function} func Function to be executed
+	   * @param {string} name The name of the guard
+	   * @return {function}
+	   */
+	  guard: function(func, name) {
+	    return func;
+	  }
+	};
+
+	module.exports = ReactErrorUtils;
+
+
+/***/ },
+/* 75 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule ReactPropTransferer
+	 */
+
+	"use strict";
+
+	var emptyFunction = __webpack_require__(123);
+	var invariant = __webpack_require__(64);
+	var joinClasses = __webpack_require__(124);
+	var merge = __webpack_require__(70);
+
+	/**
+	 * Creates a transfer strategy that will merge prop values using the supplied
+	 * `mergeStrategy`. If a prop was previously unset, this just sets it.
+	 *
+	 * @param {function} mergeStrategy
+	 * @return {function}
+	 */
+	function createTransferStrategy(mergeStrategy) {
+	  return function(props, key, value) {
+	    if (!props.hasOwnProperty(key)) {
+	      props[key] = value;
+	    } else {
+	      props[key] = mergeStrategy(props[key], value);
+	    }
+	  };
+	}
+
+	/**
+	 * Transfer strategies dictate how props are transferred by `transferPropsTo`.
+	 * NOTE: if you add any more exceptions to this list you should be sure to
+	 * update `cloneWithProps()` accordingly.
+	 */
+	var TransferStrategies = {
+	  /**
+	   * Never transfer `children`.
+	   */
+	  children: emptyFunction,
+	  /**
+	   * Transfer the `className` prop by merging them.
+	   */
+	  className: createTransferStrategy(joinClasses),
+	  /**
+	   * Never transfer the `key` prop.
+	   */
+	  key: emptyFunction,
+	  /**
+	   * Never transfer the `ref` prop.
+	   */
+	  ref: emptyFunction,
+	  /**
+	   * Transfer the `style` prop (which is an object) by merging them.
+	   */
+	  style: createTransferStrategy(merge)
+	};
+
+	/**
+	 * ReactPropTransferer are capable of transferring props to another component
+	 * using a `transferPropsTo` method.
+	 *
+	 * @class ReactPropTransferer
+	 */
+	var ReactPropTransferer = {
+
+	  TransferStrategies: TransferStrategies,
+
+	  /**
+	   * Merge two props objects using TransferStrategies.
+	   *
+	   * @param {object} oldProps original props (they take precedence)
+	   * @param {object} newProps new props to merge in
+	   * @return {object} a new object containing both sets of props merged.
+	   */
+	  mergeProps: function(oldProps, newProps) {
+	    var props = merge(oldProps);
+
+	    for (var thisKey in newProps) {
+	      if (!newProps.hasOwnProperty(thisKey)) {
+	        continue;
+	      }
+
+	      var transferStrategy = TransferStrategies[thisKey];
+
+	      if (transferStrategy && TransferStrategies.hasOwnProperty(thisKey)) {
+	        transferStrategy(props, thisKey, newProps[thisKey]);
+	      } else if (!props.hasOwnProperty(thisKey)) {
+	        props[thisKey] = newProps[thisKey];
+	      }
+	    }
+
+	    return props;
+	  },
+
+	  /**
+	   * @lends {ReactPropTransferer.prototype}
+	   */
+	  Mixin: {
+
+	    /**
+	     * Transfer props from this component to a target component.
+	     *
+	     * Props that do not have an explicit transfer strategy will be transferred
+	     * only if the target component does not already have the prop set.
+	     *
+	     * This is usually used to pass down props to a returned root component.
+	     *
+	     * @param {ReactComponent} component Component receiving the properties.
+	     * @return {ReactComponent} The supplied `component`.
+	     * @final
+	     * @protected
+	     */
+	    transferPropsTo: function(component) {
+	      ("production" !== process.env.NODE_ENV ? invariant(
+	        component._owner === this,
+	        '%s: You can\'t call transferPropsTo() on a component that you ' +
+	        'don\'t own, %s. This usually means you are calling ' +
+	        'transferPropsTo() on a component passed in as props or children.',
+	        this.constructor.displayName,
+	        component.constructor.displayName
+	      ) : invariant(component._owner === this));
+
+	      component.props = ReactPropTransferer.mergeProps(
+	        component.props,
+	        this.props
+	      );
+
+	      return component;
+	    }
+
+	  }
+	};
+
+	module.exports = ReactPropTransferer;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+
+/***/ },
+/* 76 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule ReactPropTypeLocations
+	 */
+
+	"use strict";
+
+	var keyMirror = __webpack_require__(69);
+
+	var ReactPropTypeLocations = keyMirror({
+	  prop: null,
+	  context: null,
+	  childContext: null
+	});
+
+	module.exports = ReactPropTypeLocations;
+
+
+/***/ },
+/* 77 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule ReactPropTypeLocationNames
+	 */
+
+	"use strict";
+
+	var ReactPropTypeLocationNames = {};
+
+	if ("production" !== process.env.NODE_ENV) {
+	  ReactPropTypeLocationNames = {
+	    prop: 'prop',
+	    context: 'context',
+	    childContext: 'child context'
+	  };
+	}
+
+	module.exports = ReactPropTypeLocationNames;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+
+/***/ },
+/* 78 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule instantiateReactComponent
+	 * @typechecks static-only
+	 */
+
+	"use strict";
+
+	var warning = __webpack_require__(82);
+
+	/**
+	 * Validate a `componentDescriptor`. This should be exposed publicly in a follow
+	 * up diff.
+	 *
+	 * @param {object} descriptor
+	 * @return {boolean} Returns true if this is a valid descriptor of a Component.
+	 */
+	function isValidComponentDescriptor(descriptor) {
+	  return (
+	    typeof descriptor.constructor === 'function' &&
+	    typeof descriptor.constructor.prototype.construct === 'function' &&
+	    typeof descriptor.constructor.prototype.mountComponent === 'function' &&
+	    typeof descriptor.constructor.prototype.receiveComponent === 'function'
+	  );
+	}
+
+	/**
+	 * Given a `componentDescriptor` create an instance that will actually be
+	 * mounted. Currently it just extracts an existing clone from composite
+	 * components but this is an implementation detail which will change.
+	 *
+	 * @param {object} descriptor
+	 * @return {object} A new instance of componentDescriptor's constructor.
+	 * @protected
+	 */
+	function instantiateReactComponent(descriptor) {
+	  if ("production" !== process.env.NODE_ENV) {
+	    ("production" !== process.env.NODE_ENV ? warning(
+	      isValidComponentDescriptor(descriptor),
+	      'Only React Components are valid for mounting.'
+	    ) : null);
+	    // We use the clone of a composite component instead of the original
+	    // instance. This allows us to warn you if you're are accessing the wrong
+	    // instance.
+	    var instance = descriptor.__realComponentInstance || descriptor;
+	    instance._descriptor = descriptor;
+	    return instance;
+	  }
+	  // In prod we don't clone, we simply use the same instance for unaffected
+	  // behavior. We have to keep the descriptor around for comparison later on.
+	  // This should ideally be accepted in the constructor of the instance but
+	  // since that is currently overloaded, we just manually attach it here.
+	  descriptor._descriptor = descriptor;
+	  return descriptor;
+	}
+
+	module.exports = instantiateReactComponent;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+
+/***/ },
+/* 79 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule mixInto
+	 */
+
+	"use strict";
+
+	/**
+	 * Simply copies properties to the prototype.
+	 */
+	var mixInto = function(constructor, methodBag) {
+	  var methodName;
+	  for (methodName in methodBag) {
+	    if (!methodBag.hasOwnProperty(methodName)) {
+	      continue;
+	    }
+	    constructor.prototype[methodName] = methodBag[methodName];
+	  }
+	};
+
+	module.exports = mixInto;
+
+
+/***/ },
+/* 80 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule objMap
+	 */
+
+	"use strict";
+
+	/**
+	 * For each key/value pair, invokes callback func and constructs a resulting
+	 * object which contains, for every key in obj, values that are the result of
+	 * of invoking the function:
+	 *
+	 *   func(value, key, iteration)
+	 *
+	 * @param {?object} obj Object to map keys over
+	 * @param {function} func Invoked for each key/val pair.
+	 * @param {?*} context
+	 * @return {?object} Result of mapping or null if obj is falsey
+	 */
+	function objMap(obj, func, context) {
+	  if (!obj) {
+	    return null;
+	  }
+	  var i = 0;
+	  var ret = {};
+	  for (var key in obj) {
+	    if (obj.hasOwnProperty(key)) {
+	      ret[key] = func.call(context, obj[key], key, i++);
+	    }
+	  }
+	  return ret;
+	}
+
+	module.exports = objMap;
+
+
+/***/ },
+/* 81 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule shouldUpdateReactComponent
+	 * @typechecks static-only
+	 */
+
+	"use strict";
+
+	/**
+	 * Given a `prevComponentInstance` and `nextComponent`, determines if
+	 * `prevComponentInstance` should be updated as opposed to being destroyed or
+	 * replaced by a new instance. The second argument is a descriptor. Future
+	 * versions of the reconciler should only compare descriptors to other
+	 * descriptors.
+	 *
+	 * @param {?object} prevComponentInstance
+	 * @param {?object} nextDescriptor
+	 * @return {boolean} True if `prevComponentInstance` should be updated.
+	 * @protected
+	 */
+	function shouldUpdateReactComponent(prevComponentInstance, nextDescriptor) {
+	  // TODO: Remove warning after a release.
+	  if (prevComponentInstance && nextDescriptor &&
+	      prevComponentInstance.constructor === nextDescriptor.constructor && (
+	        (prevComponentInstance.props && prevComponentInstance.props.key) ===
+	        (nextDescriptor.props && nextDescriptor.props.key)
+	      )) {
+	    if (prevComponentInstance._owner === nextDescriptor._owner) {
+	      return true;
+	    } else {
+	      if ("production" !== process.env.NODE_ENV) {
+	        if (prevComponentInstance.state) {
+	          console.warn(
+	            'A recent change to React has been found to impact your code. ' +
+	            'A mounted component will now be unmounted and replaced by a ' +
+	            'component (of the same class) if their owners are different. ' +
+	            'Previously, ownership was not considered when updating.',
+	            prevComponentInstance,
+	            nextDescriptor
+	          );
+	        }
+	      }
+	    }
+	  }
+	  return false;
+	}
+
+	module.exports = shouldUpdateReactComponent;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+
+/***/ },
+/* 82 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule warning
+	 */
+
+	"use strict";
+
+	var emptyFunction = __webpack_require__(123);
+
+	/**
+	 * Similar to invariant but only logs a warning if the condition is not met.
+	 * This can be used to log issues in development environments in critical
+	 * paths. Removing the logging code for production environments will keep the
+	 * same logic and follow the same code paths.
+	 */
+
+	var warning = emptyFunction;
+
+	if ("production" !== process.env.NODE_ENV) {
+	  warning = function(condition, format ) {var args=Array.prototype.slice.call(arguments,2);
+	    if (format === undefined) {
+	      throw new Error(
+	        '`warning(condition, format, ...args)` requires a warning ' +
+	        'message argument'
+	      );
+	    }
+
+	    if (!condition) {
+	      var argIndex = 0;
+	      console.warn('Warning: ' + format.replace(/%s/g, function()  {return args[argIndex++];}));
+	    }
+	  };
+	}
+
+	module.exports = warning;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+
+/***/ },
+/* 83 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule CSSPropertyOperations
+	 * @typechecks static-only
+	 */
+
+	"use strict";
+
+	var CSSProperty = __webpack_require__(125);
+
+	var dangerousStyleValue = __webpack_require__(126);
+	var escapeTextForBrowser = __webpack_require__(87);
+	var hyphenate = __webpack_require__(127);
+	var memoizeStringOnly = __webpack_require__(120);
+
+	var processStyleName = memoizeStringOnly(function(styleName) {
+	  return escapeTextForBrowser(hyphenate(styleName));
+	});
+
+	/**
+	 * Operations for dealing with CSS properties.
+	 */
+	var CSSPropertyOperations = {
+
+	  /**
+	   * Serializes a mapping of style properties for use as inline styles:
+	   *
+	   *   > createMarkupForStyles({width: '200px', height: 0})
+	   *   "width:200px;height:0;"
+	   *
+	   * Undefined values are ignored so that declarative programming is easier.
+	   *
+	   * @param {object} styles
+	   * @return {?string}
+	   */
+	  createMarkupForStyles: function(styles) {
+	    var serialized = '';
+	    for (var styleName in styles) {
+	      if (!styles.hasOwnProperty(styleName)) {
+	        continue;
+	      }
+	      var styleValue = styles[styleName];
+	      if (styleValue != null) {
+	        serialized += processStyleName(styleName) + ':';
+	        serialized += dangerousStyleValue(styleName, styleValue) + ';';
+	      }
+	    }
+	    return serialized || null;
+	  },
+
+	  /**
+	   * Sets the value for multiple styles on a node.  If a value is specified as
+	   * '' (empty string), the corresponding style property will be unset.
+	   *
+	   * @param {DOMElement} node
+	   * @param {object} styles
+	   */
+	  setValueForStyles: function(node, styles) {
+	    var style = node.style;
+	    for (var styleName in styles) {
+	      if (!styles.hasOwnProperty(styleName)) {
+	        continue;
+	      }
+	      var styleValue = dangerousStyleValue(styleName, styles[styleName]);
+	      if (styleValue) {
+	        style[styleName] = styleValue;
+	      } else {
+	        var expansion = CSSProperty.shorthandPropertyExpansions[styleName];
+	        if (expansion) {
+	          // Shorthand property that IE8 won't like unsetting, so unset each
+	          // component to placate it
+	          for (var individualStyleName in expansion) {
+	            style[individualStyleName] = '';
+	          }
+	        } else {
+	          style[styleName] = '';
+	        }
+	      }
+	    }
+	  }
+
+	};
+
+	module.exports = CSSPropertyOperations;
+
+
+/***/ },
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -13849,7 +15577,7 @@
 
 	"use strict";
 
-	var invariant = __webpack_require__(68);
+	var invariant = __webpack_require__(64);
 
 	var DOMPropertyInjection = {
 	  /**
@@ -14097,1825 +15825,10 @@
 
 	module.exports = DOMProperty;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
-
-/***/ },
-/* 64 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule escapeTextForBrowser
-	 * @typechecks static-only
-	 */
-
-	"use strict";
-
-	var ESCAPE_LOOKUP = {
-	  "&": "&amp;",
-	  ">": "&gt;",
-	  "<": "&lt;",
-	  "\"": "&quot;",
-	  "'": "&#x27;",
-	  "/": "&#x2f;"
-	};
-
-	var ESCAPE_REGEX = /[&><"'\/]/g;
-
-	function escaper(match) {
-	  return ESCAPE_LOOKUP[match];
-	}
-
-	/**
-	 * Escapes text to prevent scripting attacks.
-	 *
-	 * @param {*} text Text value to escape.
-	 * @return {string} An escaped string.
-	 */
-	function escapeTextForBrowser(text) {
-	  return ('' + text).replace(ESCAPE_REGEX, escaper);
-	}
-
-	module.exports = escapeTextForBrowser;
-
-
-/***/ },
-/* 65 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule memoizeStringOnly
-	 * @typechecks static-only
-	 */
-
-	"use strict";
-
-	/**
-	 * Memoizes the return value of a function that accepts one string argument.
-	 *
-	 * @param {function} callback
-	 * @return {function}
-	 */
-	function memoizeStringOnly(callback) {
-	  var cache = {};
-	  return function(string) {
-	    if (cache.hasOwnProperty(string)) {
-	      return cache[string];
-	    } else {
-	      return cache[string] = callback.call(this, string);
-	    }
-	  };
-	}
-
-	module.exports = memoizeStringOnly;
-
-
-/***/ },
-/* 66 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule warning
-	 */
-
-	"use strict";
-
-	var emptyFunction = __webpack_require__(121);
-
-	/**
-	 * Similar to invariant but only logs a warning if the condition is not met.
-	 * This can be used to log issues in development environments in critical
-	 * paths. Removing the logging code for production environments will keep the
-	 * same logic and follow the same code paths.
-	 */
-
-	var warning = emptyFunction;
-
-	if ("production" !== process.env.NODE_ENV) {
-	  warning = function(condition, format ) {var args=Array.prototype.slice.call(arguments,2);
-	    if (format === undefined) {
-	      throw new Error(
-	        '`warning(condition, format, ...args)` requires a warning ' +
-	        'message argument'
-	      );
-	    }
-
-	    if (!condition) {
-	      var argIndex = 0;
-	      console.warn('Warning: ' + format.replace(/%s/g, function()  {return args[argIndex++];}));
-	    }
-	  };
-	}
-
-	module.exports = warning;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
-
-/***/ },
-/* 67 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule EventConstants
-	 */
-
-	"use strict";
-
-	var keyMirror = __webpack_require__(73);
-
-	var PropagationPhases = keyMirror({bubbled: null, captured: null});
-
-	/**
-	 * Types of raw signals from the browser caught at the top level.
-	 */
-	var topLevelTypes = keyMirror({
-	  topBlur: null,
-	  topChange: null,
-	  topClick: null,
-	  topCompositionEnd: null,
-	  topCompositionStart: null,
-	  topCompositionUpdate: null,
-	  topContextMenu: null,
-	  topCopy: null,
-	  topCut: null,
-	  topDoubleClick: null,
-	  topDrag: null,
-	  topDragEnd: null,
-	  topDragEnter: null,
-	  topDragExit: null,
-	  topDragLeave: null,
-	  topDragOver: null,
-	  topDragStart: null,
-	  topDrop: null,
-	  topError: null,
-	  topFocus: null,
-	  topInput: null,
-	  topKeyDown: null,
-	  topKeyPress: null,
-	  topKeyUp: null,
-	  topLoad: null,
-	  topMouseDown: null,
-	  topMouseMove: null,
-	  topMouseOut: null,
-	  topMouseOver: null,
-	  topMouseUp: null,
-	  topPaste: null,
-	  topReset: null,
-	  topScroll: null,
-	  topSelectionChange: null,
-	  topSubmit: null,
-	  topTouchCancel: null,
-	  topTouchEnd: null,
-	  topTouchMove: null,
-	  topTouchStart: null,
-	  topWheel: null
-	});
-
-	var EventConstants = {
-	  topLevelTypes: topLevelTypes,
-	  PropagationPhases: PropagationPhases
-	};
-
-	module.exports = EventConstants;
-
-
-/***/ },
-/* 68 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule invariant
-	 */
-
-	"use strict";
-
-	/**
-	 * Use invariant() to assert state which your program assumes to be true.
-	 *
-	 * Provide sprintf-style format (only %s is supported) and arguments
-	 * to provide information about what broke and what you were
-	 * expecting.
-	 *
-	 * The invariant message will be stripped in production, but the invariant
-	 * will remain to ensure logic does not differ in production.
-	 */
-
-	var invariant = function(condition) {
-	  if (!condition) {
-	    var error = new Error(
-	      'Minified exception occured; use the non-minified dev environment for ' +
-	      'the full error message and additional helpful warnings.'
-	    );
-	    error.framesToPop = 1;
-	    throw error;
-	  }
-	};
-
-	if ("production" !== process.env.NODE_ENV) {
-	  invariant = function(condition, format, a, b, c, d, e, f) {
-	    if (format === undefined) {
-	      throw new Error('invariant requires an error message argument');
-	    }
-
-	    if (!condition) {
-	      var args = [a, b, c, d, e, f];
-	      var argIndex = 0;
-	      var error = new Error(
-	        'Invariant Violation: ' +
-	        format.replace(/%s/g, function() { return args[argIndex++]; })
-	      );
-	      error.framesToPop = 1; // we don't care about invariant's own frame
-	      throw error;
-	    }
-	  };
-	}
-
-	module.exports = invariant;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
-
-/***/ },
-/* 69 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule PooledClass
-	 */
-
-	"use strict";
-
-	var invariant = __webpack_require__(68);
-
-	/**
-	 * Static poolers. Several custom versions for each potential number of
-	 * arguments. A completely generic pooler is easy to implement, but would
-	 * require accessing the `arguments` object. In each of these, `this` refers to
-	 * the Class itself, not an instance. If any others are needed, simply add them
-	 * here, or in their own files.
-	 */
-	var oneArgumentPooler = function(copyFieldsFrom) {
-	  var Klass = this;
-	  if (Klass.instancePool.length) {
-	    var instance = Klass.instancePool.pop();
-	    Klass.call(instance, copyFieldsFrom);
-	    return instance;
-	  } else {
-	    return new Klass(copyFieldsFrom);
-	  }
-	};
-
-	var twoArgumentPooler = function(a1, a2) {
-	  var Klass = this;
-	  if (Klass.instancePool.length) {
-	    var instance = Klass.instancePool.pop();
-	    Klass.call(instance, a1, a2);
-	    return instance;
-	  } else {
-	    return new Klass(a1, a2);
-	  }
-	};
-
-	var threeArgumentPooler = function(a1, a2, a3) {
-	  var Klass = this;
-	  if (Klass.instancePool.length) {
-	    var instance = Klass.instancePool.pop();
-	    Klass.call(instance, a1, a2, a3);
-	    return instance;
-	  } else {
-	    return new Klass(a1, a2, a3);
-	  }
-	};
-
-	var fiveArgumentPooler = function(a1, a2, a3, a4, a5) {
-	  var Klass = this;
-	  if (Klass.instancePool.length) {
-	    var instance = Klass.instancePool.pop();
-	    Klass.call(instance, a1, a2, a3, a4, a5);
-	    return instance;
-	  } else {
-	    return new Klass(a1, a2, a3, a4, a5);
-	  }
-	};
-
-	var standardReleaser = function(instance) {
-	  var Klass = this;
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    instance instanceof Klass,
-	    'Trying to release an instance into a pool of a different type.'
-	  ) : invariant(instance instanceof Klass));
-	  if (instance.destructor) {
-	    instance.destructor();
-	  }
-	  if (Klass.instancePool.length < Klass.poolSize) {
-	    Klass.instancePool.push(instance);
-	  }
-	};
-
-	var DEFAULT_POOL_SIZE = 10;
-	var DEFAULT_POOLER = oneArgumentPooler;
-
-	/**
-	 * Augments `CopyConstructor` to be a poolable class, augmenting only the class
-	 * itself (statically) not adding any prototypical fields. Any CopyConstructor
-	 * you give this may have a `poolSize` property, and will look for a
-	 * prototypical `destructor` on instances (optional).
-	 *
-	 * @param {Function} CopyConstructor Constructor that can be used to reset.
-	 * @param {Function} pooler Customizable pooler.
-	 */
-	var addPoolingTo = function(CopyConstructor, pooler) {
-	  var NewKlass = CopyConstructor;
-	  NewKlass.instancePool = [];
-	  NewKlass.getPooled = pooler || DEFAULT_POOLER;
-	  if (!NewKlass.poolSize) {
-	    NewKlass.poolSize = DEFAULT_POOL_SIZE;
-	  }
-	  NewKlass.release = standardReleaser;
-	  return NewKlass;
-	};
-
-	var PooledClass = {
-	  addPoolingTo: addPoolingTo,
-	  oneArgumentPooler: oneArgumentPooler,
-	  twoArgumentPooler: twoArgumentPooler,
-	  threeArgumentPooler: threeArgumentPooler,
-	  fiveArgumentPooler: fiveArgumentPooler
-	};
-
-	module.exports = PooledClass;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
-
-/***/ },
-/* 70 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule traverseAllChildren
-	 */
-
-	"use strict";
-
-	var ReactInstanceHandles = __webpack_require__(52);
-	var ReactTextComponent = __webpack_require__(58);
-
-	var invariant = __webpack_require__(68);
-
-	var SEPARATOR = ReactInstanceHandles.SEPARATOR;
-	var SUBSEPARATOR = ':';
-
-	/**
-	 * TODO: Test that:
-	 * 1. `mapChildren` transforms strings and numbers into `ReactTextComponent`.
-	 * 2. it('should fail when supplied duplicate key', function() {
-	 * 3. That a single child and an array with one item have the same key pattern.
-	 * });
-	 */
-
-	var userProvidedKeyEscaperLookup = {
-	  '=': '=0',
-	  '.': '=1',
-	  ':': '=2'
-	};
-
-	var userProvidedKeyEscapeRegex = /[=.:]/g;
-
-	function userProvidedKeyEscaper(match) {
-	  return userProvidedKeyEscaperLookup[match];
-	}
-
-	/**
-	 * Generate a key string that identifies a component within a set.
-	 *
-	 * @param {*} component A component that could contain a manual key.
-	 * @param {number} index Index that is used if a manual key is not provided.
-	 * @return {string}
-	 */
-	function getComponentKey(component, index) {
-	  if (component && component.props && component.props.key != null) {
-	    // Explicit key
-	    return wrapUserProvidedKey(component.props.key);
-	  }
-	  // Implicit key determined by the index in the set
-	  return index.toString(36);
-	}
-
-	/**
-	 * Escape a component key so that it is safe to use in a reactid.
-	 *
-	 * @param {*} key Component key to be escaped.
-	 * @return {string} An escaped string.
-	 */
-	function escapeUserProvidedKey(text) {
-	  return ('' + text).replace(
-	    userProvidedKeyEscapeRegex,
-	    userProvidedKeyEscaper
-	  );
-	}
-
-	/**
-	 * Wrap a `key` value explicitly provided by the user to distinguish it from
-	 * implicitly-generated keys generated by a component's index in its parent.
-	 *
-	 * @param {string} key Value of a user-provided `key` attribute
-	 * @return {string}
-	 */
-	function wrapUserProvidedKey(key) {
-	  return '$' + escapeUserProvidedKey(key);
-	}
-
-	/**
-	 * @param {?*} children Children tree container.
-	 * @param {!string} nameSoFar Name of the key path so far.
-	 * @param {!number} indexSoFar Number of children encountered until this point.
-	 * @param {!function} callback Callback to invoke with each child found.
-	 * @param {?*} traverseContext Used to pass information throughout the traversal
-	 * process.
-	 * @return {!number} The number of children in this subtree.
-	 */
-	var traverseAllChildrenImpl =
-	  function(children, nameSoFar, indexSoFar, callback, traverseContext) {
-	    var subtreeCount = 0;  // Count of children found in the current subtree.
-	    if (Array.isArray(children)) {
-	      for (var i = 0; i < children.length; i++) {
-	        var child = children[i];
-	        var nextName = (
-	          nameSoFar +
-	          (nameSoFar ? SUBSEPARATOR : SEPARATOR) +
-	          getComponentKey(child, i)
-	        );
-	        var nextIndex = indexSoFar + subtreeCount;
-	        subtreeCount += traverseAllChildrenImpl(
-	          child,
-	          nextName,
-	          nextIndex,
-	          callback,
-	          traverseContext
-	        );
-	      }
-	    } else {
-	      var type = typeof children;
-	      var isOnlyChild = nameSoFar === '';
-	      // If it's the only child, treat the name as if it was wrapped in an array
-	      // so that it's consistent if the number of children grows
-	      var storageName =
-	        isOnlyChild ? SEPARATOR + getComponentKey(children, 0) : nameSoFar;
-	      if (children == null || type === 'boolean') {
-	        // All of the above are perceived as null.
-	        callback(traverseContext, null, storageName, indexSoFar);
-	        subtreeCount = 1;
-	      } else if (children.type && children.type.prototype &&
-	                 children.type.prototype.mountComponentIntoNode) {
-	        callback(traverseContext, children, storageName, indexSoFar);
-	        subtreeCount = 1;
-	      } else {
-	        if (type === 'object') {
-	          ("production" !== process.env.NODE_ENV ? invariant(
-	            !children || children.nodeType !== 1,
-	            'traverseAllChildren(...): Encountered an invalid child; DOM ' +
-	            'elements are not valid children of React components.'
-	          ) : invariant(!children || children.nodeType !== 1));
-	          for (var key in children) {
-	            if (children.hasOwnProperty(key)) {
-	              subtreeCount += traverseAllChildrenImpl(
-	                children[key],
-	                (
-	                  nameSoFar + (nameSoFar ? SUBSEPARATOR : SEPARATOR) +
-	                  wrapUserProvidedKey(key) + SUBSEPARATOR +
-	                  getComponentKey(children[key], 0)
-	                ),
-	                indexSoFar + subtreeCount,
-	                callback,
-	                traverseContext
-	              );
-	            }
-	          }
-	        } else if (type === 'string') {
-	          var normalizedText = new ReactTextComponent(children);
-	          callback(traverseContext, normalizedText, storageName, indexSoFar);
-	          subtreeCount += 1;
-	        } else if (type === 'number') {
-	          var normalizedNumber = new ReactTextComponent('' + children);
-	          callback(traverseContext, normalizedNumber, storageName, indexSoFar);
-	          subtreeCount += 1;
-	        }
-	      }
-	    }
-	    return subtreeCount;
-	  };
-
-	/**
-	 * Traverses children that are typically specified as `props.children`, but
-	 * might also be specified through attributes:
-	 *
-	 * - `traverseAllChildren(this.props.children, ...)`
-	 * - `traverseAllChildren(this.props.leftPanelChildren, ...)`
-	 *
-	 * The `traverseContext` is an optional argument that is passed through the
-	 * entire traversal. It can be used to store accumulations or anything else that
-	 * the callback might find relevant.
-	 *
-	 * @param {?*} children Children tree object.
-	 * @param {!function} callback To invoke upon traversing each child.
-	 * @param {?*} traverseContext Context for traversal.
-	 */
-	function traverseAllChildren(children, callback, traverseContext) {
-	  if (children !== null && children !== undefined) {
-	    traverseAllChildrenImpl(children, '', 0, callback, traverseContext);
-	  }
-	}
-
-	module.exports = traverseAllChildren;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
-
-/***/ },
-/* 71 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule ReactOwner
-	 */
-
-	"use strict";
-
-	var emptyObject = __webpack_require__(122);
-	var invariant = __webpack_require__(68);
-
-	/**
-	 * ReactOwners are capable of storing references to owned components.
-	 *
-	 * All components are capable of //being// referenced by owner components, but
-	 * only ReactOwner components are capable of //referencing// owned components.
-	 * The named reference is known as a "ref".
-	 *
-	 * Refs are available when mounted and updated during reconciliation.
-	 *
-	 *   var MyComponent = React.createClass({
-	 *     render: function() {
-	 *       return (
-	 *         <div onClick={this.handleClick}>
-	 *           <CustomComponent ref="custom" />
-	 *         </div>
-	 *       );
-	 *     },
-	 *     handleClick: function() {
-	 *       this.refs.custom.handleClick();
-	 *     },
-	 *     componentDidMount: function() {
-	 *       this.refs.custom.initialize();
-	 *     }
-	 *   });
-	 *
-	 * Refs should rarely be used. When refs are used, they should only be done to
-	 * control data that is not handled by React's data flow.
-	 *
-	 * @class ReactOwner
-	 */
-	var ReactOwner = {
-
-	  /**
-	   * @param {?object} object
-	   * @return {boolean} True if `object` is a valid owner.
-	   * @final
-	   */
-	  isValidOwner: function(object) {
-	    return !!(
-	      object &&
-	      typeof object.attachRef === 'function' &&
-	      typeof object.detachRef === 'function'
-	    );
-	  },
-
-	  /**
-	   * Adds a component by ref to an owner component.
-	   *
-	   * @param {ReactComponent} component Component to reference.
-	   * @param {string} ref Name by which to refer to the component.
-	   * @param {ReactOwner} owner Component on which to record the ref.
-	   * @final
-	   * @internal
-	   */
-	  addComponentAsRefTo: function(component, ref, owner) {
-	    ("production" !== process.env.NODE_ENV ? invariant(
-	      ReactOwner.isValidOwner(owner),
-	      'addComponentAsRefTo(...): Only a ReactOwner can have refs. This ' +
-	      'usually means that you\'re trying to add a ref to a component that ' +
-	      'doesn\'t have an owner (that is, was not created inside of another ' +
-	      'component\'s `render` method). Try rendering this component inside of ' +
-	      'a new top-level component which will hold the ref.'
-	    ) : invariant(ReactOwner.isValidOwner(owner)));
-	    owner.attachRef(ref, component);
-	  },
-
-	  /**
-	   * Removes a component by ref from an owner component.
-	   *
-	   * @param {ReactComponent} component Component to dereference.
-	   * @param {string} ref Name of the ref to remove.
-	   * @param {ReactOwner} owner Component on which the ref is recorded.
-	   * @final
-	   * @internal
-	   */
-	  removeComponentAsRefFrom: function(component, ref, owner) {
-	    ("production" !== process.env.NODE_ENV ? invariant(
-	      ReactOwner.isValidOwner(owner),
-	      'removeComponentAsRefFrom(...): Only a ReactOwner can have refs. This ' +
-	      'usually means that you\'re trying to remove a ref to a component that ' +
-	      'doesn\'t have an owner (that is, was not created inside of another ' +
-	      'component\'s `render` method). Try rendering this component inside of ' +
-	      'a new top-level component which will hold the ref.'
-	    ) : invariant(ReactOwner.isValidOwner(owner)));
-	    // Check that `component` is still the current ref because we do not want to
-	    // detach the ref if another component stole it.
-	    if (owner.refs[ref] === component) {
-	      owner.detachRef(ref);
-	    }
-	  },
-
-	  /**
-	   * A ReactComponent must mix this in to have refs.
-	   *
-	   * @lends {ReactOwner.prototype}
-	   */
-	  Mixin: {
-
-	    construct: function() {
-	      this.refs = emptyObject;
-	    },
-
-	    /**
-	     * Lazily allocates the refs object and stores `component` as `ref`.
-	     *
-	     * @param {string} ref Reference name.
-	     * @param {component} component Component to store as `ref`.
-	     * @final
-	     * @private
-	     */
-	    attachRef: function(ref, component) {
-	      ("production" !== process.env.NODE_ENV ? invariant(
-	        component.isOwnedBy(this),
-	        'attachRef(%s, ...): Only a component\'s owner can store a ref to it.',
-	        ref
-	      ) : invariant(component.isOwnedBy(this)));
-	      var refs = this.refs === emptyObject ? (this.refs = {}) : this.refs;
-	      refs[ref] = component;
-	    },
-
-	    /**
-	     * Detaches a reference name.
-	     *
-	     * @param {string} ref Name to dereference.
-	     * @final
-	     * @private
-	     */
-	    detachRef: function(ref) {
-	      delete this.refs[ref];
-	    }
-
-	  }
-
-	};
-
-	module.exports = ReactOwner;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
-
-/***/ },
-/* 72 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule ReactUpdates
-	 */
-
-	"use strict";
-
-	var ReactPerf = __webpack_require__(55);
-
-	var invariant = __webpack_require__(68);
-
-	var dirtyComponents = [];
-
-	var batchingStrategy = null;
-
-	function ensureBatchingStrategy() {
-	  ("production" !== process.env.NODE_ENV ? invariant(batchingStrategy, 'ReactUpdates: must inject a batching strategy') : invariant(batchingStrategy));
-	}
-
-	function batchedUpdates(callback, param) {
-	  ensureBatchingStrategy();
-	  batchingStrategy.batchedUpdates(callback, param);
-	}
-
-	/**
-	 * Array comparator for ReactComponents by owner depth
-	 *
-	 * @param {ReactComponent} c1 first component you're comparing
-	 * @param {ReactComponent} c2 second component you're comparing
-	 * @return {number} Return value usable by Array.prototype.sort().
-	 */
-	function mountDepthComparator(c1, c2) {
-	  return c1._mountDepth - c2._mountDepth;
-	}
-
-	function runBatchedUpdates() {
-	  // Since reconciling a component higher in the owner hierarchy usually (not
-	  // always -- see shouldComponentUpdate()) will reconcile children, reconcile
-	  // them before their children by sorting the array.
-
-	  dirtyComponents.sort(mountDepthComparator);
-
-	  for (var i = 0; i < dirtyComponents.length; i++) {
-	    // If a component is unmounted before pending changes apply, ignore them
-	    // TODO: Queue unmounts in the same list to avoid this happening at all
-	    var component = dirtyComponents[i];
-	    if (component.isMounted()) {
-	      // If performUpdateIfNecessary happens to enqueue any new updates, we
-	      // shouldn't execute the callbacks until the next render happens, so
-	      // stash the callbacks first
-	      var callbacks = component._pendingCallbacks;
-	      component._pendingCallbacks = null;
-	      component.performUpdateIfNecessary();
-	      if (callbacks) {
-	        for (var j = 0; j < callbacks.length; j++) {
-	          callbacks[j].call(component);
-	        }
-	      }
-	    }
-	  }
-	}
-
-	function clearDirtyComponents() {
-	  dirtyComponents.length = 0;
-	}
-
-	var flushBatchedUpdates = ReactPerf.measure(
-	  'ReactUpdates',
-	  'flushBatchedUpdates',
-	  function() {
-	    // Run these in separate functions so the JIT can optimize
-	    try {
-	      runBatchedUpdates();
-	    } finally {
-	      clearDirtyComponents();
-	    }
-	  }
-	);
-
-	/**
-	 * Mark a component as needing a rerender, adding an optional callback to a
-	 * list of functions which will be executed once the rerender occurs.
-	 */
-	function enqueueUpdate(component, callback) {
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    !callback || typeof callback === "function",
-	    'enqueueUpdate(...): You called `setProps`, `replaceProps`, ' +
-	    '`setState`, `replaceState`, or `forceUpdate` with a callback that ' +
-	    'isn\'t callable.'
-	  ) : invariant(!callback || typeof callback === "function"));
-	  ensureBatchingStrategy();
-
-	  if (!batchingStrategy.isBatchingUpdates) {
-	    component.performUpdateIfNecessary();
-	    callback && callback.call(component);
-	    return;
-	  }
-
-	  dirtyComponents.push(component);
-
-	  if (callback) {
-	    if (component._pendingCallbacks) {
-	      component._pendingCallbacks.push(callback);
-	    } else {
-	      component._pendingCallbacks = [callback];
-	    }
-	  }
-	}
-
-	var ReactUpdatesInjection = {
-	  injectBatchingStrategy: function(_batchingStrategy) {
-	    ("production" !== process.env.NODE_ENV ? invariant(
-	      _batchingStrategy,
-	      'ReactUpdates: must provide a batching strategy'
-	    ) : invariant(_batchingStrategy));
-	    ("production" !== process.env.NODE_ENV ? invariant(
-	      typeof _batchingStrategy.batchedUpdates === 'function',
-	      'ReactUpdates: must provide a batchedUpdates() function'
-	    ) : invariant(typeof _batchingStrategy.batchedUpdates === 'function'));
-	    ("production" !== process.env.NODE_ENV ? invariant(
-	      typeof _batchingStrategy.isBatchingUpdates === 'boolean',
-	      'ReactUpdates: must provide an isBatchingUpdates boolean attribute'
-	    ) : invariant(typeof _batchingStrategy.isBatchingUpdates === 'boolean'));
-	    batchingStrategy = _batchingStrategy;
-	  }
-	};
-
-	var ReactUpdates = {
-	  batchedUpdates: batchedUpdates,
-	  enqueueUpdate: enqueueUpdate,
-	  flushBatchedUpdates: flushBatchedUpdates,
-	  injection: ReactUpdatesInjection
-	};
-
-	module.exports = ReactUpdates;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
-
-/***/ },
-/* 73 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule keyMirror
-	 * @typechecks static-only
-	 */
-
-	"use strict";
-
-	var invariant = __webpack_require__(68);
-
-	/**
-	 * Constructs an enumeration with keys equal to their value.
-	 *
-	 * For example:
-	 *
-	 *   var COLORS = keyMirror({blue: null, red: null});
-	 *   var myColor = COLORS.blue;
-	 *   var isColorValid = !!COLORS[myColor];
-	 *
-	 * The last line could not be performed if the values of the generated enum were
-	 * not equal to their keys.
-	 *
-	 *   Input:  {key1: val1, key2: val2}
-	 *   Output: {key1: key1, key2: key2}
-	 *
-	 * @param {object} obj
-	 * @return {object}
-	 */
-	var keyMirror = function(obj) {
-	  var ret = {};
-	  var key;
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    obj instanceof Object && !Array.isArray(obj),
-	    'keyMirror(...): Argument must be an object.'
-	  ) : invariant(obj instanceof Object && !Array.isArray(obj)));
-	  for (key in obj) {
-	    if (!obj.hasOwnProperty(key)) {
-	      continue;
-	    }
-	    ret[key] = key;
-	  }
-	  return ret;
-	};
-
-	module.exports = keyMirror;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
-
-/***/ },
-/* 74 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule merge
-	 */
-
-	"use strict";
-
-	var mergeInto = __webpack_require__(84);
-
-	/**
-	 * Shallow merges two structures into a return value, without mutating either.
-	 *
-	 * @param {?object} one Optional object with properties to merge from.
-	 * @param {?object} two Optional object with properties to merge from.
-	 * @return {object} The shallow extension of one by two.
-	 */
-	var merge = function(one, two) {
-	  var result = {};
-	  mergeInto(result, one);
-	  mergeInto(result, two);
-	  return result;
-	};
-
-	module.exports = merge;
-
-
-/***/ },
-/* 75 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule monitorCodeUse
-	 */
-
-	"use strict";
-
-	var invariant = __webpack_require__(68);
-
-	/**
-	 * Provides open-source compatible instrumentation for monitoring certain API
-	 * uses before we're ready to issue a warning or refactor. It accepts an event
-	 * name which may only contain the characters [a-z0-9_] and an optional data
-	 * object with further information.
-	 */
-
-	function monitorCodeUse(eventName, data) {
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    eventName && !/[^a-z0-9_]/.test(eventName),
-	    'You must provide an eventName using only the characters [a-z0-9_]'
-	  ) : invariant(eventName && !/[^a-z0-9_]/.test(eventName)));
-	}
-
-	module.exports = monitorCodeUse;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
-
-/***/ },
-/* 76 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule ReactErrorUtils
-	 * @typechecks
-	 */
-
-	"use strict";
-
-	var ReactErrorUtils = {
-	  /**
-	   * Creates a guarded version of a function. This is supposed to make debugging
-	   * of event handlers easier. To aid debugging with the browser's debugger,
-	   * this currently simply returns the original function.
-	   *
-	   * @param {function} func Function to be executed
-	   * @param {string} name The name of the guard
-	   * @return {function}
-	   */
-	  guard: function(func, name) {
-	    return func;
-	  }
-	};
-
-	module.exports = ReactErrorUtils;
-
-
-/***/ },
-/* 77 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule ReactPropTransferer
-	 */
-
-	"use strict";
-
-	var emptyFunction = __webpack_require__(121);
-	var invariant = __webpack_require__(68);
-	var joinClasses = __webpack_require__(123);
-	var merge = __webpack_require__(74);
-
-	/**
-	 * Creates a transfer strategy that will merge prop values using the supplied
-	 * `mergeStrategy`. If a prop was previously unset, this just sets it.
-	 *
-	 * @param {function} mergeStrategy
-	 * @return {function}
-	 */
-	function createTransferStrategy(mergeStrategy) {
-	  return function(props, key, value) {
-	    if (!props.hasOwnProperty(key)) {
-	      props[key] = value;
-	    } else {
-	      props[key] = mergeStrategy(props[key], value);
-	    }
-	  };
-	}
-
-	/**
-	 * Transfer strategies dictate how props are transferred by `transferPropsTo`.
-	 * NOTE: if you add any more exceptions to this list you should be sure to
-	 * update `cloneWithProps()` accordingly.
-	 */
-	var TransferStrategies = {
-	  /**
-	   * Never transfer `children`.
-	   */
-	  children: emptyFunction,
-	  /**
-	   * Transfer the `className` prop by merging them.
-	   */
-	  className: createTransferStrategy(joinClasses),
-	  /**
-	   * Never transfer the `key` prop.
-	   */
-	  key: emptyFunction,
-	  /**
-	   * Never transfer the `ref` prop.
-	   */
-	  ref: emptyFunction,
-	  /**
-	   * Transfer the `style` prop (which is an object) by merging them.
-	   */
-	  style: createTransferStrategy(merge)
-	};
-
-	/**
-	 * ReactPropTransferer are capable of transferring props to another component
-	 * using a `transferPropsTo` method.
-	 *
-	 * @class ReactPropTransferer
-	 */
-	var ReactPropTransferer = {
-
-	  TransferStrategies: TransferStrategies,
-
-	  /**
-	   * Merge two props objects using TransferStrategies.
-	   *
-	   * @param {object} oldProps original props (they take precedence)
-	   * @param {object} newProps new props to merge in
-	   * @return {object} a new object containing both sets of props merged.
-	   */
-	  mergeProps: function(oldProps, newProps) {
-	    var props = merge(oldProps);
-
-	    for (var thisKey in newProps) {
-	      if (!newProps.hasOwnProperty(thisKey)) {
-	        continue;
-	      }
-
-	      var transferStrategy = TransferStrategies[thisKey];
-
-	      if (transferStrategy && TransferStrategies.hasOwnProperty(thisKey)) {
-	        transferStrategy(props, thisKey, newProps[thisKey]);
-	      } else if (!props.hasOwnProperty(thisKey)) {
-	        props[thisKey] = newProps[thisKey];
-	      }
-	    }
-
-	    return props;
-	  },
-
-	  /**
-	   * @lends {ReactPropTransferer.prototype}
-	   */
-	  Mixin: {
-
-	    /**
-	     * Transfer props from this component to a target component.
-	     *
-	     * Props that do not have an explicit transfer strategy will be transferred
-	     * only if the target component does not already have the prop set.
-	     *
-	     * This is usually used to pass down props to a returned root component.
-	     *
-	     * @param {ReactComponent} component Component receiving the properties.
-	     * @return {ReactComponent} The supplied `component`.
-	     * @final
-	     * @protected
-	     */
-	    transferPropsTo: function(component) {
-	      ("production" !== process.env.NODE_ENV ? invariant(
-	        component._owner === this,
-	        '%s: You can\'t call transferPropsTo() on a component that you ' +
-	        'don\'t own, %s. This usually means you are calling ' +
-	        'transferPropsTo() on a component passed in as props or children.',
-	        this.constructor.displayName,
-	        component.constructor.displayName
-	      ) : invariant(component._owner === this));
-
-	      component.props = ReactPropTransferer.mergeProps(
-	        component.props,
-	        this.props
-	      );
-
-	      return component;
-	    }
-
-	  }
-	};
-
-	module.exports = ReactPropTransferer;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
-
-/***/ },
-/* 78 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule ReactPropTypeLocations
-	 */
-
-	"use strict";
-
-	var keyMirror = __webpack_require__(73);
-
-	var ReactPropTypeLocations = keyMirror({
-	  prop: null,
-	  context: null,
-	  childContext: null
-	});
-
-	module.exports = ReactPropTypeLocations;
-
-
-/***/ },
-/* 79 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule ReactPropTypeLocationNames
-	 */
-
-	"use strict";
-
-	var ReactPropTypeLocationNames = {};
-
-	if ("production" !== process.env.NODE_ENV) {
-	  ReactPropTypeLocationNames = {
-	    prop: 'prop',
-	    context: 'context',
-	    childContext: 'child context'
-	  };
-	}
-
-	module.exports = ReactPropTypeLocationNames;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
-
-/***/ },
-/* 80 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule instantiateReactComponent
-	 * @typechecks static-only
-	 */
-
-	"use strict";
-
-	var warning = __webpack_require__(66);
-
-	/**
-	 * Validate a `componentDescriptor`. This should be exposed publicly in a follow
-	 * up diff.
-	 *
-	 * @param {object} descriptor
-	 * @return {boolean} Returns true if this is a valid descriptor of a Component.
-	 */
-	function isValidComponentDescriptor(descriptor) {
-	  return (
-	    typeof descriptor.constructor === 'function' &&
-	    typeof descriptor.constructor.prototype.construct === 'function' &&
-	    typeof descriptor.constructor.prototype.mountComponent === 'function' &&
-	    typeof descriptor.constructor.prototype.receiveComponent === 'function'
-	  );
-	}
-
-	/**
-	 * Given a `componentDescriptor` create an instance that will actually be
-	 * mounted. Currently it just extracts an existing clone from composite
-	 * components but this is an implementation detail which will change.
-	 *
-	 * @param {object} descriptor
-	 * @return {object} A new instance of componentDescriptor's constructor.
-	 * @protected
-	 */
-	function instantiateReactComponent(descriptor) {
-	  if ("production" !== process.env.NODE_ENV) {
-	    ("production" !== process.env.NODE_ENV ? warning(
-	      isValidComponentDescriptor(descriptor),
-	      'Only React Components are valid for mounting.'
-	    ) : null);
-	    // We use the clone of a composite component instead of the original
-	    // instance. This allows us to warn you if you're are accessing the wrong
-	    // instance.
-	    var instance = descriptor.__realComponentInstance || descriptor;
-	    instance._descriptor = descriptor;
-	    return instance;
-	  }
-	  // In prod we don't clone, we simply use the same instance for unaffected
-	  // behavior. We have to keep the descriptor around for comparison later on.
-	  // This should ideally be accepted in the constructor of the instance but
-	  // since that is currently overloaded, we just manually attach it here.
-	  descriptor._descriptor = descriptor;
-	  return descriptor;
-	}
-
-	module.exports = instantiateReactComponent;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
-
-/***/ },
-/* 81 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule mixInto
-	 */
-
-	"use strict";
-
-	/**
-	 * Simply copies properties to the prototype.
-	 */
-	var mixInto = function(constructor, methodBag) {
-	  var methodName;
-	  for (methodName in methodBag) {
-	    if (!methodBag.hasOwnProperty(methodName)) {
-	      continue;
-	    }
-	    constructor.prototype[methodName] = methodBag[methodName];
-	  }
-	};
-
-	module.exports = mixInto;
-
-
-/***/ },
-/* 82 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule objMap
-	 */
-
-	"use strict";
-
-	/**
-	 * For each key/value pair, invokes callback func and constructs a resulting
-	 * object which contains, for every key in obj, values that are the result of
-	 * of invoking the function:
-	 *
-	 *   func(value, key, iteration)
-	 *
-	 * @param {?object} obj Object to map keys over
-	 * @param {function} func Invoked for each key/val pair.
-	 * @param {?*} context
-	 * @return {?object} Result of mapping or null if obj is falsey
-	 */
-	function objMap(obj, func, context) {
-	  if (!obj) {
-	    return null;
-	  }
-	  var i = 0;
-	  var ret = {};
-	  for (var key in obj) {
-	    if (obj.hasOwnProperty(key)) {
-	      ret[key] = func.call(context, obj[key], key, i++);
-	    }
-	  }
-	  return ret;
-	}
-
-	module.exports = objMap;
-
-
-/***/ },
-/* 83 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule shouldUpdateReactComponent
-	 * @typechecks static-only
-	 */
-
-	"use strict";
-
-	/**
-	 * Given a `prevComponentInstance` and `nextComponent`, determines if
-	 * `prevComponentInstance` should be updated as opposed to being destroyed or
-	 * replaced by a new instance. The second argument is a descriptor. Future
-	 * versions of the reconciler should only compare descriptors to other
-	 * descriptors.
-	 *
-	 * @param {?object} prevComponentInstance
-	 * @param {?object} nextDescriptor
-	 * @return {boolean} True if `prevComponentInstance` should be updated.
-	 * @protected
-	 */
-	function shouldUpdateReactComponent(prevComponentInstance, nextDescriptor) {
-	  // TODO: Remove warning after a release.
-	  if (prevComponentInstance && nextDescriptor &&
-	      prevComponentInstance.constructor === nextDescriptor.constructor && (
-	        (prevComponentInstance.props && prevComponentInstance.props.key) ===
-	        (nextDescriptor.props && nextDescriptor.props.key)
-	      )) {
-	    if (prevComponentInstance._owner === nextDescriptor._owner) {
-	      return true;
-	    } else {
-	      if ("production" !== process.env.NODE_ENV) {
-	        if (prevComponentInstance.state) {
-	          console.warn(
-	            'A recent change to React has been found to impact your code. ' +
-	            'A mounted component will now be unmounted and replaced by a ' +
-	            'component (of the same class) if their owners are different. ' +
-	            'Previously, ownership was not considered when updating.',
-	            prevComponentInstance,
-	            nextDescriptor
-	          );
-	        }
-	      }
-	    }
-	  }
-	  return false;
-	}
-
-	module.exports = shouldUpdateReactComponent;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
-
-/***/ },
-/* 84 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule mergeInto
-	 * @typechecks static-only
-	 */
-
-	"use strict";
-
-	var mergeHelpers = __webpack_require__(124);
-
-	var checkMergeObjectArg = mergeHelpers.checkMergeObjectArg;
-
-	/**
-	 * Shallow merges two structures by mutating the first parameter.
-	 *
-	 * @param {object} one Object to be merged into.
-	 * @param {?object} two Optional object with properties to merge from.
-	 */
-	function mergeInto(one, two) {
-	  checkMergeObjectArg(one);
-	  if (two != null) {
-	    checkMergeObjectArg(two);
-	    for (var key in two) {
-	      if (!two.hasOwnProperty(key)) {
-	        continue;
-	      }
-	      one[key] = two[key];
-	    }
-	  }
-	}
-
-	module.exports = mergeInto;
-
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 85 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule objMapKeyVal
-	 */
-
-	"use strict";
-
-	/**
-	 * Behaves the same as `objMap` but invokes func with the key first, and value
-	 * second. Use `objMap` unless you need this special case.
-	 * Invokes func as:
-	 *
-	 *   func(key, value, iteration)
-	 *
-	 * @param {?object} obj Object to map keys over
-	 * @param {!function} func Invoked for each key/val pair.
-	 * @param {?*} context
-	 * @return {?object} Result of mapping or null if obj is falsey
-	 */
-	function objMapKeyVal(obj, func, context) {
-	  if (!obj) {
-	    return null;
-	  }
-	  var i = 0;
-	  var ret = {};
-	  for (var key in obj) {
-	    if (obj.hasOwnProperty(key)) {
-	      ret[key] = func.call(context, key, obj[key], i++);
-	    }
-	  }
-	  return ret;
-	}
-
-	module.exports = objMapKeyVal;
-
-
-/***/ },
-/* 86 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule CSSPropertyOperations
-	 * @typechecks static-only
-	 */
-
-	"use strict";
-
-	var CSSProperty = __webpack_require__(125);
-
-	var dangerousStyleValue = __webpack_require__(126);
-	var escapeTextForBrowser = __webpack_require__(64);
-	var hyphenate = __webpack_require__(127);
-	var memoizeStringOnly = __webpack_require__(65);
-
-	var processStyleName = memoizeStringOnly(function(styleName) {
-	  return escapeTextForBrowser(hyphenate(styleName));
-	});
-
-	/**
-	 * Operations for dealing with CSS properties.
-	 */
-	var CSSPropertyOperations = {
-
-	  /**
-	   * Serializes a mapping of style properties for use as inline styles:
-	   *
-	   *   > createMarkupForStyles({width: '200px', height: 0})
-	   *   "width:200px;height:0;"
-	   *
-	   * Undefined values are ignored so that declarative programming is easier.
-	   *
-	   * @param {object} styles
-	   * @return {?string}
-	   */
-	  createMarkupForStyles: function(styles) {
-	    var serialized = '';
-	    for (var styleName in styles) {
-	      if (!styles.hasOwnProperty(styleName)) {
-	        continue;
-	      }
-	      var styleValue = styles[styleName];
-	      if (styleValue != null) {
-	        serialized += processStyleName(styleName) + ':';
-	        serialized += dangerousStyleValue(styleName, styleValue) + ';';
-	      }
-	    }
-	    return serialized || null;
-	  },
-
-	  /**
-	   * Sets the value for multiple styles on a node.  If a value is specified as
-	   * '' (empty string), the corresponding style property will be unset.
-	   *
-	   * @param {DOMElement} node
-	   * @param {object} styles
-	   */
-	  setValueForStyles: function(node, styles) {
-	    var style = node.style;
-	    for (var styleName in styles) {
-	      if (!styles.hasOwnProperty(styleName)) {
-	        continue;
-	      }
-	      var styleValue = dangerousStyleValue(styleName, styles[styleName]);
-	      if (styleValue) {
-	        style[styleName] = styleValue;
-	      } else {
-	        var expansion = CSSProperty.shorthandPropertyExpansions[styleName];
-	        if (expansion) {
-	          // Shorthand property that IE8 won't like unsetting, so unset each
-	          // component to placate it
-	          for (var individualStyleName in expansion) {
-	            style[individualStyleName] = '';
-	          }
-	        } else {
-	          style[styleName] = '';
-	        }
-	      }
-	    }
-	  }
-
-	};
-
-	module.exports = CSSPropertyOperations;
-
-
-/***/ },
-/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -15940,7 +15853,7 @@
 
 	var ReactMount = __webpack_require__(53);
 
-	var invariant = __webpack_require__(68);
+	var invariant = __webpack_require__(64);
 
 	var ReactBrowserComponentMixin = {
 	  /**
@@ -15961,10 +15874,10 @@
 
 	module.exports = ReactBrowserComponentMixin;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
-/* 88 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -15988,7 +15901,7 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(67);
+	var EventConstants = __webpack_require__(63);
 	var EventListener = __webpack_require__(128);
 	var EventPluginHub = __webpack_require__(129);
 	var EventPluginRegistry = __webpack_require__(130);
@@ -15996,9 +15909,9 @@
 	var ReactEventEmitterMixin = __webpack_require__(131);
 	var ViewportMetrics = __webpack_require__(132);
 
-	var invariant = __webpack_require__(68);
+	var invariant = __webpack_require__(64);
 	var isEventSupported = __webpack_require__(133);
-	var merge = __webpack_require__(74);
+	var merge = __webpack_require__(70);
 
 	/**
 	 * Summary of `ReactEventEmitter` event handling:
@@ -16307,10 +16220,63 @@
 
 	module.exports = ReactEventEmitter;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
-/* 89 */
+/* 87 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule escapeTextForBrowser
+	 * @typechecks static-only
+	 */
+
+	"use strict";
+
+	var ESCAPE_LOOKUP = {
+	  "&": "&amp;",
+	  ">": "&gt;",
+	  "<": "&lt;",
+	  "\"": "&quot;",
+	  "'": "&#x27;",
+	  "/": "&#x2f;"
+	};
+
+	var ESCAPE_REGEX = /[&><"'\/]/g;
+
+	function escaper(match) {
+	  return ESCAPE_LOOKUP[match];
+	}
+
+	/**
+	 * Escapes text to prevent scripting attacks.
+	 *
+	 * @param {*} text Text value to escape.
+	 * @return {string} An escaped string.
+	 */
+	function escapeTextForBrowser(text) {
+	  return ('' + text).replace(ESCAPE_REGEX, escaper);
+	}
+
+	module.exports = escapeTextForBrowser;
+
+
+/***/ },
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16357,7 +16323,7 @@
 
 
 /***/ },
-/* 90 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16380,15 +16346,15 @@
 
 	"use strict";
 
-	var DOMProperty = __webpack_require__(63);
+	var DOMProperty = __webpack_require__(84);
 	var EventPluginHub = __webpack_require__(129);
 	var ReactComponent = __webpack_require__(45);
 	var ReactCompositeComponent = __webpack_require__(46);
 	var ReactDOM = __webpack_require__(49);
-	var ReactEventEmitter = __webpack_require__(88);
+	var ReactEventEmitter = __webpack_require__(86);
 	var ReactPerf = __webpack_require__(55);
-	var ReactRootIndex = __webpack_require__(113);
-	var ReactUpdates = __webpack_require__(72);
+	var ReactRootIndex = __webpack_require__(112);
+	var ReactUpdates = __webpack_require__(68);
 
 	var ReactInjection = {
 	  Component: ReactComponent.injection,
@@ -16406,7 +16372,7 @@
 
 
 /***/ },
-/* 91 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16431,7 +16397,7 @@
 
 	"use strict";
 
-	var DOMProperty = __webpack_require__(63);
+	var DOMProperty = __webpack_require__(84);
 
 	var MUST_USE_ATTRIBUTE = DOMProperty.injection.MUST_USE_ATTRIBUTE;
 	var MUST_USE_PROPERTY = DOMProperty.injection.MUST_USE_PROPERTY;
@@ -16608,7 +16574,7 @@
 
 
 /***/ },
-/* 92 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16631,16 +16597,16 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(67);
+	var EventConstants = __webpack_require__(63);
 	var EventPluginHub = __webpack_require__(129);
 	var EventPropagators = __webpack_require__(134);
 	var ExecutionEnvironment = __webpack_require__(60);
-	var ReactUpdates = __webpack_require__(72);
+	var ReactUpdates = __webpack_require__(68);
 	var SyntheticEvent = __webpack_require__(135);
 
 	var isEventSupported = __webpack_require__(133);
 	var isTextInputElement = __webpack_require__(136);
-	var keyOf = __webpack_require__(89);
+	var keyOf = __webpack_require__(88);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 
@@ -17001,7 +16967,7 @@
 
 
 /***/ },
-/* 93 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17037,7 +17003,7 @@
 
 
 /***/ },
-/* 94 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17061,14 +17027,14 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(67);
+	var EventConstants = __webpack_require__(63);
 	var EventPropagators = __webpack_require__(134);
 	var ExecutionEnvironment = __webpack_require__(60);
 	var ReactInputSelection = __webpack_require__(137);
 	var SyntheticCompositionEvent = __webpack_require__(138);
 
 	var getTextContentAccessor = __webpack_require__(139);
-	var keyOf = __webpack_require__(89);
+	var keyOf = __webpack_require__(88);
 
 	var END_KEYCODES = [9, 13, 27, 32]; // Tab, Return, Esc, Space
 	var START_KEYCODE = 229;
@@ -17303,7 +17269,7 @@
 
 
 /***/ },
-/* 95 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17326,7 +17292,7 @@
 
 	"use strict";
 
-	 var keyOf = __webpack_require__(89);
+	 var keyOf = __webpack_require__(88);
 
 	/**
 	 * Module that is injectable into `EventPluginHub`, that specifies a
@@ -17353,7 +17319,7 @@
 
 
 /***/ },
-/* 96 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17377,12 +17343,12 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(67);
+	var EventConstants = __webpack_require__(63);
 	var EventPropagators = __webpack_require__(134);
 	var SyntheticMouseEvent = __webpack_require__(140);
 
 	var ReactMount = __webpack_require__(53);
-	var keyOf = __webpack_require__(89);
+	var keyOf = __webpack_require__(88);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 	var getFirstReactDOM = ReactMount.getFirstReactDOM;
@@ -17504,7 +17470,7 @@
 
 
 /***/ },
-/* 97 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17528,9 +17494,9 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(67);
+	var EventConstants = __webpack_require__(63);
 
-	var emptyFunction = __webpack_require__(121);
+	var emptyFunction = __webpack_require__(123);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 
@@ -17573,7 +17539,7 @@
 
 
 /***/ },
-/* 98 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -17599,13 +17565,13 @@
 	"use strict";
 
 	var ReactDOMIDOperations = __webpack_require__(141);
-	var ReactMarkupChecksum = __webpack_require__(119);
+	var ReactMarkupChecksum = __webpack_require__(117);
 	var ReactMount = __webpack_require__(53);
 	var ReactPerf = __webpack_require__(55);
 	var ReactReconcileTransaction = __webpack_require__(142);
 
-	var getReactRootElementInContainer = __webpack_require__(115);
-	var invariant = __webpack_require__(68);
+	var getReactRootElementInContainer = __webpack_require__(114);
+	var invariant = __webpack_require__(64);
 
 
 	var ELEMENT_NODE_TYPE = 1;
@@ -17701,10 +17667,10 @@
 
 	module.exports = ReactComponentBrowserEnvironment;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
-/* 99 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17728,13 +17694,13 @@
 
 	"use strict";
 
-	var PooledClass = __webpack_require__(69);
-	var ReactEventEmitter = __webpack_require__(88);
+	var PooledClass = __webpack_require__(65);
+	var ReactEventEmitter = __webpack_require__(86);
 	var ReactInstanceHandles = __webpack_require__(52);
 	var ReactMount = __webpack_require__(53);
 
 	var getEventTarget = __webpack_require__(143);
-	var mixInto = __webpack_require__(81);
+	var mixInto = __webpack_require__(79);
 
 	/**
 	 * @type {boolean}
@@ -17859,7 +17825,7 @@
 
 
 /***/ },
-/* 100 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17883,11 +17849,11 @@
 	"use strict";
 
 	var AutoFocusMixin = __webpack_require__(144);
-	var ReactBrowserComponentMixin = __webpack_require__(87);
+	var ReactBrowserComponentMixin = __webpack_require__(85);
 	var ReactCompositeComponent = __webpack_require__(46);
 	var ReactDOM = __webpack_require__(49);
 
-	var keyMirror = __webpack_require__(73);
+	var keyMirror = __webpack_require__(69);
 
 	// Store a reference to the <button> `ReactDOMComponent`.
 	var button = ReactDOM.button;
@@ -17934,7 +17900,7 @@
 
 
 /***/ },
-/* 101 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17957,11 +17923,11 @@
 
 	"use strict";
 
-	var ReactBrowserComponentMixin = __webpack_require__(87);
+	var ReactBrowserComponentMixin = __webpack_require__(85);
 	var ReactCompositeComponent = __webpack_require__(46);
 	var ReactDOM = __webpack_require__(49);
-	var ReactEventEmitter = __webpack_require__(88);
-	var EventConstants = __webpack_require__(67);
+	var ReactEventEmitter = __webpack_require__(86);
+	var EventConstants = __webpack_require__(63);
 
 	// Store a reference to the <form> `ReactDOMComponent`.
 	var form = ReactDOM.form;
@@ -18002,7 +17968,7 @@
 
 
 /***/ },
-/* 102 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18025,11 +17991,11 @@
 
 	"use strict";
 
-	var ReactBrowserComponentMixin = __webpack_require__(87);
+	var ReactBrowserComponentMixin = __webpack_require__(85);
 	var ReactCompositeComponent = __webpack_require__(46);
 	var ReactDOM = __webpack_require__(49);
-	var ReactEventEmitter = __webpack_require__(88);
-	var EventConstants = __webpack_require__(67);
+	var ReactEventEmitter = __webpack_require__(86);
+	var EventConstants = __webpack_require__(63);
 
 	// Store a reference to the <img> `ReactDOMComponent`.
 	var img = ReactDOM.img;
@@ -18069,7 +18035,7 @@
 
 
 /***/ },
-/* 103 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -18095,13 +18061,13 @@
 	var AutoFocusMixin = __webpack_require__(144);
 	var DOMPropertyOperations = __webpack_require__(42);
 	var LinkedValueUtils = __webpack_require__(145);
-	var ReactBrowserComponentMixin = __webpack_require__(87);
+	var ReactBrowserComponentMixin = __webpack_require__(85);
 	var ReactCompositeComponent = __webpack_require__(46);
 	var ReactDOM = __webpack_require__(49);
 	var ReactMount = __webpack_require__(53);
 
-	var invariant = __webpack_require__(68);
-	var merge = __webpack_require__(74);
+	var invariant = __webpack_require__(64);
+	var merge = __webpack_require__(70);
 
 	// Store a reference to the <input> `ReactDOMComponent`.
 	var input = ReactDOM.input;
@@ -18255,10 +18221,10 @@
 
 	module.exports = ReactDOMInput;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
-/* 104 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -18281,11 +18247,11 @@
 
 	"use strict";
 
-	var ReactBrowserComponentMixin = __webpack_require__(87);
+	var ReactBrowserComponentMixin = __webpack_require__(85);
 	var ReactCompositeComponent = __webpack_require__(46);
 	var ReactDOM = __webpack_require__(49);
 
-	var warning = __webpack_require__(66);
+	var warning = __webpack_require__(82);
 
 	// Store a reference to the <option> `ReactDOMComponent`.
 	var option = ReactDOM.option;
@@ -18317,10 +18283,10 @@
 
 	module.exports = ReactDOMOption;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
-/* 105 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -18345,12 +18311,12 @@
 
 	var AutoFocusMixin = __webpack_require__(144);
 	var LinkedValueUtils = __webpack_require__(145);
-	var ReactBrowserComponentMixin = __webpack_require__(87);
+	var ReactBrowserComponentMixin = __webpack_require__(85);
 	var ReactCompositeComponent = __webpack_require__(46);
 	var ReactDOM = __webpack_require__(49);
 
-	var invariant = __webpack_require__(68);
-	var merge = __webpack_require__(74);
+	var invariant = __webpack_require__(64);
+	var merge = __webpack_require__(70);
 
 	// Store a reference to the <select> `ReactDOMComponent`.
 	var select = ReactDOM.select;
@@ -18504,10 +18470,10 @@
 
 	module.exports = ReactDOMSelect;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
-/* 106 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -18533,14 +18499,14 @@
 	var AutoFocusMixin = __webpack_require__(144);
 	var DOMPropertyOperations = __webpack_require__(42);
 	var LinkedValueUtils = __webpack_require__(145);
-	var ReactBrowserComponentMixin = __webpack_require__(87);
+	var ReactBrowserComponentMixin = __webpack_require__(85);
 	var ReactCompositeComponent = __webpack_require__(46);
 	var ReactDOM = __webpack_require__(49);
 
-	var invariant = __webpack_require__(68);
-	var merge = __webpack_require__(74);
+	var invariant = __webpack_require__(64);
+	var merge = __webpack_require__(70);
 
-	var warning = __webpack_require__(66);
+	var warning = __webpack_require__(82);
 
 	// Store a reference to the <textarea> `ReactDOMComponent`.
 	var textarea = ReactDOM.textarea;
@@ -18655,10 +18621,10 @@
 
 	module.exports = ReactDOMTextarea;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
-/* 107 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18681,15 +18647,15 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(67);
+	var EventConstants = __webpack_require__(63);
 	var EventPropagators = __webpack_require__(134);
 	var ReactInputSelection = __webpack_require__(137);
 	var SyntheticEvent = __webpack_require__(135);
 
-	var getActiveElement = __webpack_require__(146);
+	var getActiveElement = __webpack_require__(154);
 	var isTextInputElement = __webpack_require__(136);
-	var keyOf = __webpack_require__(89);
-	var shallowEqual = __webpack_require__(147);
+	var keyOf = __webpack_require__(88);
+	var shallowEqual = __webpack_require__(155);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 
@@ -18864,7 +18830,7 @@
 
 
 /***/ },
-/* 108 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18906,7 +18872,7 @@
 
 
 /***/ },
-/* 109 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -18929,21 +18895,21 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(67);
+	var EventConstants = __webpack_require__(63);
 	var EventPluginUtils = __webpack_require__(43);
 	var EventPropagators = __webpack_require__(134);
-	var SyntheticClipboardEvent = __webpack_require__(148);
+	var SyntheticClipboardEvent = __webpack_require__(146);
 	var SyntheticEvent = __webpack_require__(135);
-	var SyntheticFocusEvent = __webpack_require__(149);
-	var SyntheticKeyboardEvent = __webpack_require__(150);
+	var SyntheticFocusEvent = __webpack_require__(147);
+	var SyntheticKeyboardEvent = __webpack_require__(148);
 	var SyntheticMouseEvent = __webpack_require__(140);
-	var SyntheticDragEvent = __webpack_require__(151);
-	var SyntheticTouchEvent = __webpack_require__(152);
-	var SyntheticUIEvent = __webpack_require__(153);
-	var SyntheticWheelEvent = __webpack_require__(154);
+	var SyntheticDragEvent = __webpack_require__(149);
+	var SyntheticTouchEvent = __webpack_require__(150);
+	var SyntheticUIEvent = __webpack_require__(151);
+	var SyntheticWheelEvent = __webpack_require__(152);
 
-	var invariant = __webpack_require__(68);
-	var keyOf = __webpack_require__(89);
+	var invariant = __webpack_require__(64);
+	var keyOf = __webpack_require__(88);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 
@@ -19323,10 +19289,10 @@
 
 	module.exports = SimpleEventPlugin;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
-/* 110 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19349,11 +19315,11 @@
 
 	"use strict";
 
-	var ReactUpdates = __webpack_require__(72);
-	var Transaction = __webpack_require__(155);
+	var ReactUpdates = __webpack_require__(68);
+	var Transaction = __webpack_require__(153);
 
-	var emptyFunction = __webpack_require__(121);
-	var mixInto = __webpack_require__(81);
+	var emptyFunction = __webpack_require__(123);
+	var mixInto = __webpack_require__(79);
 
 	var RESET_BATCHED_UPDATES = {
 	  initialize: emptyFunction,
@@ -19407,7 +19373,7 @@
 
 
 /***/ },
-/* 111 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -19434,7 +19400,7 @@
 	// Defeat circular references by requiring this directly.
 	var ReactCompositeComponent = __webpack_require__(46);
 
-	var invariant = __webpack_require__(68);
+	var invariant = __webpack_require__(64);
 
 	/**
 	 * Create a component that will throw an exception when unmounted.
@@ -19474,10 +19440,10 @@
 
 	module.exports = createFullPageComponent;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
-/* 112 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19501,12 +19467,12 @@
 
 	"use strict";
 
-	var DOMProperty = __webpack_require__(63);
-	var ReactDefaultPerfAnalysis = __webpack_require__(156);
+	var DOMProperty = __webpack_require__(84);
+	var ReactDefaultPerfAnalysis = __webpack_require__(157);
 	var ReactMount = __webpack_require__(53);
 	var ReactPerf = __webpack_require__(55);
 
-	var performanceNow = __webpack_require__(157);
+	var performanceNow = __webpack_require__(158);
 
 	function roundFloat(val) {
 	  return Math.floor(val * 100) / 100;
@@ -19727,7 +19693,7 @@
 
 
 /***/ },
-/* 113 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19769,7 +19735,7 @@
 
 
 /***/ },
-/* 114 */
+/* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19791,7 +19757,7 @@
 	 * @typechecks
 	 */
 
-	var isTextNode = __webpack_require__(158);
+	var isTextNode = __webpack_require__(156);
 
 	/*jslint bitwise:true */
 
@@ -19824,7 +19790,7 @@
 
 
 /***/ },
-/* 115 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19870,7 +19836,7 @@
 
 
 /***/ },
-/* 116 */
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19893,7 +19859,7 @@
 
 	"use strict";
 
-	var keyMirror = __webpack_require__(73);
+	var keyMirror = __webpack_require__(69);
 
 	/**
 	 * When a component's children are updated, a series of update configuration
@@ -19914,7 +19880,7 @@
 
 
 /***/ },
-/* 117 */
+/* 116 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -19937,8 +19903,8 @@
 
 	"use strict";
 
-	var invariant = __webpack_require__(68);
-	var traverseAllChildren = __webpack_require__(70);
+	var invariant = __webpack_require__(64);
+	var traverseAllChildren = __webpack_require__(66);
 
 	/**
 	 * @param {function} traverseContext Context passed through traversal.
@@ -19975,78 +19941,10 @@
 
 	module.exports = flattenChildren;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
-/* 118 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule createObjectFrom
-	 */
-
-	/**
-	 * Construct an object from an array of keys
-	 * and optionally specified value or list of values.
-	 *
-	 *  >>> createObjectFrom(['a','b','c']);
-	 *  {a: true, b: true, c: true}
-	 *
-	 *  >>> createObjectFrom(['a','b','c'], false);
-	 *  {a: false, b: false, c: false}
-	 *
-	 *  >>> createObjectFrom(['a','b','c'], 'monkey');
-	 *  {c:'monkey', b:'monkey' c:'monkey'}
-	 *
-	 *  >>> createObjectFrom(['a','b','c'], [1,2,3]);
-	 *  {a: 1, b: 2, c: 3}
-	 *
-	 *  >>> createObjectFrom(['women', 'men'], [true, false]);
-	 *  {women: true, men: false}
-	 *
-	 * @param   Array   list of keys
-	 * @param   mixed   optional value or value array.  defaults true.
-	 * @returns object
-	 */
-	function createObjectFrom(keys, values /* = true */) {
-	  if ("production" !== process.env.NODE_ENV) {
-	    if (!Array.isArray(keys)) {
-	      throw new TypeError('Must pass an array of keys.');
-	    }
-	  }
-
-	  var object = {};
-	  var isArray = Array.isArray(values);
-	  if (typeof values == 'undefined') {
-	    values = true;
-	  }
-
-	  for (var ii = keys.length; ii--;) {
-	    object[keys[ii]] = isArray ? values[ii] : values;
-	  }
-	  return object;
-	}
-
-	module.exports = createObjectFrom;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
-
-/***/ },
-/* 119 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20069,7 +19967,7 @@
 
 	"use strict";
 
-	var adler32 = __webpack_require__(159);
+	var adler32 = __webpack_require__(161);
 
 	var ReactMarkupChecksum = {
 	  CHECKSUM_ATTR_NAME: 'data-react-checksum',
@@ -20105,7 +20003,7 @@
 
 
 /***/ },
-/* 120 */
+/* 118 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20129,13 +20027,13 @@
 
 	"use strict";
 
-	var PooledClass = __webpack_require__(69);
-	var ReactMountReady = __webpack_require__(160);
-	var ReactPutListenerQueue = __webpack_require__(161);
-	var Transaction = __webpack_require__(155);
+	var PooledClass = __webpack_require__(65);
+	var ReactMountReady = __webpack_require__(159);
+	var ReactPutListenerQueue = __webpack_require__(160);
+	var Transaction = __webpack_require__(153);
 
-	var emptyFunction = __webpack_require__(121);
-	var mixInto = __webpack_require__(81);
+	var emptyFunction = __webpack_require__(123);
+	var mixInto = __webpack_require__(79);
 
 	/**
 	 * Provides a `ReactMountReady` queue for collecting `onDOMReady` callbacks
@@ -20227,7 +20125,75 @@
 
 
 /***/ },
-/* 121 */
+/* 119 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule createObjectFrom
+	 */
+
+	/**
+	 * Construct an object from an array of keys
+	 * and optionally specified value or list of values.
+	 *
+	 *  >>> createObjectFrom(['a','b','c']);
+	 *  {a: true, b: true, c: true}
+	 *
+	 *  >>> createObjectFrom(['a','b','c'], false);
+	 *  {a: false, b: false, c: false}
+	 *
+	 *  >>> createObjectFrom(['a','b','c'], 'monkey');
+	 *  {c:'monkey', b:'monkey' c:'monkey'}
+	 *
+	 *  >>> createObjectFrom(['a','b','c'], [1,2,3]);
+	 *  {a: 1, b: 2, c: 3}
+	 *
+	 *  >>> createObjectFrom(['women', 'men'], [true, false]);
+	 *  {women: true, men: false}
+	 *
+	 * @param   Array   list of keys
+	 * @param   mixed   optional value or value array.  defaults true.
+	 * @returns object
+	 */
+	function createObjectFrom(keys, values /* = true */) {
+	  if ("production" !== process.env.NODE_ENV) {
+	    if (!Array.isArray(keys)) {
+	      throw new TypeError('Must pass an array of keys.');
+	    }
+	  }
+
+	  var object = {};
+	  var isArray = Array.isArray(values);
+	  if (typeof values == 'undefined') {
+	    values = true;
+	  }
+
+	  for (var ii = keys.length; ii--;) {
+	    object[keys[ii]] = isArray ? values[ii] : values;
+	  }
+	  return object;
+	}
+
+	module.exports = createObjectFrom;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+
+/***/ },
+/* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20245,38 +20211,34 @@
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 *
-	 * @providesModule emptyFunction
+	 * @providesModule memoizeStringOnly
+	 * @typechecks static-only
 	 */
 
-	var copyProperties = __webpack_require__(162);
+	"use strict";
 
-	function makeEmptyFunction(arg) {
-	  return function() {
-	    return arg;
+	/**
+	 * Memoizes the return value of a function that accepts one string argument.
+	 *
+	 * @param {function} callback
+	 * @return {function}
+	 */
+	function memoizeStringOnly(callback) {
+	  var cache = {};
+	  return function(string) {
+	    if (cache.hasOwnProperty(string)) {
+	      return cache[string];
+	    } else {
+	      return cache[string] = callback.call(this, string);
+	    }
 	  };
 	}
 
-	/**
-	 * This function accepts and discards inputs; it has no side effects. This is
-	 * primarily useful idiomatically for overridable function endpoints which
-	 * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
-	 */
-	function emptyFunction() {}
-
-	copyProperties(emptyFunction, {
-	  thatReturns: makeEmptyFunction,
-	  thatReturnsFalse: makeEmptyFunction(false),
-	  thatReturnsTrue: makeEmptyFunction(true),
-	  thatReturnsNull: makeEmptyFunction(null),
-	  thatReturnsThis: function() { return this; },
-	  thatReturnsArgument: function(arg) { return arg; }
-	});
-
-	module.exports = emptyFunction;
+	module.exports = memoizeStringOnly;
 
 
 /***/ },
-/* 122 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20307,60 +20269,10 @@
 
 	module.exports = emptyObject;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
-/* 123 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule joinClasses
-	 * @typechecks static-only
-	 */
-
-	"use strict";
-
-	/**
-	 * Combines multiple className strings into one.
-	 * http://jsperf.com/joinclasses-args-vs-array
-	 *
-	 * @param {...?string} classes
-	 * @return {string}
-	 */
-	function joinClasses(className/*, ... */) {
-	  if (!className) {
-	    className = '';
-	  }
-	  var nextClass;
-	  var argLength = arguments.length;
-	  if (argLength > 1) {
-	    for (var ii = 1; ii < argLength; ii++) {
-	      nextClass = arguments[ii];
-	      nextClass && (className += ' ' + nextClass);
-	    }
-	  }
-	  return className;
-	}
-
-	module.exports = joinClasses;
-
-
-/***/ },
-/* 124 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20385,8 +20297,8 @@
 
 	"use strict";
 
-	var invariant = __webpack_require__(68);
-	var keyMirror = __webpack_require__(73);
+	var invariant = __webpack_require__(64);
+	var keyMirror = __webpack_require__(69);
 
 	/**
 	 * Maximum number of levels to traverse. Will catch circular structures.
@@ -20500,7 +20412,106 @@
 
 	module.exports = mergeHelpers;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+
+/***/ },
+/* 123 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule emptyFunction
+	 */
+
+	var copyProperties = __webpack_require__(162);
+
+	function makeEmptyFunction(arg) {
+	  return function() {
+	    return arg;
+	  };
+	}
+
+	/**
+	 * This function accepts and discards inputs; it has no side effects. This is
+	 * primarily useful idiomatically for overridable function endpoints which
+	 * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
+	 */
+	function emptyFunction() {}
+
+	copyProperties(emptyFunction, {
+	  thatReturns: makeEmptyFunction,
+	  thatReturnsFalse: makeEmptyFunction(false),
+	  thatReturnsTrue: makeEmptyFunction(true),
+	  thatReturnsNull: makeEmptyFunction(null),
+	  thatReturnsThis: function() { return this; },
+	  thatReturnsArgument: function(arg) { return arg; }
+	});
+
+	module.exports = emptyFunction;
+
+
+/***/ },
+/* 124 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule joinClasses
+	 * @typechecks static-only
+	 */
+
+	"use strict";
+
+	/**
+	 * Combines multiple className strings into one.
+	 * http://jsperf.com/joinclasses-args-vs-array
+	 *
+	 * @param {...?string} classes
+	 * @return {string}
+	 */
+	function joinClasses(className/*, ... */) {
+	  if (!className) {
+	    className = '';
+	  }
+	  var nextClass;
+	  var argLength = arguments.length;
+	  if (argLength > 1) {
+	    for (var ii = 1; ii < argLength; ii++) {
+	      nextClass = arguments[ii];
+	      nextClass && (className += ' ' + nextClass);
+	    }
+	  }
+	  return className;
+	}
+
+	module.exports = joinClasses;
+
 
 /***/ },
 /* 125 */
@@ -20741,7 +20752,7 @@
 	 * @providesModule EventListener
 	 */
 
-	var emptyFunction = __webpack_require__(121);
+	var emptyFunction = __webpack_require__(123);
 
 	/**
 	 * Upstream version of event listener. Does not take into account specific
@@ -20807,7 +20818,7 @@
 
 	module.exports = EventListener;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 129 */
@@ -20839,9 +20850,9 @@
 
 	var accumulate = __webpack_require__(163);
 	var forEachAccumulated = __webpack_require__(164);
-	var invariant = __webpack_require__(68);
+	var invariant = __webpack_require__(64);
 	var isEventSupported = __webpack_require__(133);
-	var monitorCodeUse = __webpack_require__(75);
+	var monitorCodeUse = __webpack_require__(71);
 
 	/**
 	 * Internal store for event listeners
@@ -21109,7 +21120,7 @@
 
 	module.exports = EventPluginHub;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 130 */
@@ -21136,7 +21147,7 @@
 
 	"use strict";
 
-	var invariant = __webpack_require__(68);
+	var invariant = __webpack_require__(64);
 
 	/**
 	 * Injectable ordering of event plugins.
@@ -21397,7 +21408,7 @@
 
 	module.exports = EventPluginRegistry;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 131 */
@@ -21424,7 +21435,7 @@
 	"use strict";
 
 	var EventPluginHub = __webpack_require__(129);
-	var ReactUpdates = __webpack_require__(72);
+	var ReactUpdates = __webpack_require__(68);
 
 	function runEventQueueInBatch(events) {
 	  EventPluginHub.enqueueEvents(events);
@@ -21605,7 +21616,7 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(67);
+	var EventConstants = __webpack_require__(63);
 	var EventPluginHub = __webpack_require__(129);
 
 	var accumulate = __webpack_require__(163);
@@ -21729,7 +21740,7 @@
 
 	module.exports = EventPropagators;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 135 */
@@ -21756,12 +21767,12 @@
 
 	"use strict";
 
-	var PooledClass = __webpack_require__(69);
+	var PooledClass = __webpack_require__(65);
 
-	var emptyFunction = __webpack_require__(121);
+	var emptyFunction = __webpack_require__(123);
 	var getEventTarget = __webpack_require__(143);
-	var merge = __webpack_require__(74);
-	var mergeInto = __webpack_require__(84);
+	var merge = __webpack_require__(70);
+	var mergeInto = __webpack_require__(72);
 
 	/**
 	 * @interface Event
@@ -21982,9 +21993,9 @@
 
 	var ReactDOMSelection = __webpack_require__(166);
 
-	var containsNode = __webpack_require__(114);
+	var containsNode = __webpack_require__(113);
 	var focusNode = __webpack_require__(167);
-	var getActiveElement = __webpack_require__(146);
+	var getActiveElement = __webpack_require__(154);
 
 	function isInDocument(node) {
 	  return containsNode(document.documentElement, node);
@@ -22233,7 +22244,7 @@
 
 	"use strict";
 
-	var SyntheticUIEvent = __webpack_require__(153);
+	var SyntheticUIEvent = __webpack_require__(151);
 	var ViewportMetrics = __webpack_require__(132);
 
 	/**
@@ -22326,13 +22337,13 @@
 
 	"use strict";
 
-	var CSSPropertyOperations = __webpack_require__(86);
+	var CSSPropertyOperations = __webpack_require__(83);
 	var DOMChildrenOperations = __webpack_require__(168);
 	var DOMPropertyOperations = __webpack_require__(42);
 	var ReactMount = __webpack_require__(53);
 	var ReactPerf = __webpack_require__(55);
 
-	var invariant = __webpack_require__(68);
+	var invariant = __webpack_require__(64);
 
 	/**
 	 * Errors for properties that should not be updated with `updatePropertyById()`.
@@ -22522,7 +22533,7 @@
 
 	module.exports = ReactDOMIDOperations;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 142 */
@@ -22549,14 +22560,14 @@
 
 	"use strict";
 
-	var PooledClass = __webpack_require__(69);
-	var ReactEventEmitter = __webpack_require__(88);
+	var PooledClass = __webpack_require__(65);
+	var ReactEventEmitter = __webpack_require__(86);
 	var ReactInputSelection = __webpack_require__(137);
-	var ReactMountReady = __webpack_require__(160);
-	var ReactPutListenerQueue = __webpack_require__(161);
-	var Transaction = __webpack_require__(155);
+	var ReactMountReady = __webpack_require__(159);
+	var ReactPutListenerQueue = __webpack_require__(160);
+	var Transaction = __webpack_require__(153);
 
-	var mixInto = __webpack_require__(81);
+	var mixInto = __webpack_require__(79);
 
 	/**
 	 * Ensures that, when possible, the selection range (currently selected text
@@ -22819,8 +22830,8 @@
 
 	var ReactPropTypes = __webpack_require__(56);
 
-	var invariant = __webpack_require__(68);
-	var warning = __webpack_require__(66);
+	var invariant = __webpack_require__(64);
+	var warning = __webpack_require__(82);
 
 	var hasReadOnlyValue = {
 	  'button': true,
@@ -22957,105 +22968,10 @@
 
 	module.exports = LinkedValueUtils;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 146 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule getActiveElement
-	 * @typechecks
-	 */
-
-	/**
-	 * Same as document.activeElement but wraps in a try-catch block. In IE it is
-	 * not safe to call document.activeElement if there is nothing focused.
-	 *
-	 * The activeElement will be null only if the document body is not yet defined.
-	 */
-	function getActiveElement() /*?DOMElement*/ {
-	  try {
-	    return document.activeElement || document.body;
-	  } catch (e) {
-	    return document.body;
-	  }
-	}
-
-	module.exports = getActiveElement;
-
-
-/***/ },
-/* 147 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule shallowEqual
-	 */
-
-	"use strict";
-
-	/**
-	 * Performs equality by iterating through keys on an object and returning
-	 * false when any key has values which are not strictly equal between
-	 * objA and objB. Returns true when the values of all keys are strictly equal.
-	 *
-	 * @return {boolean}
-	 */
-	function shallowEqual(objA, objB) {
-	  if (objA === objB) {
-	    return true;
-	  }
-	  var key;
-	  // Test for A's keys different from B.
-	  for (key in objA) {
-	    if (objA.hasOwnProperty(key) &&
-	        (!objB.hasOwnProperty(key) || objA[key] !== objB[key])) {
-	      return false;
-	    }
-	  }
-	  // Test for B'a keys missing from A.
-	  for (key in objB) {
-	    if (objB.hasOwnProperty(key) && !objA.hasOwnProperty(key)) {
-	      return false;
-	    }
-	  }
-	  return true;
-	}
-
-	module.exports = shallowEqual;
-
-
-/***/ },
-/* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23112,7 +23028,7 @@
 
 
 /***/ },
-/* 149 */
+/* 147 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23136,7 +23052,7 @@
 
 	"use strict";
 
-	var SyntheticUIEvent = __webpack_require__(153);
+	var SyntheticUIEvent = __webpack_require__(151);
 
 	/**
 	 * @interface FocusEvent
@@ -23162,7 +23078,7 @@
 
 
 /***/ },
-/* 150 */
+/* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23186,7 +23102,7 @@
 
 	"use strict";
 
-	var SyntheticUIEvent = __webpack_require__(153);
+	var SyntheticUIEvent = __webpack_require__(151);
 
 	var getEventKey = __webpack_require__(169);
 
@@ -23226,7 +23142,7 @@
 
 
 /***/ },
-/* 151 */
+/* 149 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23276,7 +23192,7 @@
 
 
 /***/ },
-/* 152 */
+/* 150 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23300,7 +23216,7 @@
 
 	"use strict";
 
-	var SyntheticUIEvent = __webpack_require__(153);
+	var SyntheticUIEvent = __webpack_require__(151);
 
 	/**
 	 * @interface TouchEvent
@@ -23332,7 +23248,7 @@
 
 
 /***/ },
-/* 153 */
+/* 151 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23383,7 +23299,7 @@
 
 
 /***/ },
-/* 154 */
+/* 152 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23455,7 +23371,7 @@
 
 
 /***/ },
-/* 155 */
+/* 153 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -23478,7 +23394,7 @@
 
 	"use strict";
 
-	var invariant = __webpack_require__(68);
+	var invariant = __webpack_require__(64);
 
 	/**
 	 * `Transaction` creates a black box that is able to wrap any method such that
@@ -23735,7 +23651,102 @@
 
 	module.exports = Transaction;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+
+/***/ },
+/* 154 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule getActiveElement
+	 * @typechecks
+	 */
+
+	/**
+	 * Same as document.activeElement but wraps in a try-catch block. In IE it is
+	 * not safe to call document.activeElement if there is nothing focused.
+	 *
+	 * The activeElement will be null only if the document body is not yet defined.
+	 */
+	function getActiveElement() /*?DOMElement*/ {
+	  try {
+	    return document.activeElement || document.body;
+	  } catch (e) {
+	    return document.body;
+	  }
+	}
+
+	module.exports = getActiveElement;
+
+
+/***/ },
+/* 155 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule shallowEqual
+	 */
+
+	"use strict";
+
+	/**
+	 * Performs equality by iterating through keys on an object and returning
+	 * false when any key has values which are not strictly equal between
+	 * objA and objB. Returns true when the values of all keys are strictly equal.
+	 *
+	 * @return {boolean}
+	 */
+	function shallowEqual(objA, objB) {
+	  if (objA === objB) {
+	    return true;
+	  }
+	  var key;
+	  // Test for A's keys different from B.
+	  for (key in objA) {
+	    if (objA.hasOwnProperty(key) &&
+	        (!objB.hasOwnProperty(key) || objA[key] !== objB[key])) {
+	      return false;
+	    }
+	  }
+	  // Test for B'a keys missing from A.
+	  for (key in objB) {
+	    if (objB.hasOwnProperty(key) && !objA.hasOwnProperty(key)) {
+	      return false;
+	    }
+	  }
+	  return true;
+	}
+
+	module.exports = shallowEqual;
+
 
 /***/ },
 /* 156 */
@@ -23756,10 +23767,46 @@
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 *
+	 * @providesModule isTextNode
+	 * @typechecks
+	 */
+
+	var isNode = __webpack_require__(170);
+
+	/**
+	 * @param {*} object The object to check.
+	 * @return {boolean} Whether or not the object is a DOM text node.
+	 */
+	function isTextNode(object) {
+	  return isNode(object) && object.nodeType == 3;
+	}
+
+	module.exports = isTextNode;
+
+
+/***/ },
+/* 157 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
 	 * @providesModule ReactDefaultPerfAnalysis
 	 */
 
-	var merge = __webpack_require__(74);
+	var merge = __webpack_require__(70);
 
 	// Don't try to save users less than 1.2ms (a number I made up)
 	var DONT_CARE_THRESHOLD = 1.2;
@@ -23943,7 +23990,7 @@
 
 
 /***/ },
-/* 157 */
+/* 158 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23991,88 +24038,7 @@
 
 
 /***/ },
-/* 158 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule isTextNode
-	 * @typechecks
-	 */
-
-	var isNode = __webpack_require__(170);
-
-	/**
-	 * @param {*} object The object to check.
-	 * @return {boolean} Whether or not the object is a DOM text node.
-	 */
-	function isTextNode(object) {
-	  return isNode(object) && object.nodeType == 3;
-	}
-
-	module.exports = isTextNode;
-
-
-/***/ },
 /* 159 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule adler32
-	 */
-
-	/* jslint bitwise:true */
-
-	"use strict";
-
-	var MOD = 65521;
-
-	// This is a clean-room implementation of adler32 designed for detecting
-	// if markup is not what we expect it to be. It does not need to be
-	// cryptographically strong, only reasonable good at detecting if markup
-	// generated on the server is different than that on the client.
-	function adler32(data) {
-	  var a = 1;
-	  var b = 0;
-	  for (var i = 0; i < data.length; i++) {
-	    a = (a + data.charCodeAt(i)) % MOD;
-	    b = (b + a) % MOD;
-	  }
-	  return a | (b << 16);
-	}
-
-	module.exports = adler32;
-
-
-/***/ },
-/* 160 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24095,9 +24061,9 @@
 
 	"use strict";
 
-	var PooledClass = __webpack_require__(69);
+	var PooledClass = __webpack_require__(65);
 
-	var mixInto = __webpack_require__(81);
+	var mixInto = __webpack_require__(79);
 
 	/**
 	 * A specialized pseudo-event module to help keep track of components waiting to
@@ -24173,7 +24139,7 @@
 
 
 /***/ },
-/* 161 */
+/* 160 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24196,10 +24162,10 @@
 
 	"use strict";
 
-	var PooledClass = __webpack_require__(69);
-	var ReactEventEmitter = __webpack_require__(88);
+	var PooledClass = __webpack_require__(65);
+	var ReactEventEmitter = __webpack_require__(86);
 
-	var mixInto = __webpack_require__(81);
+	var mixInto = __webpack_require__(79);
 
 	function ReactPutListenerQueue() {
 	  this.listenersToPut = [];
@@ -24237,6 +24203,51 @@
 	PooledClass.addPoolingTo(ReactPutListenerQueue);
 
 	module.exports = ReactPutListenerQueue;
+
+
+/***/ },
+/* 161 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule adler32
+	 */
+
+	/* jslint bitwise:true */
+
+	"use strict";
+
+	var MOD = 65521;
+
+	// This is a clean-room implementation of adler32 designed for detecting
+	// if markup is not what we expect it to be. It does not need to be
+	// cryptographically strong, only reasonable good at detecting if markup
+	// generated on the server is different than that on the client.
+	function adler32(data) {
+	  var a = 1;
+	  var b = 0;
+	  for (var i = 0; i < data.length; i++) {
+	    a = (a + data.charCodeAt(i)) % MOD;
+	    b = (b + a) % MOD;
+	  }
+	  return a | (b << 16);
+	}
+
+	module.exports = adler32;
 
 
 /***/ },
@@ -24298,7 +24309,7 @@
 
 	module.exports = copyProperties;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 163 */
@@ -24324,7 +24335,7 @@
 
 	"use strict";
 
-	var invariant = __webpack_require__(68);
+	var invariant = __webpack_require__(64);
 
 	/**
 	 * Accumulates items that must not be null or undefined.
@@ -24359,7 +24370,7 @@
 
 	module.exports = accumulate;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 164 */
@@ -24714,7 +24725,7 @@
 	"use strict";
 
 	var Danger = __webpack_require__(172);
-	var ReactMultiChildUpdateTypes = __webpack_require__(116);
+	var ReactMultiChildUpdateTypes = __webpack_require__(115);
 
 	var getTextContentAccessor = __webpack_require__(139);
 
@@ -25111,9 +25122,9 @@
 	var ExecutionEnvironment = __webpack_require__(60);
 
 	var createNodesFromMarkup = __webpack_require__(173);
-	var emptyFunction = __webpack_require__(121);
+	var emptyFunction = __webpack_require__(123);
 	var getMarkupWrap = __webpack_require__(174);
-	var invariant = __webpack_require__(68);
+	var invariant = __webpack_require__(64);
 
 	var OPEN_TAG_NAME_EXP = /^(<[^ \/>]+)/;
 	var RESULT_INDEX_ATTR = 'data-danger-index';
@@ -25273,7 +25284,7 @@
 
 	module.exports = Danger;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 173 */
@@ -25304,7 +25315,7 @@
 
 	var createArrayFrom = __webpack_require__(175);
 	var getMarkupWrap = __webpack_require__(174);
-	var invariant = __webpack_require__(68);
+	var invariant = __webpack_require__(64);
 
 	/**
 	 * Dummy container used to render all markup.
@@ -25373,7 +25384,7 @@
 
 	module.exports = createNodesFromMarkup;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 174 */
@@ -25399,7 +25410,7 @@
 
 	var ExecutionEnvironment = __webpack_require__(60);
 
-	var invariant = __webpack_require__(68);
+	var invariant = __webpack_require__(64);
 
 	/**
 	 * Dummy container used to detect which wraps are necessary.
@@ -25498,7 +25509,7 @@
 
 	module.exports = getMarkupWrap;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ },
 /* 175 */
@@ -25620,7 +25631,7 @@
 	 * @typechecks
 	 */
 
-	var invariant = __webpack_require__(68);
+	var invariant = __webpack_require__(64);
 
 	/**
 	 * Convert array-like objects to arrays.
@@ -25677,7 +25688,7 @@
 
 	module.exports = toArray;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ }
 /******/ ])

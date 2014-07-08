@@ -8,8 +8,7 @@ var React = require('react'),
   EventsItem = require('./eventsItem'),
   AboutPage = require('./about'),
 
-  _ = require('lodash'),
-  get = require('../util/util').get,
+  _ = require('../util/util'),
 
   Index = React.createClass({
     getInitialState: function() {
@@ -38,7 +37,6 @@ var React = require('react'),
         _.compose(this.setState.bind(this), this.cacheData), false)
     },
     render: function() {
-
       // FIXME: move following 3 lines somewhere else
       // to keep render side-effects free
       if (typeof localStorage != 'undefined') {
@@ -57,10 +55,10 @@ var React = require('react'),
         Pages({
           '/': {handler: BlogIndex},
           '/blog/:year/:id': {handler: BlogItem},
-          '/events': {handler: EventsIndex, data: get(this.state, 'events')},
+          '/events': {handler: EventsIndex, data: _.get(this.state, 'events')},
           '/events/:id': {handler: EventsItem, data: {
-            'event': get(this.state, 'event'),
-            'rsvp': get(this.state, 'people')}},
+            'event': _.get(this.state, 'event'),
+            'rsvp': _.get(this.state, 'people')}},
           '/about': {handler: AboutPage}
         })
       ])

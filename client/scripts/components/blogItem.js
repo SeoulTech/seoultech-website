@@ -1,6 +1,5 @@
 var React = require('react'),
-  $ = React.DOM,
-  _ = require('lodash');
+  $ = React.DOM;
 
 module.exports = React.createClass({
   render: function() {

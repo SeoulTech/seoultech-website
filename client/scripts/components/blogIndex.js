@@ -1,11 +1,13 @@
 var React = require('react'),
   $ = React.DOM,
-  _ = require('lodash'),
+  _ = require('../util/util'),
   index = require('../../content/target/index');
+
+
 
 module.exports = React.createClass({
   render: function() {
-    return $.div(null, _(index).keys().reverse()
+    return $.div(null, _.keys(index).reverse()
       .filter(RegExp.prototype.test.bind(/.*blog*/))
       .map(function(path) {
         var year = path.match(/[0-9]+/)

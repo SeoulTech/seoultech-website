@@ -1,8 +1,6 @@
 var React = require('react'),
   $ = React.DOM,
-  _ = require('lodash'),
-  maybe = require('./util').maybe,
-  get = require('./util').get;
+  _ = require('./util');
 
 module.exports = React.createClass({
   handleHashchange: function(props) {
@@ -14,7 +12,7 @@ module.exports = React.createClass({
           '(?:\\?([\\s\\S]*))?$')
       }
 
-    return _(props).keys().concat({}).reduceRight(function(nextState, route) {
+    return _.reduceRight(_.keys(props).concat({}), function(nextState, route) {
       var params = hash.match(routeToRegex(route)),
         getParamNames = function(route) {return route.match(paramRegex)},
         trimFirstEl = function(p) {return p.slice(1)},
@@ -22,14 +20,15 @@ module.exports = React.createClass({
         urlParams
 
       if (params) {
-        otherProps = get(props, route, 'data'),
+        otherProps = _.get(props, route, 'data'),
         urlParams = _.zipObject(
-          maybe(getParamNames(route)).fmap(trimFirstEl).return(),
+          _.maybe(getParamNames(route)).fmap(trimFirstEl).return(),
           _.compact(trimFirstEl(params)))
 
         return _.assign(nextState, {
-          handler: get(props, route, 'handler'),
-          props: _.merge(urlParams, otherProps)})
+          handler: _.get(props, route, 'handler'),
+          props: _.merge(urlParams, otherProps)
+        })
       }
 
       return nextState

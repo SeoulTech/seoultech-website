@@ -1,8 +1,7 @@
 var React = require('react'),
   $ = React.DOM,
-  _ = require('lodash'),
-  fetch = require('../util/fetch'),
-  get = require('../util/util').get;
+  _ = require('../util/util'),
+  fetch = require('../util/fetch');
 
 module.exports = React.createClass({
   componentDidMount: function() {
@@ -11,12 +10,12 @@ module.exports = React.createClass({
   },
   render: function() {
     return $.div(null, [
-      $.h1({key: 'name'}, get(this.props.data, 'event',this.props.id, 'name')),
+      $.h1({key: 'name'}, _.get(this.props.data, 'event',this.props.id, 'name')),
       $.div({key: 'description', dangerouslySetInnerHTML: {
-        __html: get(this.props, 'event', this.props.id, 'description')}}),
+        __html: _.get(this.props, 'event', this.props.id, 'description')}}),
       $.h3({key: 'h3'}, 'Attendees:'),
       $.ul({key: 'ul'}, [
-        _.map(get(this.props.rsvp, this.props.id, 'results'), function(r, i) {
+        _.map(_.get(this.props.rsvp, this.props.id, 'results'), function(r, i) {
           return $.li({key: i}, r.member.name)
         })
       ])

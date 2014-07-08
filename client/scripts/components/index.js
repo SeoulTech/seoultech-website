@@ -12,7 +12,7 @@ var React = require('react'),
 
   Index = React.createClass({
     getInitialState: function() {
-      return JSON.parse(localStorage.getItem('state')) || {}
+      return {}
     },
 
     // FIXME: refactor cacheData
@@ -37,11 +37,6 @@ var React = require('react'),
         _.compose(this.setState.bind(this), this.cacheData), false)
     },
     render: function() {
-      // FIXME: move following 3 lines somewhere else
-      // to keep render side-effects free
-      if (typeof localStorage != 'undefined') {
-        localStorage.setItem('state', JSON.stringify(this.state))
-      }
       return $.div(null, [
         $.a({key: 'link-to-blog', href: './#'}, 'Blog'),
         $.a({key: 'link-to-events', href: './#/events'}, 'Events'),

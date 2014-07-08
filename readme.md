@@ -24,7 +24,6 @@ general:
 + apply css
 + write tests for components
 + add more pages to the site
-+ consider using sessionStorage instead of localStorage
 + minify scripts and styles
 
 blog:

@@ -3,7 +3,7 @@ var React = require('react'),
   _ = require('./util');
 
 module.exports = React.createClass({
-  handleHashchange: function(props) {
+  getNextState: function(props) {
     var lh = location.hash,
       hash = _.isEmpty(lh)? '/' : lh.slice(1).replace(/\/$/, ''),
       paramRegex = /(\(\?)?:\w+/g,
@@ -24,7 +24,6 @@ module.exports = React.createClass({
         urlParams = _.zipObject(
           _.maybe(getParamNames(route)).fmap(trimFirstEl).return(),
           _.compact(trimFirstEl(params)))
-
         return _.assign(nextState, {
           handler: _.get(props, route, 'handler'),
           props: _.merge(urlParams, otherProps)
@@ -34,16 +33,15 @@ module.exports = React.createClass({
       return nextState
     })
   },
-  setStateOnHashchange: function(props) {
-    this.setState(this.handleHashchange(props))
+  updateState: function(_, props) {
+    this.setState(this.getNextState(props || this.props))
   },
   componentWillReceiveProps: function(nextProps) {
-    this.setStateOnHashchange(nextProps)
+    this.updateState(_, nextProps)
   },
   componentWillMount: function() {
-    window.addEventListener('hashchange',
-      this.setStateOnHashchange.bind(this, this.props), false)
-    this.setStateOnHashchange(this.props)
+    window.addEventListener('hashchange', this.updateState, false)
+    this.updateState()
   },
   render: function() {
     return this.state.handler(this.state.props)

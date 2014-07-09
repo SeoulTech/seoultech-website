@@ -1,4 +1,4 @@
-var React = require('react'),
+var React = require('react/addons'),
   $ = React.DOM,
   Pages = require('../util/router'),
 
@@ -14,22 +14,18 @@ var React = require('react'),
     getInitialState: function() {
       return {}
     },
-
-    // FIXME: refactor cacheData
     cacheData: function(event) {
-      var _state = _.cloneDeep(this.state, true),
+      var _state = {},
         component = event.detail.component,
         id = event.detail.id,
-        data = event.detail.data;
+        data = event.detail.data
         // {component, id, data} = event.detail;
-
       if (id) {
-        _state[component] = _state[component] || {};
+        _state[component] = this.state[component] || {}
         _state[component][id] = data
-      } else {
+       } else {
         _state[component] = data
       }
-
       return _state
     },
     componentDidMount: function() {

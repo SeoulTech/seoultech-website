@@ -33,5 +33,4 @@ event:
 + display userpics of guests for each meetup
 
 builder:
-+ auto-create directories
 + write tests for `builder.js`

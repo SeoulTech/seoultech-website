@@ -2,6 +2,7 @@
 
 var fs = require('fs'),
   convertDir = require('./parse'),
+  mkdirp = require('mkdirp'),
 
   inputDir = 'client/content/source/',
   outputDir = 'client/content/target/',
@@ -27,12 +28,15 @@ var fs = require('fs'),
     getDirectories(path).forEach(function(dir) {
       var inputPath = path + dir + '/',
         outputPath = inputPath.replace('source', 'target')
+      
       if (getFiles(path + dir + '/').length > 0) {
         inputIndex[inputPath] = getFiles(inputPath)
         outputIndex[outputPath] = getFiles(inputPath)
       }
+
       getIndex(inputPath, inputIndex, outputIndex)
     })
+
     return [inputIndex, outputIndex]
   },
 
@@ -42,13 +46,16 @@ var fs = require('fs'),
 
 try {
   var index = getIndex(inputDir),
-  inputIndex = index[0],
-  outputIndex = index[1]
+    inputIndex = index[0],
+    outputIndex = index[1]
 
   fs.writeFileSync(outputDir + 'index.js',
     'module.exports = ' + JSON.stringify(outputIndex))
-
-  Object.keys(inputIndex).map(function(_, i) {
+  
+  Object.keys(outputIndex).map(function(dir) {
+    mkdirp.sync(dir)
+    return dir
+  }).map(function(_, i) {
     return [Object.keys(inputIndex)[i], Object.keys(outputIndex)[i]]
   }).forEach(function(args) {
     convertDir.apply(null, args)

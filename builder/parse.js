@@ -58,7 +58,6 @@ module.exports = function(i, o) {
     inputDir = i
     outputDir = o
     forEachFile(when(isMarkdown, seq(read, convert, write, log)))
-    // console.log('\x1b[32m' + inputDir + ' is converted', '\x1b[39m\n')
   } catch (e) {
     console.error(e.stack)
     console.log('\x1b[31m', 'Conversion failed', '\x1b[39m')

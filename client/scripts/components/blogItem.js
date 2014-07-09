@@ -1,10 +1,9 @@
-var React = require('react'),
-  $ = React.DOM;
+import {createClass, DOM} from 'react';
 
-module.exports = React.createClass({
-  render: function() {
-    var par = this.props.year + '/' + this.props.id
-    return $.div({dangerouslySetInnerHTML: {
-      __html: require('../../content/target/blog/' + par)}})
+module.exports = createClass({
+  render() {
+    const {year, id} = this.props
+    return DOM.div({dangerouslySetInnerHTML: {
+      __html: require('../../content/target/blog/' + `${year}/${id}`)}})
   }
-});
+})

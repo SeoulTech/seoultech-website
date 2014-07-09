@@ -1,23 +1,20 @@
-var React = require('react'),
-  $ = React.DOM,
-  _ = require('../util/util'),
-  index = require('../../content/target/index');
+module _ from '../util/util';
+import {createClass, DOM} from 'react';
+const index = require('../../content/target/index');
 
+module.exports = createClass({
+  render() {
+    const {div, h3, ul, li, a} = DOM
 
-
-module.exports = React.createClass({
-  render: function() {
-    return $.div(null, _.keys(index).reverse()
+    return div(null, _.keys(index).reverse()
       .filter(RegExp.prototype.test.bind(/.*blog*/))
-      .map(function(path) {
-        var year = path.match(/[0-9]+/)
+      .map(path => {
+        const year = path.match(/[0-9]+/)
         return [
-          $.h3(null, year),
-          $.ul(null, _.map(index[path], function(entry) {
-            return $.li({key: entry},
-              $.a({href: './#/blog/' + year + '/' + entry}, entry))
-          }))
+          h3(null, year),
+          ul(null, _.map(index[path], entry =>
+            li({key: entry},a({href: `./#/blog/${year}/${entry}`}, entry))))
         ]
       }))
   }
-});
+})

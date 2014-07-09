@@ -3,11 +3,10 @@ module.exports = {
     output: {
         path: __dirname + '/client',
         filename: "bundle.js"
+    },
+    module: {
+      loaders: [{
+        test: /\.js$/, loader: 'es6-loader'
+      }]
     }
-    // ,
-    // module: {
-    //   loaders: [{
-    //     test: /\.js$/, loader: 'es6-loader'
-    //   }]
-    // }
 };

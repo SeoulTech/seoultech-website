@@ -1,19 +1,16 @@
-var React = require('react'),
-  $ = React.DOM,
-  _ = require('../util/util'),
-  fetch = require('../util/fetch');
+module _ from '../util/util';
+import {createClass, DOM as $} from 'react';
+const fetch = require('../util/fetch');
 
-module.exports = React.createClass({
+module.exports = createClass({
   componentWillMount: _.partial(fetch, 'events'),
-  render: function() {
+  render() {
     return $.ul(null, [
-      _.map(_.get(this.props, 'results'), function(d, i) {
-        return $.li({key: d.id}, [
-          $.span({key: 'date' + d.id}, '[' + new Date(d.time).toDateString() + '] '),
-          $.a({key: 'name' + d.id, href: './#/events/' + d.id}, d.name),
-          $.span({key: 'rsvp' + d.id}, ' (' + d.yes_rsvp_count + ' techies)')
-        ])
-      })
+      _.map(_.get(this.props, 'results'), (d, i) => $.li({key: d.id}, [
+        $.span({key: 'date' + d.id}, `[${new Date(d.time).toDateString()}]`),
+        $.a({key: 'name' + d.id, href: `./#/events/${d.id}`}, d.name),
+        $.span({key: 'rsvp' + d.id}, ` (${d.yes_rsvp_count} techies)`)
+      ]))
     ])
   }
 })

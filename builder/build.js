@@ -3,6 +3,7 @@
 var fs = require('fs'),
   convertDir = require('./parse'),
   mkdirp = require('mkdirp'),
+  rimraf = require('rimraf'),
 
   inputDir = 'client/content/source/',
   outputDir = 'client/content/target/',
@@ -53,6 +54,7 @@ try {
     'export default ' + JSON.stringify(outputIndex))
 
   Object.keys(outputIndex).map(function(dir) {
+    rimraf.sync(dir)
     mkdirp.sync(dir)
     return dir
   }).map(function(_, i) {

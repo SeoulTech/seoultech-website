@@ -1,8 +1,8 @@
 module _ from '../util/util';
+import fetch from '../util/fetch';
 import {createClass, DOM} from 'react';
-const fetch = require('../util/fetch');
 
-module.exports = createClass({
+export default createClass({
   componentDidMount() {
     fetch('event', this.props.id)
     fetch('people', this.props.id)

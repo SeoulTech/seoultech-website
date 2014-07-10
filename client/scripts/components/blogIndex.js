@@ -1,8 +1,8 @@
 module _ from '../util/util';
 import {createClass, DOM} from 'react';
-const index = require('../../content/target/index');
+import index from '../../content/target/index';
 
-module.exports = createClass({
+export default createClass({
   render() {
     const {div, h3, ul, li, a} = DOM
 

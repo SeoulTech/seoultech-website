@@ -72,65 +72,76 @@
 	var renderComponent = __webpack_require__(8).renderComponent;
 	var createClass = __webpack_require__(8).createClass;
 	var DOM = __webpack_require__(8).DOM;
+	var Pages = __webpack_require__(7)["default"];
+	var AboutPage = __webpack_require__(1)["default"];
+	var BlogIndex = __webpack_require__(2)["default"];
+	var BlogItem = __webpack_require__(3)["default"];
+	var EventsIndex = __webpack_require__(4)["default"];
+	var EventsItem = __webpack_require__(5)["default"];
 
-	var Pages = __webpack_require__(7),
-	  BlogIndex = __webpack_require__(1),
-	  BlogItem = __webpack_require__(2),
-	  EventsIndex = __webpack_require__(3),
-	  EventsItem = __webpack_require__(4),
-	  AboutPage = __webpack_require__(5),
+	var Index = createClass({
+	  getInitialState: function() {return {}},
+	  cacheData: function(event) {
+	    var _state = {},
+	      component = (data = event.detail).component, id = data.id, data = data.data
 
-	  Index = createClass({
-	    getInitialState: function() {return {}},
-	    cacheData: function(event) {
-	      var _state = {},
-	        component = (data = event.detail).component, id = data.id, data = data.data
-
-	      if (id) {
-	        _state[component] = this.state[component] || {}
-	        _state[component][id] = data
-	       } else {
-	        _state[component] = data
-	      }
-	      return _state
-	    },
-	    componentDidMount: function() {
-	      window.addEventListener('fetch',
-	        _.compose(this.setState.bind(this), this.cacheData), false)
-	    },
-	    render: function() {
-	      var div = DOM.div, a = DOM.a, br = DOM.br, img = DOM.img
-	      return div(null, [
-	        a({key: 'link-to-blog', href: './#'}, 'Blog'),
-	        a({key: 'link-to-events', href: './#/events'}, 'Events'),
-	        a({key: 'link-to-about', href: './#/about'}, 'About'),
-	        br({key: 'break'}),
-	        img({
-	          key: 'image',
-	          src: 'client/images/banner.png',
-	          alt: 'Seoul Tech Society',
-	          className: 'main--logo'
-	        }),
-	        Pages({
-	          key: 'pages',
-	          '/': {handler: BlogIndex},
-	          '/blog/:year/:id': {handler: BlogItem},
-	          '/events': {handler: EventsIndex, data: _.get(this.state, 'events')},
-	          '/events/:id': {handler: EventsItem, data: {
-	            'event': _.get(this.state, 'event'),
-	            'rsvp': _.get(this.state, 'people')}},
-	          '/about': {handler: AboutPage}
-	        })
-	      ])
+	    if (id) {
+	      _state[component] = this.state[component] || {}
+	      _state[component][id] = data
+	      } else {
+	      _state[component] = data
 	    }
-	  })
-
+	    return _state
+	  },
+	  componentDidMount: function() {
+	    window.addEventListener('fetch',
+	      _.compose(this.setState.bind(this), this.cacheData), false)
+	  },
+	  render: function() {
+	    var div = DOM.div, a = DOM.a, br = DOM.br, img = DOM.img
+	    return div(null, [
+	      a({key: 'link-to-blog', href: './#'}, 'Blog'),
+	      a({key: 'link-to-events', href: './#/events'}, 'Events'),
+	      a({key: 'link-to-about', href: './#/about'}, 'About'),
+	      br({key: 'break'}),
+	      img({
+	        key: 'image',
+	        src: 'client/images/banner.png',
+	        alt: 'Seoul Tech Society',
+	        className: 'main--logo'
+	      }),
+	      Pages({
+	        key: 'pages',
+	        '/': {handler: BlogIndex},
+	        '/blog/:year/:id': {handler: BlogItem},
+	        '/events': {handler: EventsIndex, data: _.get(this.state, 'events')},
+	        '/events/:id': {handler: EventsItem, data: {
+	          'event': _.get(this.state, 'event'),
+	          'rsvp': _.get(this.state, 'people')}},
+	        '/about': {handler: AboutPage}
+	      })
+	    ])
+	  }
+	});
+	exports.Index = Index;
 	renderComponent(Index(), document.querySelector('.wrapper'))
-
-	module.exports = Index
 
 /***/ },
 /* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var createClass = __webpack_require__(8).createClass;
+	var DOM = __webpack_require__(8).DOM;
+
+	exports["default"] = createClass({
+	  render: function()  {return DOM.div({dangerouslySetInnerHTML: {
+	    __html: __webpack_require__(14)
+	  }})}
+	})
+
+/***/ },
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -160,9 +171,9 @@
 	var _ = __es6_transpiler_build_module_object__("_", __webpack_require__(6));
 	var createClass = __webpack_require__(8).createClass;
 	var DOM = __webpack_require__(8).DOM;
-	var index = __webpack_require__(177);
+	var index = __webpack_require__(11)["default"];
 
-	module.exports = createClass({
+	exports["default"] = createClass({
 	  render: function() {
 	    var div = DOM.div, h3 = DOM.h3, ul = DOM.ul, li = DOM.li, a = DOM.a
 
@@ -180,64 +191,19 @@
 	})
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var createClass = __webpack_require__(8).createClass;
 	var DOM = __webpack_require__(8).DOM;
 
-	module.exports = createClass({
+	exports["default"] = createClass({
 	  render: function() {
-	    var year = (id = this.props).year, id = id.id
+	    var p = this.props.year + '/' + this.props.id
 	    return DOM.div({dangerouslySetInnerHTML: {
-	      __html: __webpack_require__(9)("./" + (("" + year) + ("/" + id) + ""))}})
-	  }
-	})
-
-/***/ },
-/* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	function __es6_transpiler_warn__(warning) {
-	  if (typeof console === 'undefined') {
-	  } else if (typeof console.warn === "function") {
-	    console.warn(warning);
-	  } else if (typeof console.log === "function") {
-	    console.log(warning);
-	  }
-	}
-	function __es6_transpiler_build_module_object__(name, imported) {
-	  var moduleInstanceObject = Object.create ? Object.create(null) : {};
-	  if (typeof imported === "function") {
-	    __es6_transpiler_warn__("imported module '"+name+"' exported a function - this may not work as expected");
-	  }
-	  for (var key in imported) {
-	    if (Object.prototype.hasOwnProperty.call(imported, key)) {
-	      moduleInstanceObject[key] = imported[key];
-	    }
-	  }
-	  if (Object.freeze) {
-	    Object.freeze(moduleInstanceObject);
-	  }
-	  return moduleInstanceObject;
-	}
-	var _ = __es6_transpiler_build_module_object__("_", __webpack_require__(6));
-	var createClass = __webpack_require__(8).createClass;
-	var $ = __webpack_require__(8).DOM;
-	var fetch = __webpack_require__(10);
-
-	module.exports = createClass({
-	  componentWillMount: _.partial(fetch, 'events'),
-	  render: function() {
-	    return $.ul(null, [
-	      _.map(_.get(this.props, 'results'), function(d, i)  {return $.li({key: d.id}, [
-	        $.span({key: 'date' + d.id}, (("[" + (new Date(d.time).toDateString())) + "]")),
-	        $.a({key: 'name' + d.id, href: ("./#/events/" + (d.id))}, d.name),
-	        $.span({key: 'rsvp' + d.id}, ((" (" + (d.yes_rsvp_count)) + " techies)"))
-	      ])})
-	    ])
+	      __html: __webpack_require__(9)("./" + p + '.html')
+	    }})
 	  }
 	})
 
@@ -270,11 +236,57 @@
 	  return moduleInstanceObject;
 	}
 	var _ = __es6_transpiler_build_module_object__("_", __webpack_require__(6));
+	var fetch = __webpack_require__(10)["default"];
+	var createClass = __webpack_require__(8).createClass;
+	var $ = __webpack_require__(8).DOM;
+
+	exports["default"] = createClass({
+	  componentWillMount: _.partial(fetch, 'events'),
+	  render: function() {
+	    return $.ul(null, [
+	      _.map(_.get(this.props, 'results'), function(d, i)  {return $.li({key: d.id}, [
+	        $.span({key: 'date' + d.id}, (("[" + (new Date(d.time).toDateString())) + "]")),
+	        $.a({key: 'name' + d.id, href: ("./#/events/" + (d.id))}, d.name),
+	        $.span({key: 'rsvp' + d.id}, ((" (" + (d.yes_rsvp_count)) + " techies)"))
+	      ])})
+	    ])
+	  }
+	})
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	function __es6_transpiler_warn__(warning) {
+	  if (typeof console === 'undefined') {
+	  } else if (typeof console.warn === "function") {
+	    console.warn(warning);
+	  } else if (typeof console.log === "function") {
+	    console.log(warning);
+	  }
+	}
+	function __es6_transpiler_build_module_object__(name, imported) {
+	  var moduleInstanceObject = Object.create ? Object.create(null) : {};
+	  if (typeof imported === "function") {
+	    __es6_transpiler_warn__("imported module '"+name+"' exported a function - this may not work as expected");
+	  }
+	  for (var key in imported) {
+	    if (Object.prototype.hasOwnProperty.call(imported, key)) {
+	      moduleInstanceObject[key] = imported[key];
+	    }
+	  }
+	  if (Object.freeze) {
+	    Object.freeze(moduleInstanceObject);
+	  }
+	  return moduleInstanceObject;
+	}
+	var _ = __es6_transpiler_build_module_object__("_", __webpack_require__(6));
+	var fetch = __webpack_require__(10)["default"];
 	var createClass = __webpack_require__(8).createClass;
 	var DOM = __webpack_require__(8).DOM;
-	var fetch = __webpack_require__(10);
 
-	module.exports = createClass({
+	exports["default"] = createClass({
 	  componentDidMount: function() {
 	    fetch('event', this.props.id)
 	    fetch('people', this.props.id)
@@ -298,68 +310,69 @@
 	})
 
 /***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var createClass = __webpack_require__(8).createClass;
-	var DOM = __webpack_require__(8).DOM;
-	var __html = __webpack_require__(11)
-	module.exports = createClass({
-	  render: function()  {return DOM.div({dangerouslySetInnerHTML: {__html: __html}})}
-	})
-
-/***/ },
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var _ = __webpack_require__(41),
-	util = {
-
-	  get: function()  {var SLICE$0 = Array.prototype.slice;var args = SLICE$0.call(arguments, 0);return args.reduce(function(obj, key) 
-	    {return _.has(obj, key)? obj[key] : null})},
-
-	  maybe: function(value) {
-	    return {
-	      map: function(f) {
-	        return value !== null? util.maybe(f(value)) : this
-	      },
-	      fmap: function(f) {
-	        return value !== null? util.maybe(value.map(f)) : this
-	      },
-	      return: function()  {return typeof value == 'function'? value() : value}
-	    }
-	  },
-
-	  // list of lodash methods used; either to make a custom lodash build
-	  // or replace lodash with something else
-
-	  assign: _.assign,
-	  cloneDeep: _.cloneDeep,
-	  compact: _.compact,
-	  compose: _.compose,
-	  filter: _.filter,
-	  isEmpty: _.isEmpty,
-	  keys: _.keys,
-	  map: _.map,
-	  merge: _.merge,
-	  partial: _.partial,
-	  reduceRight: _.reduceRight,
-	  zipObject: _.zipObject
-	}
-
-	module.exports = util
+	function get() {var SLICE$0 = Array.prototype.slice;var args = SLICE$0.call(arguments, 0);
+	  return args.reduce(function(obj, key)  {return _.has(obj, key)? obj[key] : null})
+	};
+	exports.get = get;
+	function maybe(value) {
+	  return {
+	    map: function(f) {return value !== null? maybe(f(value)) : this},
+	    fmap: function(f) {return value !== null? maybe(value.map(f)) : this},
+	    return: function()  {return typeof value == 'function'? value() : value}
+	  }
+	};
+	exports.maybe = maybe;
+	// list of lodash methods used; either to make a custom lodash build
+	// or replace lodash with something else
+	exports.assign = __webpack_require__(13).assign;
+	exports.cloneDeep = __webpack_require__(13).cloneDeep;
+	exports.compact = __webpack_require__(13).compact;
+	exports.compose = __webpack_require__(13).compose;
+	exports.filter = __webpack_require__(13).filter;
+	exports.isEmpty = __webpack_require__(13).isEmpty;
+	exports.keys = __webpack_require__(13).keys;
+	exports.map = __webpack_require__(13).map;
+	exports.merge = __webpack_require__(13).merge;
+	exports.partial = __webpack_require__(13).partial;
+	exports.reduceRight = __webpack_require__(13).reduceRight;
+	exports.zipObject = __webpack_require__(13).zipObject;
 
 /***/ },
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var React = __webpack_require__(8),
-	  _ = __webpack_require__(6);
+	function __es6_transpiler_warn__(warning) {
+	  if (typeof console === 'undefined') {
+	  } else if (typeof console.warn === "function") {
+	    console.warn(warning);
+	  } else if (typeof console.log === "function") {
+	    console.log(warning);
+	  }
+	}
+	function __es6_transpiler_build_module_object__(name, imported) {
+	  var moduleInstanceObject = Object.create ? Object.create(null) : {};
+	  if (typeof imported === "function") {
+	    __es6_transpiler_warn__("imported module '"+name+"' exported a function - this may not work as expected");
+	  }
+	  for (var key in imported) {
+	    if (Object.prototype.hasOwnProperty.call(imported, key)) {
+	      moduleInstanceObject[key] = imported[key];
+	    }
+	  }
+	  if (Object.freeze) {
+	    Object.freeze(moduleInstanceObject);
+	  }
+	  return moduleInstanceObject;
+	}
+	var _ = __es6_transpiler_build_module_object__("_", __webpack_require__(6));
+	var createClass = __webpack_require__(8).createClass;
 
-	module.exports = React.createClass({
+	exports["default"] = createClass({
 	  getNextState: function(props) {
 	    var lh = location.hash,
 	      hash = _.isEmpty(lh)? '/' : lh.slice(1).replace(/\/$/, ''),
@@ -407,63 +420,38 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	module.exports = __webpack_require__(15);
+	module.exports = __webpack_require__(12);
 
 /***/ },
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./2013/angelhack-contest-in-seoul-dcamp-june-8th-2013": 16,
-		"./2013/angelhack-contest-in-seoul-dcamp-june-8th-2013.js": 16,
-		"./2013/data-recovery-basics-bob-training-centre-jan-2-2014": 17,
-		"./2013/data-recovery-basics-bob-training-centre-jan-2-2014.js": 17,
-		"./2013/digital-art-lecture-series-i-when-artists-become-geeks": 18,
-		"./2013/digital-art-lecture-series-i-when-artists-become-geeks.js": 18,
-		"./2013/first-friday-night-jam-meetup-follow-up": 19,
-		"./2013/first-friday-night-jam-meetup-follow-up.js": 19,
-		"./2013/first-friday-night-tech-jam-seoul-april-19": 20,
-		"./2013/first-friday-night-tech-jam-seoul-april-19.js": 20,
-		"./2013/google-i-o-extended-seoul-may-16-2013": 21,
-		"./2013/google-i-o-extended-seoul-may-16-2013.js": 21,
-		"./2013/linux-101-seoul-sydney-tafe-korea-sep-23": 22,
-		"./2013/linux-101-seoul-sydney-tafe-korea-sep-23.js": 22,
-		"./2013/promotion-chuseok-game-jam-w-joe-spradley-sep-18": 23,
-		"./2013/promotion-chuseok-game-jam-w-joe-spradley-sep-18.js": 23,
-		"./2013/review-of-digital-art-series-i-ii": 24,
-		"./2013/review-of-digital-art-series-i-ii.js": 24,
-		"./2013/review-of-team-up-for-anglehack": 25,
-		"./2013/review-of-team-up-for-anglehack.js": 25,
-		"./2013/seoul-tech-careers-lead-developer-cto-for-a-fashtech": 26,
-		"./2013/seoul-tech-careers-lead-developer-cto-for-a-fashtech.js": 26,
-		"./2013/seoul-tech-rises-to-samsung-challenge": 27,
-		"./2013/seoul-tech-rises-to-samsung-challenge.js": 27,
-		"./2013/special-guest-speaker-ffventures-john-frankel-seoul": 28,
-		"./2013/special-guest-speaker-ffventures-john-frankel-seoul.js": 28,
-		"./2013/stay-safe-in-the-cyberspace-dcamp-oct-18th-2013": 29,
-		"./2013/stay-safe-in-the-cyberspace-dcamp-oct-18th-2013.js": 29,
-		"./2013/team-up-for-angelhack-2-d-camp-may-28-2013": 30,
-		"./2013/team-up-for-angelhack-2-d-camp-may-28-2013.js": 30,
-		"./2013/team-up-for-angelhack-seoul-may-10": 31,
-		"./2013/team-up-for-angelhack-seoul-may-10.js": 31,
-		"./2013/upcoming-tech-events-in-korea-keeping-updated": 32,
-		"./2013/upcoming-tech-events-in-korea-keeping-updated.js": 32,
-		"./2013/upcoming-tech-events-in-seoul-on-may-2013": 33,
-		"./2013/upcoming-tech-events-in-seoul-on-may-2013.js": 33,
-		"./2014/launch-lab-where-ideas-take-off-june-28": 34,
-		"./2014/launch-lab-where-ideas-take-off-june-28.js": 34,
-		"./2014/popular-science-ehealth-trends-w-dr-ogan-gurel": 35,
-		"./2014/popular-science-ehealth-trends-w-dr-ogan-gurel.js": 35,
-		"./2014/promotion-techtalk-networking-vol-2-platoon-feb-19": 36,
-		"./2014/promotion-techtalk-networking-vol-2-platoon-feb-19.js": 36,
-		"./2014/promotion-wellness-it-festival-at-center-seoul-july": 37,
-		"./2014/promotion-wellness-it-festival-at-center-seoul-july.js": 37,
-		"./2014/seoul-hack-n-tell-night-2": 38,
-		"./2014/seoul-hack-n-tell-night-2.js": 38,
-		"./2014/seoul-tech-ver-1-0-art-party-platoon-kunsthalle": 39,
-		"./2014/seoul-tech-ver-1-0-art-party-platoon-kunsthalle.js": 39,
-		"./2014/the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp": 40,
-		"./2014/the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp.js": 40
+		"./2013/angelhack-contest-in-seoul-dcamp-june-8th-2013.html": 15,
+		"./2013/data-recovery-basics-bob-training-centre-jan-2-2014.html": 16,
+		"./2013/digital-art-lecture-series-i-when-artists-become-geeks.html": 17,
+		"./2013/first-friday-night-jam-meetup-follow-up.html": 18,
+		"./2013/first-friday-night-tech-jam-seoul-april-19.html": 19,
+		"./2013/google-i-o-extended-seoul-may-16-2013.html": 20,
+		"./2013/linux-101-seoul-sydney-tafe-korea-sep-23.html": 21,
+		"./2013/promotion-chuseok-game-jam-w-joe-spradley-sep-18.html": 22,
+		"./2013/review-of-digital-art-series-i-ii.html": 23,
+		"./2013/review-of-team-up-for-anglehack.html": 24,
+		"./2013/seoul-tech-careers-lead-developer-cto-for-a-fashtech.html": 25,
+		"./2013/seoul-tech-rises-to-samsung-challenge.html": 26,
+		"./2013/special-guest-speaker-ffventures-john-frankel-seoul.html": 27,
+		"./2013/stay-safe-in-the-cyberspace-dcamp-oct-18th-2013.html": 28,
+		"./2013/team-up-for-angelhack-2-d-camp-may-28-2013.html": 29,
+		"./2013/team-up-for-angelhack-seoul-may-10.html": 30,
+		"./2013/upcoming-tech-events-in-korea-keeping-updated.html": 31,
+		"./2013/upcoming-tech-events-in-seoul-on-may-2013.html": 32,
+		"./2014/launch-lab-where-ideas-take-off-june-28.html": 33,
+		"./2014/popular-science-ehealth-trends-w-dr-ogan-gurel.html": 34,
+		"./2014/promotion-techtalk-networking-vol-2-platoon-feb-19.html": 35,
+		"./2014/promotion-wellness-it-festival-at-center-seoul-july.html": 36,
+		"./2014/seoul-hack-n-tell-night-2.html": 37,
+		"./2014/seoul-tech-ver-1-0-art-party-platoon-kunsthalle.html": 38,
+		"./2014/the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp.html": 39
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -483,8 +471,32 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var _ = __webpack_require__(6),
-	  p = {
+	function __es6_transpiler_warn__(warning) {
+	  if (typeof console === 'undefined') {
+	  } else if (typeof console.warn === "function") {
+	    console.warn(warning);
+	  } else if (typeof console.log === "function") {
+	    console.log(warning);
+	  }
+	}
+	function __es6_transpiler_build_module_object__(name, imported) {
+	  var moduleInstanceObject = Object.create ? Object.create(null) : {};
+	  if (typeof imported === "function") {
+	    __es6_transpiler_warn__("imported module '"+name+"' exported a function - this may not work as expected");
+	  }
+	  for (var key in imported) {
+	    if (Object.prototype.hasOwnProperty.call(imported, key)) {
+	      moduleInstanceObject[key] = imported[key];
+	    }
+	  }
+	  if (Object.freeze) {
+	    Object.freeze(moduleInstanceObject);
+	  }
+	  return moduleInstanceObject;
+	}
+	var _ = __es6_transpiler_build_module_object__("_", __webpack_require__(6));
+	var urls = function(component, id) {
+	  var p = {
 	    domain: 'http://api.meetup.com/2/',
 	    key: '?key=32e6f1c637b17515d3c112970763b6d',
 	    group: 'group_urlname=seoul-tech-society',
@@ -493,36 +505,36 @@
 	    only1: 'only=id,name',
 	    only2: 'only=id,name,description',
 	    only3: 'only=id,name,time,yes_rsvp_count'
-	  },
-	  urls = function(component, id) {
-	    return _.get({
-	      events: p.domain + 'events/' + [p.key, p.group, p.status, p.only3].join('&'),
-	      event: p.domain + 'event/' + id + [p.key, p.only2].join('&'),
-	      people: p.domain + 'rsvps/' + [p.key, 'event_id=' + id].join('&'),
-	      person: p.domain + 'member/' + id + [p.key].join('&'),
-	      venues: p.domain + 'venues/' + [p.key, p.group, p.only1].join('&'),
-	    }, component)
 	  }
 
-	module.exports = function(component, id) {
-	  var callback = '__j' + document.getElementsByClassName('jsonp').length,
-	    script = document.createElement('script')
+	  return _.get({
+	    events: p.domain + 'events/' + [p.key, p.group, p.status, p.only3].join('&'),
+	    event: p.domain + 'event/' + id + [p.key, p.only2].join('&'),
+	    people: p.domain + 'rsvps/' + [p.key, 'event_id=' + id].join('&'),
+	    person: p.domain + 'member/' + id + [p.key].join('&'),
+	    venues: p.domain + 'venues/' + [p.key, p.group, p.only1].join('&'),
+	  }, component)
+	}
 
+	exports["default"] = function(component, id) {
+	  var callback = '__j' + document.getElementsByClassName('jsonp').length
+
+	  var script = document.createElement('script')
 	  script.type = 'text/javascript'
 	  script.className = 'jsonp'
 	  script.src = urls(component, id) + '&callback=' + callback
+
+	  window.addEventListener('fetch', function() {
+	    [].slice.call(document.getElementsByClassName('jsonp'))
+	      .forEach(function(s ) {return s.parentNode.removeChild(s)})
+	    script = null
+	  })
 
 	  window[callback] = function(data) {
 	    window.dispatchEvent(new CustomEvent('fetch', {
 	      detail: {data: data, component: component, id: id}
 	    }))
 	  }
-
-	  window.addEventListener('fetch', function() {
-	    [].slice.call(document.getElementsByClassName('jsonp'))
-	      .forEach(function(s)  {return s.parentNode.removeChild(s)})
-	    script = null
-	  })
 
 	  document.head.appendChild(script)
 
@@ -533,13 +545,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	module.exports = '<h1 id=\'about-us\'>About us</h1>\n<h2 id=\'-no-matter-what-anybody-tells-you-words-and-ideas-can-change-the-world-tom-schulman-dead-poets-society\'>&quot;No matter what anybody tells you, words and ideas can change the world.&quot; — Tom Schulman, Dead Poets Society</h2>\n<h3 id=\'who-we-are\'>Who we are</h3>\n<p>Seoul Tech Society is an international non-profit organization based in Seoul. It was founded in 2013 with aim to build and unite tech community all around Korea and beyond.</p>\n<h3 id=\'what-we-do\'>What we do</h3>\n<p>Technology is our passion so we hold open monthly meetings to collaborate on projects, learn from each other or share knowledge through conference-like sessions.  </p>\n<p>Our interests are not centered around a specific area, all digital technologies and IT related topics are honored and welcome: mobile &amp; wearable electronics, software, web, robotics, UX, Computer Science, Maths, etc.</p>\n<p>If you are an expat interested in the Seoul tech scene or a Korean netizen interested expanding abroad, come and join us for networking and discussion, and of course a few drinks.</p>\n<h3 id=\'how-to-apply-to-present\'>How to apply to present</h3>\n<p>A science, engineering or technology professional? Want to share your knowledge and passion? Need a stage to present your successful startup?</p>\n<p>If you would like to be one of our guest speakers and reach out to the international tech community of Seoul, drop us an email at contacts@seoultechsociety.org or RSVP on the next event, we’ll be glad to hear from you!</p>\n<p><a href=\'https://www.facebook.com/SeoulTechSociety\'>https://www.facebook.com/SeoulTechSociety</a></p>\n<p><a href=\'https://www.facebook.com/groups/SeoulTechSociety/\'>https://www.facebook.com/groups/SeoulTechSociety/</a></p>\n<p><a href=\'https://twitter.com/Seoul_Tech\'>https://twitter.com/Seoul_Tech</a></p>\n'
+	exports["default"] = {"client/content/target/blog/2013/":["angelhack-contest-in-seoul-dcamp-june-8th-2013","data-recovery-basics-bob-training-centre-jan-2-2014","digital-art-lecture-series-i-when-artists-become-geeks","first-friday-night-jam-meetup-follow-up","first-friday-night-tech-jam-seoul-april-19","google-i-o-extended-seoul-may-16-2013","linux-101-seoul-sydney-tafe-korea-sep-23","promotion-chuseok-game-jam-w-joe-spradley-sep-18","review-of-digital-art-series-i-ii","review-of-team-up-for-anglehack","seoul-tech-careers-lead-developer-cto-for-a-fashtech","seoul-tech-rises-to-samsung-challenge","special-guest-speaker-ffventures-john-frankel-seoul","stay-safe-in-the-cyberspace-dcamp-oct-18th-2013","team-up-for-angelhack-2-d-camp-may-28-2013","team-up-for-angelhack-seoul-may-10","upcoming-tech-events-in-korea-keeping-updated","upcoming-tech-events-in-seoul-on-may-2013"],"client/content/target/blog/2014/":["launch-lab-where-ideas-take-off-june-28","popular-science-ehealth-trends-w-dr-ogan-gurel","promotion-techtalk-networking-vol-2-platoon-feb-19","promotion-wellness-it-festival-at-center-seoul-july","seoul-hack-n-tell-night-2","seoul-tech-ver-1-0-art-party-platoon-kunsthalle","the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp"],"client/content/target/pages/":["about"]}
 
 /***/ },
-/* 12 */,
-/* 13 */,
-/* 14 */,
-/* 15 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -563,25 +572,25 @@
 
 	"use strict";
 
-	var DOMPropertyOperations = __webpack_require__(42);
-	var EventPluginUtils = __webpack_require__(43);
-	var ReactChildren = __webpack_require__(44);
-	var ReactComponent = __webpack_require__(45);
-	var ReactCompositeComponent = __webpack_require__(46);
-	var ReactContext = __webpack_require__(47);
-	var ReactCurrentOwner = __webpack_require__(48);
-	var ReactDOM = __webpack_require__(49);
-	var ReactDOMComponent = __webpack_require__(50);
-	var ReactDefaultInjection = __webpack_require__(51);
-	var ReactInstanceHandles = __webpack_require__(52);
-	var ReactMount = __webpack_require__(53);
-	var ReactMultiChild = __webpack_require__(54);
-	var ReactPerf = __webpack_require__(55);
-	var ReactPropTypes = __webpack_require__(56);
-	var ReactServerRendering = __webpack_require__(57);
-	var ReactTextComponent = __webpack_require__(58);
+	var DOMPropertyOperations = __webpack_require__(40);
+	var EventPluginUtils = __webpack_require__(41);
+	var ReactChildren = __webpack_require__(42);
+	var ReactComponent = __webpack_require__(43);
+	var ReactCompositeComponent = __webpack_require__(44);
+	var ReactContext = __webpack_require__(45);
+	var ReactCurrentOwner = __webpack_require__(46);
+	var ReactDOM = __webpack_require__(47);
+	var ReactDOMComponent = __webpack_require__(48);
+	var ReactDefaultInjection = __webpack_require__(49);
+	var ReactInstanceHandles = __webpack_require__(50);
+	var ReactMount = __webpack_require__(51);
+	var ReactMultiChild = __webpack_require__(52);
+	var ReactPerf = __webpack_require__(53);
+	var ReactPropTypes = __webpack_require__(54);
+	var ReactServerRendering = __webpack_require__(55);
+	var ReactTextComponent = __webpack_require__(56);
 
-	var onlyChild = __webpack_require__(59);
+	var onlyChild = __webpack_require__(57);
 
 	ReactDefaultInjection.inject();
 
@@ -624,7 +633,7 @@
 	};
 
 	if ("production" !== process.env.NODE_ENV) {
-	  var ExecutionEnvironment = __webpack_require__(60);
+	  var ExecutionEnvironment = __webpack_require__(58);
 	  if (ExecutionEnvironment.canUseDOM &&
 	      window.top === window.self &&
 	      navigator.userAgent.indexOf('Chrome') > -1) {
@@ -640,185 +649,10 @@
 	React.version = '0.10.0';
 
 	module.exports = React;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'angelhack-contest-in-seoul-dcamp-june-8th-2013\'>AngelHack Contest in Seoul @DCAMP, June 8th 2013</h1>\n<p>Hey! What are you doing next weekend? You should check out the\n<a href=\'http://angelhack.co.kr/\' title=\'official angelhack korea site\'>AngelHack event @\nDCAMP</a> on June\n8th! \\\n\\\nOver 150 developers are expected to attend and have the chance to win\nsome of \\$100,000+ in prizes and the opportunity to be flown out to\nSilicon Valley to represent Seoul at our global demo day and mentored\nfor 10 weeks prior. </p>\n<p><strong>And you know what? You can use a promo code below to get 20% off the\nticket price!</strong></p>\n<p><strong>Promo code  is ”seoultechsociety&quot; and there are only 15 spots left.</strong></p>\n<p><a href=\'http://ahsp13seoul.eventbrite.com/\'>http://ahsp13seoul.eventbrite.com/</a> </p>\n<p><img src=\'http://media.tumblr.com/17ce6194a2e794032bf876bb935fec6d/tumblr_inline_mnk1ctERxk1qz4rgp.jpg\' alt=\'image\'></p>\n'
-
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'data-recovery-basics-bob-training-centre-jan-2-2014\'>Data recovery basics @BoB Training Centre, Jan 2, 2014</h1>\n<p>Have you ever deleted a file and then realized it was a crucial mistake\nthat you have ever made to your files? Come to Seoul Tech Society event\nand learn how to recover your data! </p>\n<p>RSVP <a href=\'http://www.meetup.com/seoul-tech-society/events/147208302/\'>http://www.meetup.com/seoul-tech-society/events/147208302/</a></p>\n<p><img src=\'https://31.media.tumblr.com/3443c12ddb0930ee894d06e75ac2b152/tumblr_inline_my5oh22IO81qz73mc.jpg\' alt=\'\'></p>\n<p><img src=\'https://31.media.tumblr.com/afa905a9688eef92fe958b09b71d3cdd/tumblr_inline_my5odbEkVb1qz73mc.jpg\' alt=\'\'></p>\n'
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'digital-art-lecture-series-i-when-artists-become-geeks-or-vice-versa-seoul-july-10\'>Digital Art Lecture Series I: When artists become geeks or vice versa @Seoul, July 10</h1>\n<p><a href=\'http://www.smellsdreamy.com\'>Digital artist</a>, educator and the Seoul\nTech Society member <a href=\'http://facebook.com/LuciaJeesunLee\'>Lucia Lee</a> will\ngive a series of lectures on digital art. \\</p>\n<p>The first lecture: Introduction to Digital Art  - When artists become\ngeeks or vice versa.</p>\n<p><img src=\'http://media.tumblr.com/74213c7b105c90f5e13036e5e00ce0c1/tumblr_inline_mp22gh44Pa1qz4rgp.jpg\' alt=\'image\'></p>\n<hr>\n<p><strong>Agenda:</strong> Lucia will walk you through to the magic world of digital\nart, providing examples of inspiring artists and projects in the field.\nGet yourself ready for full of visual and creative stimuli!</p>\n<p><strong>About Lucia :</strong> Lucia Jeesun Lee is an interdisciplinary artist\nworking primarily in digital media. Born and raised in South Korea, she\nmoved to New York as she began her studies at New York University, where\nshe garnered her Master’s Degree in Interactive Telecommunication in</p>\n<ol>\n<li>Her works have been featured in various venues in New York. She\nalso has worked as a video projection designer in off-off Broadway shows\nand as an adjunct professor/ instructor in Hostos Community College,\nStevens Institute of Technology, and Queens Museum of Art</li>\n</ol>\n<p>Location: <a href=\'http://hubseoul.net/\'>HUB Seoul </a> , <a href=\'https://maps.google.com/maps?q=Bongeunsa-ro+55-gil,+Gangnam-gu,+Seoul,+South+Korea&amp;hl=en&amp;sll=37.0625,-95.677068&amp;sspn=40.460237,78.662109&amp;hnear=Bongeunsa-ro+55-gil,+Gangnam-gu,+Seoul,+South+Korea&amp;t=m&amp;z=16\'>17 Bongeunsa-ro 55-gil,\nSeoul</a></p>\n<p>Time: 19.00-20.30</p>\n<p>RSVP to this event\nat <a href=\'http://www.meetup.com/seoul-tech-society/events/125183962/\'>http://www.meetup.com/seoul-tech-society/</a></p>\n'
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'first-friday-night-jam-meetup-follow-up\'>First Friday Night Jam meetup follow-up</h1>\n<p>Firstly a big thank you to all those of you who attended and supported\nthe event. It was our largest yet, with 20+ attendees and we’re pleased\nto see that true community grows.</p>\n<p>As planned this meetup consisted of two parts:</p>\n<p><strong>Free Talk at TOZ Sinchon</strong></p>\n<blockquote>\n<p>where we made a short presentation of the Seoul Tech Society itself</p>\n<p><strong><a href=\'http://www.slideshare.net/SeoulTechSociety/seoul-tech-society\' title=\'Introduction to Seoul Tech Society\'>Introduction to Seoul Tech\nSociety</a></strong></p>\n<p>\\</p>\n<p>and then had a discussion session on <em>“Modern Tech Opportunities in\nKorea”</em></p>\n<p><a href=\'http://www.slideshare.net/SeoulTechSociety/tech-opportunities-in-korea\'></a><a href=\'http://www.slideshare.net/SeoulTechSociety/tech-opportunities-in-korea\'>http://www.slideshare.net/SeoulTechSociety/tech-opportunities-in-korea</a>.</p>\n<p>A lot of good tech topics popped up so event 2 hours was not enough to\nget to the last slide.</p>\n</blockquote>\n<p><strong>Afterparty</strong></p>\n<blockquote>\n<p>The rest of the evening all of us spend together at the nearest pub,\nsocializing and discussing a truly broad range of topics: from Berlin\nstartup scene and mobile OS code bases up to Pushkin and international\naffairs.</p>\n</blockquote>\n<p>It was wonderful (and nobody expected that) to see what an international\ncrowd attended the event: people all over the Europe, South America, US\nand Republic of  Korea of course. That was the diversity we are up to!\nPeople with different backgrounds, cultures, languages got together to\nmeet others who are smart, educated, enthusiastic and young at their\nhearts to share skills, knowledge and passion in business and\ntechnology.</p>\n<p>Through the evening a few things were noted as missing: a <strong><a href=\'https://www.facebook.com/SeoulTechSociety\'>Seoul Tech\nSociety Facebook page</a></strong>\nwhich now exists, as the brand new twitter account\ndoes <strong><a href=\'https://twitter.com/Seoul_Tech\'>@Seoul_Tech</a></strong>, so feel free to\nfollow news and updates with the way which is more convenient to you.\nBoth channels will be used  to deliver news, updates, announce events\netc.</p>\n<p>We are also <em>exploring ways to work, share and interact</em> altogether as a\ncommunity: what is the most convenient way to exchange links, suggest\ndiscussion topics and speakers you are interested to listen to on our\nnext meetups?</p>\n<ul>\n<li>Would plain-old forum work for your?</li>\n<li>Is google+ too geeky</li>\n<li>or are we eager to get something reddit\\hacker’s news style these\nwebX.Y days?</li>\n</ul>\n<p>We’d like to know what you think!</p>\n<p><strong>\\\n</strong></p>\n<p>Stay tuned, drop us a few warm words at\n <strong>contacts[at]seoultechsociety.org</strong> and don’t forget to check our next\nevent:</p>\n<p><em>&quot;Team up for AngelHack @Seoul&quot;</em></p>\n<p><a href=\'http://www.meetup.com/seoul-tech-society/events/115904382/\'>http://www.meetup.com/seoul-tech-society/events/115904382/</a></p>\n<p>Seoul Tech Society team,</p>\n<p>FB       <a href=\'https://www.facebook.com/SeoulTechSociety\'>https://www.facebook.com/SeoulTechSociety</a></p>\n<p>Twitter <a href=\'https://twitter.com/Seoul_Tech\'>https://twitter.com/Seoul_Tech</a></p>\n<p><strong>\\\n\\\nP.S </strong>That was great to meet you all at First Friday Night Jam!</p>\n'
-
-/***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'first-friday-night-tech-jam-seoul-april-19\'>First Friday Night Tech Jam @Seoul, April 19</h1>\n<p>Fun People, Great Connections, and New Tech.</p>\n<p>Seoul Tech Society presents a free talk  <em>“Modern Opportunities in\nKorea, Perspectives for Tech Professionals”</em></p>\n<p>Korea’s the most innovative country in the world, local enthusiasm for\ntechnology provides developers and designers with all possible\nchallenges.</p>\n<p>Let’s discuss  Asian tech landscape and true innovation opportunities\nthat exist today in Korea.</p>\n<p><strong>Schedule</strong> (Feel free to join or leave any time)</p>\n<p><em>7-7:30PM</em> Mix and Mingle.</p>\n<blockquote>\n<p>Meet other techies</p>\n</blockquote>\n<p><em>7:30-9PM</em> Discussion session</p>\n<blockquote>\n<p><em>“Modern Opportunities in Korea, Perspectives for Tech Professionals”</em></p>\n<p>What are you passionate about? Let us know!</p>\n</blockquote>\n<p><em>9-…PM </em>Party time</p>\n<blockquote>\n<p>Free time to get along with other members. We will move to the nearest\nbar for a pint of beer. Call to Nikolay (010-9426-7394) for the exact\nlocation.</p>\n</blockquote>\n<p><strong>Place</strong></p>\n<p>We’v reserved a room at TOZ: please make sure to take your name OFF the\nRSVP list if you are not able to attend (the cost of the meetup depends\non the room size, which depends on the number of people in attendance).</p>\n<p>TOZ provides a comfortable room for ~5,000won/person for 2.5hr with\nfree refreshments.</p>\n<p>Please <a href=\'http://www.meetup.com/computer-science-society/events/111470142/\'>RSVP on\nmeetup.com</a> in\ncase you plan to show up. </p>\n<p><strong>Directions: </strong><a href=\'https://maps.google.com/maps?q=37.556471,126.937097&amp;ll=37.556436,126.936927&amp;spn=0.001529,0.00327&amp;num=1&amp;t=m&amp;z=19\'>Sinchon\nTOZ</a></p>\n<p>18-55 Changcheon-dong, Seodaemun-gu, Seoul, South Korea, Seoul/</p>\n<p>Sinchon subway station (line 2), exit 3, go straight 50m until\nStarbucks, 4th floor in the building of Starbucks. Call to Nikolay\n(010-9426-7394) if any difficulties.</p>\n<p><strong>Update: </strong>Afterpaty place “Warawara”</p>\n<p>\\\nView <a href=\'https://maps.google.com/maps/ms?msa=0&amp;msid=216735581831034000805.0004dab3a83fd9e6d51ce&amp;ie=UTF8&amp;t=m&amp;ll=37.557847,126.938267&amp;spn=0.005954,0.009141&amp;z=16&amp;source=embed\'>45-1 Changcheon-dong (37\nMyeongmul-gil)</a>\nin a larger map</p>\n<p>Please call Nikolay in case if you get lost :)</p>\n'
-
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'google-i-o-extended-seoul-may-16-2013\'>Google I/O Extended @Seoul, May 16 2013</h1>\n<p>Watch sessions and connect with developers at Google I/O Extended in\nSeoul. \\\n<a href=\'https://developers.google.com/events/io/about\'>https://developers.google.com/events/io/about</a> </p>\n<p><strong>PLACE</strong></p>\n<p><a href=\'http://maps.google.com/maps?q=@37.499718,127.025670\' title=\'Lat: 37.499718 / Lon: 127.025670\'>TOZ\nGangnam</a> 1307-26\nSeocho-dong, Seocho-gu, Seoul</p>\n<p>TOZ provides a comfortable room for ~5,000won/person for 2.5hr with\nfree refreshments.</p>\n<p>Please <a href=\'http://www.meetup.com/computer-science-society/events/111470142/\'>RSVP on\nmeetup.com</a> if\nyou are planing to show up</p>\n<p><strong>SCHEDULE</strong> </p>\n<blockquote>\n<p>&quot;Best of&quot; keynote compilation</p>\n<p>Watch session video</p>\n<p>Talk</p>\n</blockquote>\n<p>(Feel free to join or leave any time)</p>\n'
-
-/***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'linux-101-seoul-sydney-tafe-korea-sep-23\'>Linux 101 @Seoul Sydney TAFE Korea, Sep 23</h1>\n<p><strong>Linux 101 - Introduction to Linux </strong>by Raphael Chambers, the inspiring\nmember of the Seoul Tech Society. </p>\n<p>RSVP to this event at <a href=\'http://www.meetup.com/seoul-tech-society/\'>http://www.meetup.com/seoul-tech-society/</a></p>\n<p>Linux is a free and open source operating system which is gaining\nmomentum and is a great alternative to other more well marketed OS’s. </p>\n<p>In this talk I will cover some history and present some advantages (and\ndisadvantages) of the Linux OS, without getting too technical. Whats\ngood, whats new and how can we benefit from this awesome free operating\nsystem. </p>\n<p>Learn about the tech that is running the majority of web servers,\nmultiple embedded devices, and even your android phones. Browse the\nsource code, build your own distro, conquer the world… did I mention it\nwas free? </p>\n<p><strong>Location:</strong> Sydney TAFE Korea</p>\n<p>8th floor, Seoul Hyundai Occupational Training College.</p>\n<p>Near Dangsan (당산) station, green line exit 3. </p>\n<p>Sydney TAFE Korea provides us a comfortable space with a beautiful view\non the Hangan river.</p>\n<p>Don’t miss, there will be an afterparty…</p>\n'
-
-/***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'promotion-chuseok-game-jam-w-joe-spradley-sep-18\'>Promotion: Chuseok Game Jam! w/ Joe Spradley, Sep 18</h1>\n<p><a href=\'https://www.facebook.com/events/197105527128041/\'>https://www.facebook.com/events/197105527128041/</a></p>\n<p>Follow the link and join Chuseok Game Jam hosted by our worthy member\nJoe Spradley and his startup PlayFluent.</p>\n<p><img src=\'http://media.tumblr.com/0c2a9d85114115491293f706d9271e8c/tumblr_inline_mt8loe6jYd1rjim2g.jpg\' alt=\'\'></p>\n<p>All details in the link, but for those who don’t know what a Game Jam\nis… They are going to try to make a few brand new games in a very short\namount of time. No pressure though because people of all skill levels\nwill be participating and the goal is simply to make something!</p>\n<p>Other Important Info:</p>\n<p>Wednesday 2pm - Friday 5pm is the official time but this is a causal +\nfun event so everyone is invited and can come participate as much or as\nlittle as desired. </p>\n<p>It’s FREE! + Saturday and Sunday night we will have some related social\nevents where you can show off your creation and play other games.\\^\\^</p>\n<p>Directions:</p>\n<p>Dangsan Station Exit 4. Turn left, walk down the street to the second\nbuilding. Enter and come to the 3rd Floor.</p>\n<p><a href=\'https://maps.google.com/maps?q=37.534866,126.903475&amp;num=1&amp;vpsrc=0&amp;ie=UTF8&amp;t=m&amp;z=19\'>https://maps.google.com/maps?q=37.534866,126.903475&amp;num=1&amp;vpsrc=0&amp;ie=UTF8&amp;t=m&amp;z=19</a></p>\n'
-
-/***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'review-of-digital-art-series-i-ii-\'>Review of &quot;Digital Art Series I&amp;II&quot;</h1>\n<p>Recently, we had the honor of hosting two inspirational art lectures by\nthe internationally acclaimed and very creative media artist Lucia\nJeesun Lee (aka<a href=\'https://twitter.com/smellsdreamy\'>@smellsdreamy</a>).</p>\n<p>In the first lecture, ‘Introduction to Digital Art I - When artists\nbecome geeks or vice versa’, Lucia gave us a peek into the exciting and\ndiverse trends currently happening in digital art.  Her talk took\nattendees on a fascinating journey through this colorful area of\nconverging technologies.  Where Musicians, Designers, Entrepreneurs,\nFilmmakers, Writers, Architects, Hackers, Inventors, Engineers,\nUrbanists, Scientists, Choreographers as well as Magicians are currently\nfinding new ways to use technology in their practices.</p>\n<p>You can find the slides for ‘Introduction to Digital Art I’ here:\n<a href=\'https://www.dropbox.com/s/72oekls988u494w/digital_art_lecture_1_lucia_lee.ppt\'></a><a href=\'https://www.dropbox.com/s/72oekls988u494w/digital_art_lecture_1_lucia_lee.ppt\'>https://www.dropbox.com/s/72oekls988u494w/digital_art_lecture_1_lucia_lee.ppt</a></p>\n<p>The intrigued audience hurried to her second lecture, ’Introduction to\nDigital Art II - Mapping’, where she took them deeper into the curious\nworld of online digital mapping.   Lucia’s solid selection of artists\nand her thoughtful interpretations helped a very eager audience to see\nhow images of our modern, sometimes hectic world, once frozen in time\ncould be appropriated and transformed into expressive and highly\nunconventional pieces of contemporary art.  In addition, she kindly\nprovided some great resources for those looking to jump in and do their\nown projects.</p>\n<p>Both her lectures were enriched with lively discussions at the end as\nwell as a very enjoyable after-parties.</p>\n<p>These valuable events couldn’t have happened without the generous\nsupport of two great organizations, Hub Seoul and World Culture Open\nSeoul Office, who graciously opened up their wonderful venues to Seoul\nTech Society members.</p>\n<p><strong>Hub Seoul</strong>\\\n<img src=\'https://lh3.googleusercontent.com/9QPjmwC57S5muRmizwQHYCDqfgGYWVGF3xYdzF-4TmvtXrOk2TYUFVAAocRtFrfJobjAEiScUlWxwOD6MJF3a0Ty5d50fhET3uHx0nVq002nNTFkDoynfHRL\' alt=\'image\'>\\\n<strong>WCO</strong>\\\n<img src=\'https://lh5.googleusercontent.com/PqLzDtQvhxhCmQcSHB5gA226FEl7hGrXsXh8-rqmOo7jdqdEJBUuTq7unWYoB2IsCL_pUCDv3cLt8NAlINEu72HcB6qTRtl0yGZ4C4FrXaweETpvMn9iFJBr\' alt=\'image\'></p>\n<p><strong>Hub Seoul</strong> <a href=\'http://www.hubseoul.net\'>www.hubseoul.net</a> /\n<a href=\'http://www.facebook.com/hubseoul\'>www.facebook.com/hubseoul</a>\\\nis originally a quite co-working space, where everyone can find a handy\ncorner to concentrate on their project, for a reasonable fee.\\\nFor us, It smoothly transformed in a space, which welcomed our first\nevent. It was one of the reasons to give a successful start to these\nseries of lectures.</p>\n<p><strong>World Culture Open Seoul Office</strong> <a href=\'http://wcoseoul.org/xe/\'>http://wcoseoul.org/xe/</a>\\\nis the free space in the heart of Seoul for diverse cultural events. We\nare very thankful to WCO and glad that we contributed bringing culture\nand technologies closer to each other.</p>\n<p>We will look forward to hear more fascinating talks from Lucia and\ndiscover over welcoming spaces.</p>\n'
-
-/***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'review-of-team-up-for-anglehack-\'>Review of &quot;Team up for AngleHack&quot;</h1>\n<p>It would be enough to say that this time event was SUPER fun &amp;\nchallenging.</p>\n<p>Review in a brief:</p>\n<ul>\n<li>~20 people attended</li>\n<li>11 cool project ideas were proposed</li>\n<li>3 most promising were chosen by voting</li>\n<li>..to be continue - a plan for one more meeting exists!</li>\n</ul>\n<p>Some juicy details for whose who interested:</p>\n<p>The event was popular far beyond the expectation - more than 90% of RSVP\nshowed up - ~20 highly skilled tech enthusiasts. The atmosphere was\ncreative and cheerful, we generated 11 project proposals to compete in\nAngelHack contest. After hectic discussions 3 the most promising ideas\nwere chosen so 3 teams will participate in the hackathon.</p>\n<p>Wish a good luck to our heroes!!</p>\n<p>To chill out our burning brains later on we threw an after-party with a\ncold beer or two.</p>\n<p>As so many people were involved, excited and committed we decided to\nmake one more meeting before the actual AngelHack contest.</p>\n<p>Special shout out goes to our\nfriends <a href=\'http://www.nflabs.com/\' title=\'NFLabs\'><strong>NFLabs</strong></a> who hosted this\nevent at their nice office at Gangnam and helped most generously with,\nhm, let us say “refreshments” and “stuff”.</p>\n'
-
-/***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'seoul-tech-careers-lead-developer-cto-for-a-fashtech-startup-\'>Seoul Tech Careers: Lead Developer / CTO for a fashtech startup </h1>\n<p><img src=\'http://media.tumblr.com/3a0093657e210472d511353149c9ca2a/tumblr_inline_mxh2nwZ8LX1qz73mc.png\' alt=\'image\'></p>\n<p><strong>Lead Developer / CTO Candidate</strong></p>\n<p>Are you eager for an exciting opportunity to make your mark in\n“fashtech” the industry cross sector of fashion and technology?\\\nThis may be your chance.\\\nRed Carpet Closet is an upandcoming fashtech startup currently seeking\nan experienced fullstack web developer with ambitions to take the lead\nin building our ecommerce platform. We have big ideas that will\n“democratize fashion” for shoppers and designers but we need a talented\ntechnical superstar to bring these ideas to life!\\\nYou’ll work closely with the energetic founders, with international\nworking experience in leading global technology firms, who love the idea\nof working hard and playing harder.</p>\n<p>Role: FullStack Web Developer / Location: Seoul, South Korea\\\n(A candidate with the right fit and experience can be considered for the\nposition of CTO)</p>\n<p>Responsibilities</p>\n<ul>\n<li>Primary: Lead architecture of the whole site focus on initial site\ncoding and development (from frontend to backend)</li>\n<li>Secondary: Help shape the technology development roadmap for the\necommerce platform and advise in future technical hiring decisions</li>\n</ul>\n<p>Requirements</p>\n<ul>\n<li>No working restriction in South Korea (applicable to foreigners)</li>\n</ul>\n<p>Education\\</p>\n<ul>\n<li>Degree in Computer Science or Engineering (minimum)</li>\n</ul>\n<p>Experience / Skills</p>\n<ul>\n<li>Several years of programming experience; recent graduates with\npotential and a strong portfolio may also be considered</li>\n<li>Well versed in major web development and web application languages\n(backend APIs /code, e.g. python; front end code, e.g. HTML5, CSS3,\njavaScript)</li>\n<li>Strong knowledge of SQL and relational database design</li>\n<li>Proficiency with Korea’s crossbrowser, crossplatform issues, and W3C\nWeb standards</li>\n<li>Familiar with search engine optimization (SEO)</li>\n<li>Able to efficiently lead and coordinate a small team of designers\nand other developers</li>\n<li>Experience working with startups a plus</li>\n<li>Ecommerce experience a plus</li>\n</ul>\n<p>An ideal candidate would also possess the following:</p>\n<ul>\n<li>Creativity, drive, an obsessive eye for detail and rapid iteration,\nexperimentation skills</li>\n<li>Able to step back and see the big picture</li>\n<li>Ability to meet strict deadlines, efficiently juggle multiple hats\nand learn fast</li>\n<li>Good interpersonal and communication skills</li>\n</ul>\n<p>Compensation</p>\n<ul>\n<li>Open to negotiation.</li>\n</ul>\n<p>If you have what it takes, please reach out to Ellen at\nhr@redcarpetcloset.com. In your email, please include the following:</p>\n<ul>\n<li>Resume (English or Korean)</li>\n<li>Links to / examples of your portfolio that best reflect your web\ndevelopment skills; for projects that were joint collaborations,\nplease specify your role and involvement</li>\n<li>Tell us which is your favorite ecommerce website and your 3 reasons</li>\n</ul>\n<p>——————————————————————————————————————-\\\n개발자 / CTO 모집</p>\n<p>안녕하세요,</p>\n<p>레드카펫 클로젯의 ecommerce 플랫폼을 구축하기 위해, 능력있는 fullstack\n웹 개발자를 모십니다.\\\n저희의 수많은 아이디어를 현실로 이루어 지게 할 수있는 멋진 개발자. 바로\n당신을 레드카펫 클로젯 가족으로 초대하고 싶습니다.\\\n저희 레드카펫 클로젯은 초기 startup 기업이지만, 가능성이 높고 빠른\n성장이 기대됩니다. 글로벌 tech 회사에서 폭넓은 경험과 열정을 가진\nfounder들과 함께,\\\n레드카펫 클로젯의 성공을 만들어 갈 당신을 기다립니다.</p>\n<p>[모집분야]\\\nFullStack 웹 개발자 (경력 및 적임자가 CTO 포지션으로 전환 가능함)</p>\n<p>\\\n[업무영역]</p>\n<p>\\\n주요업무:</p>\n<ul>\n<li>사이트 구조 / ecommerce 플랫폼 구축 계획</li>\n<li>초기 단계부터 사이트 코딩 및 개발 (frontend/backend) 지원활동:</li>\n<li>레드카펫 ecommerce 플랫폼 개발 로드맵 계획</li>\n<li>기술 관련 포지션 채용 과정 지원</li>\n</ul>\n<p>[필수요건]</p>\n<ul>\n<li>한국에서 근무 제한 없음 (외국인 해당)</li>\n</ul>\n<p>교육\\</p>\n<ul>\n<li>CS/공대 경험/기술</li>\n<li>프로그래밍 경험 3년 이상 (잠재력 및 강한 포트폴리오를 가진\n졸업자라면 지원 가능함)</li>\n<li>주요웹개발및웹에플리케이션언어에능통 (예, backend API / code python;\nfrontend HTML, CSS3, javaScript 등)</li>\n<li>SQL 및 관계형 데이터베이스 설계에 대해 깊은 지식을 갖춘자</li>\n<li>한국과 국제의 Crossbrowser, crossplatform 이슈 및 W3C 웹 기준 능통한\n자</li>\n<li>Search engine optimization (SEO) 이해력이 높은자</li>\n<li>프로젝트 리드 경험자 우대</li>\n</ul>\n<p>[우대요건]</p>\n<ul>\n<li>스타트업 경험자</li>\n<li>Ecommerce 비지니스 및 플랫폼 관련 경험자</li>\n<li>창의력, 추진력, 빠른 반복 (iteration)/실험 (experimentation)에 대해\n섬세함을 갖춘자</li>\n<li>책임감이 강하며 배우고자 하는 마음을 강한자</li>\n<li>원활한 의사소통을 갖춘자</li>\n</ul>\n<p>[인센티브] 추 후 협상</p>\n<p>[지원방법]\\\n아래 서류를 준비하여 엘렌(Ellen)에게 hr@redcarpetcloset.com로 메일 송부\n부탁 드립니다.</p>\n<ul>\n<li>이력서(영문/국문문관)</li>\n<li>포트포리오(본인이 웹 개발자로써 제일 자랑하는 프로젝트 어떤 것인지\n표시해주시고 개인 프로젝트 아닌 경우, 본인이 역활이 무엇인지\n정확하게 알려주시기 바랍니다.)</li>\n<li>본인이 제일 마음에 들는 ecommerce 웹사이트 및 그 웹사이트 좋아하는\n3가지 이유</li>\n</ul>\n<p>많은 지원 부탁드립니다. 감사합니다!</p>\n'
-
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'seoul-tech-rises-to-samsung-challenge\'>Seoul Tech Rises To Samsung Challenge</h1>\n<p>In the space of two weeks, the WeeSeeTeam has gone on a hackathon\njourney which began at a Seoul Tech Society event\n@<a href=\'http://www.nflabs.com/\'>NFlabs</a> and has rapidly moved onto development\nat one of Samsung’s dedicated development centers in the heart of\nGangnam.</p>\n<p>In November, more than two dozen Seoul Tech Society members came\ntogether at NFLabs office space in Gangnam. Seven members discussed\nentering the final SAMSUNG App Challenge for 2013.  The contest aims to\naward innovative applications that showcase the Galaxy Note’s S-Pen. The\ngoal is ambitious: two winning teams have the potential to each get a\n\\$200,000 grand prize, and the WeeSee Team is now poised to come out a\nwinner.</p>\n<p>WeeSee is uniquely positioned because of its diversity and depth of\ntalent, which is typical of the Seoul Tech Society’s membership.\n Hailing from all around the world and from various professional\nbackgrounds, the WeeSee team has brought together a collegial group of\nvegetarians, gamers, entrepreneurs, and hackers.</p>\n<p>For the first few weeks the team had been meeting together in Mullae and\nHongdae, but later secured free office space complimentary of Samsung.\n The team has been finalizing the beta version of  their productivity\napp which aims to disrupt the way people collaborate and share notes.\nThe app developed by WeeSee will enter a crowded productivity category\nled by brands such as Evernote.  The app differentiates itself with its\nuse of the Samsung S-Pen stylus, and it allows users the ability to\nexperience more while working with others.</p>\n<p>Before submitting their application on December 31st, the team is\nsearching for additional members to join them in either a design or\ndevelopment role.  Requirements:</p>\n<p>The candidates can be a UX/UI Design specialist and/or a (mobile)\napplications developer who is familiar with any of the following:</p>\n<ul>\n<li><p>Mobile application development Samsung/Android</p>\n</li>\n<li><p>Photoshop</p>\n</li>\n<li><p>Android design guide principles</p>\n</li>\n<li><p>Action bar / status bar / navbar for current mobile applications</p>\n</li>\n<li><p>Icons for mobile apps</p>\n</li>\n<li><p>Branding and theme for Android / Samsung</p>\n</li>\n</ul>\n<p>If you think you can contribute to the team in any way, please feel free\nto send an e-mail to <a href=\'&#109;&#x61;&#x69;&#x6c;&#x74;&#x6f;&#58;&#x77;&#x65;&#x65;&#x73;&#101;&#101;&#116;&#x65;&#x61;&#x6d;&#x40;&#x67;&#x6d;&#97;&#x69;&#x6c;&#46;&#x63;&#x6f;&#109;\'>&#x77;&#x65;&#x65;&#x73;&#101;&#101;&#116;&#x65;&#x61;&#x6d;&#x40;&#x67;&#x6d;&#97;&#x69;&#x6c;&#46;&#x63;&#x6f;&#109;</a>  or follow this\n(<a href=\'http://www.meetup.com/seoul-tech-society/messages/boards/thread/40367552#113451732\'>link</a>).</p>\n<p>More info about the Samsung App Challenge here\n(<a href=\'http://developer.samsung.com/ssac2013/note/aboutTheChallenge.do\'>link</a>)</p>\n<p><img src=\'https://lh3.googleusercontent.com/xQIgrpMLSuyFnO75mQUeFOKR5lBiQ_kj08eO1IWmFNM7PYeVnMo6I-JpvmZyO9RkbVFk9Vndu3BSKd91t21IqB9-MilG5ENygc6lJDWdqE8ahOj2IxEhr-rQCQ\' alt=\'image\'></p>\n<p>Inception @ Mullae Art Center</p>\n<p><img src=\'https://lh3.googleusercontent.com/WVVUTctvcvzM8gIRTNB0LSMlkiYndtqXmhc60DMpy2s8Nq4olns-pslBj-5XMqtkoBf2n_K-D-_mKD8_tmxAtZBaI82weDNjaQ1gjoR47QaUfMZDmJvDrdtV7w\' alt=\'image\'></p>\n<p>Brainstorming  → App Deep Dive II  @ Insight Hongdae</p>\n<p><img src=\'https://lh3.googleusercontent.com/lLXIXgt9LDO0hiMHhvu6EG938CpKou4Qz1PWwvRTrh2DfwIjwslOUPGeA30WSVcsGeRIooRVCqTOR5IP8ZUUX4C8bYZqjzWK04wvHV2-vNk5BplJWfzQ4EFZdA\' alt=\'image\'></p>\n<p>Cheers: first milestone  @\nNFLabs<img src=\'https://lh6.googleusercontent.com/fCzX3pYGxn36vK8Nd53ZLhrE0bF75t1ul1cx8ZMhamRFhqfqO1cuByw1OQI_jzhzVfYAxYyKQPANcb_z7IP3KSX3WEUaqR1dDBRCDYKLmnsScu9sh7KB3vwm3w\' alt=\'image\'></p>\n<p>Our first demo @ Samsung Ocean</p>\n<p><img src=\'https://lh4.googleusercontent.com/OHz8t5pQ1sYzsg3t79s8-GxhF9s99SbiBUsHUhrmitN_rPdVFXFx9V1bODtjOML1nlAdfJKbwepCt24nbUfS7wbQ4AB9zhDSrFYywBpNYQGRaLsP8KMBJWSZ9Q\' alt=\'image\'></p>\n<p>Deep immersion for the best product   →  App Deep Dive I @ NFLabs</p>\n<p><img src=\'https://lh4.googleusercontent.com/N6fBPGlzAmwYUoc6SazOE4BteT0iGMSQ33W4_gS2mRYM0IPlW3rkDw43X8R7MAUJWX2vFJdX7VuVBCPYnhPMbkQXvJExRetw2xEb3bBrqBiNumYxIOWZPXF6-g\' alt=\'image\'></p>\n<pre><code>                                                          Jackson\n</code></pre><p><a href=\'https://plus.google.com/113799495386801196546\'>Google+</a></p>\n'
-
-/***/ },
-/* 28 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'special-guest-speaker-ffventures-john-frankel-seoul-june-14\'>Special Guest Speaker: ffVentures&#39; John Frankel @Seoul, June 14</h1>\n<p>Our special guest speaker is John Frankel, who is a Partner at ff\nVenture Capital. John will give a lecture:</p>\n<p><em>“YOU ARE SO LUCKY! The next great entrepreneurial opportunity: the\nmassive white space right in front of you.”</em></p>\n<p><img src=\'http://media.tumblr.com/c3bd3547ab4d80edc2a3c5f0d2f8fe61/tumblr_inline_mm9qo8U9zC1qz4rgp.png\' alt=\'image\'></p>\n<p><strong>John Frankel (<a href=\'http://ffvc.com/team/john-frankel/\'>Source</a>)</strong></p>\n<p><strong><img src=\'http://media.tumblr.com/b9845c75bec9bd52b61e04f5004c8bfc/tumblr_inline_mm9qpkxgGf1qz4rgp.jpg\' alt=\'image\'></strong></p>\n<p>John Frankel has been an early-stage venture investor since 1999. Mr.\nFrankel was one of the earliest investors in Quigo Technologies, which\nwas purchased by AOL in December 2007, and in Cornerstone OnDemand (CSOD\non NASDAQ) which had a successful IPO in March 2011. He has also served\nand/or now serves on the boards of 500px, Apparel Media Group,\nAlerts.com, Centzy, ClearPath Immigration, Gobbler, Infochimps, Klout,\nPhone.com, Quigo Technologies, The Goldman Sachs Trust Company, and\nVoxy. He is also a Mentor with the Entrepreneurs Roundtable Accelerator\nprogram.</p>\n<p>In particular, he established Goldman’s Cayman offshore administration\nbusiness, their London global custody business, and reengineered their\nglobal prime brokerage business. In capital markets, he worked closely\nwith some of the world’s leading hedge funds, and developed a keen\nunderstanding of portfolio risk/return management. He started his\nbusiness career with Arthur Anderson &amp; Co. in the audit and insolvency\ndivisions.</p>\n<p>Mr. Frankel earned a Master of Arts from New College, Oxford where he\nstudied Mathematics, Philosophy and Logic, and is a Fellow Chartered\nAccountant of the Institute of Chartered Accountants in England and\nWales.</p>\n<p>Final agenda will be posted 5 to 7 days in advance of the meeting.</p>\n<p>RSVP to this event\nat <a href=\'http://www.meetup.com/seoul-tech-society/events/117773242/\'></a><a href=\'http://www.meetup.com/seoul-tech-society/events/117773242/\'>http://www.meetup.com/seoul-tech-society/events/117773242/</a></p>\n'
-
-/***/ },
-/* 29 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'stay-safe-in-the-cyberspace-dcamp-oct-18th-2013\'>Stay safe in the cyberspace @DCAMP, Oct 18th 2013</h1>\n<p>Do you spend more and more time with your digital devices? So do\ncriminals who are finding new ways to take advantage of these\nhyper-connected technologies.\\\nOur honored guests Dr. Joshua James and Security Consultant Michał\nRzepka will guide you through the cyber world of white and black forces.</p>\n<p><strong>Featured</strong>\\\nBring your Windows laptop to practice being a cyber-sleuth with a\npractical lab on computer memory acquisition and analysis.\\\n<img src=\'http://3.bp.blogspot.com/_2hM3rrwU8kI/TPEkYiKDaLI/AAAAAAAAAx0/rExWBO8i1eo/s320/cyber-crime-and-identity-theft.jpg\' alt=\'image\'></p>\n<p>RSVP to this event\nat <a href=\'http://www.meetup.com/seoul-tech-society/events/144302832/\'>http://www.meetup.com/seoul-tech-society/events/144302832/</a></p>\n<p><strong>Agenda</strong>\\\n<strong><em>Web vulnerabilities - what [developers do for you to stay\ninsecure</em></strong>\\\nTalk about simple, old, known, yet still very popular weaknesses in web\napps that affect users - basically everyone, since we all use web.\\\n<strong><em>Cybercrime and digital forensics - what cyber cops do</em></strong>\\\nThis talk will give an overview of what cybercrime is, what cybercops\ndo, and how digital forensic investigations are conducted.\\\n<strong><em>Memory acquisition and analysis - hands on</em></strong>\\\nDuring this practical you will learn to take a copy of Random Access\nMemory and extract evidence of user activity, such as pictures, web\naddresses and passwords.</p>\n<p><strong>Speakers</strong>\\\nDr. Joshua James is a researcher with the Digital Forensics\nInvestigation Laboratory as well as a lecturer and researcher with\nUniversity College Dublin, Korea University, Korea National Police\nUniversity and Soon Chun Hyang University. Coming from a background in\nnetwork security and administration, his focus is now on the\nformalization and automation of digital forensic investigation methods,\nand the application of these methods in low cost, open source solutions\nfor digital investigators.\\\nMichał Rzepka was previously working as a Security Engineer in national\ncomputing center and taking part in several national and European\nprojects, Michał is currently working as a Security Consultant for the\nleading IT Security company in Northern Europe. His areas of experience\ninclude penetration testing, web application security assessing, as well\nas PCI DSS compliance.</p>\n'
-
-/***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'team-up-for-angelhack-2-d-camp-may-28-2013\'>Team up for AngelHack#2 @D.Camp, May 28 2013</h1>\n<p>Guys, we are just a few weeks from AngleHack 2013 contest, let’s get\nprepared to take part and win!</p>\n<p><a href=\'http://seoultechsociety.org/post/49421013070/team-up-for-angelhack-seoul-may-10\'>Last time at\nNFLabs</a>\nit was a really productive session: we pre-selected three ideas and lots\nof stuff has been done by teams of devoted techies from that time so…</p>\n<p>Let’s get together once more at <a href=\'http://dreamcamp.co\'>D.Camp</a> (thanks to\ntheir support)  and review our progress, refine goals and tactics to get\nready for the show time! As usual please RSVP at <a href=\'http://www.meetup.com/seoul-tech-society/events/120815772/\'>Seoul Tech Society\nmeetup\npage</a>.</p>\n<p>So just to re-cap:</p>\n<p>This is the <em>second event</em> held by <em>Seoul Tech Society</em> in anticipation\nof <em>AngelHack 2013</em>. You can learn more about our previos event from our\n<a href=\'http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack\'>R</a><a href=\'http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack\'>eview\nof\n“</a><a href=\'http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack\'>Team\nup for AngelHack\n2013”</a>. </p>\n<p>To learn more about AngleHack itself and the registration process please\nrefer to the official event materials:</p>\n<ul>\n<li>Official site: <a href=\'http://angelhack.co.kr\'>http://angelhack.co.kr</a></li>\n<li>Dev invite presentation (ENG): <a href=\'http://goo.gl/XHOIk\'>http://goo.gl/XHOIk</a> </li>\n<li>Dev invite presentation (KR): <a href=\'http://goo.gl/It3M1\'>http://goo.gl/It3M1</a></li>\n<li>FB:\n<a href=\'http://www.facebook.com/pages/AngelHack-Seoul-Korea/133538800151630\'>http://www.facebook.com/pages/AngelHack-Seoul-Korea/133538800151630</a></li>\n</ul>\n'
-
-/***/ },
-/* 31 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'team-up-for-angelhack-seoul-may-10\'>Team up for AngelHack @Seoul, May 10</h1>\n<p><strong>Update 05/14/2013: </strong>review to <a href=\'http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack\'>Team up for\nAngelHack</a>\nwas added.</p>\n<p>Hey, <em>Seoul Tech Society</em>, let’s make a team and join AngelHack contest!</p>\n<p>Are you a designer, developer or entrepreneur? Do you have a cool idea,\nwant to team up and implement a new project?</p>\n<p><a href=\'http://www.meetup.com/seoul-tech-society/events/115904382/\'>RSVP this\nevent</a> to\nbrainstorm ideas and discuss details with those of you who are\ninterested.</p>\n<p><strong>Join this event if you :</strong></p>\n<ul>\n<li><p>curious about AngelHack</p>\n</li>\n<li><p>looking for a team to join, to discuss ideas for a project</p>\n</li>\n<li><p>want to participate in AngelHack@Seoul on 8-9 of June</p>\n</li>\n</ul>\n<p><strong>When :</strong>  Friday, May 10th 2013.</p>\n<p>7:00pm ~ 7:30pm -> Waiting for people, mingling</p>\n<p>7:30pm ~ 9:00pm -> Angelhack preparation</p>\n<p>\\</p>\n<p><strong>Place:</strong></p>\n<p>We will use NFLabs’s conference room.</p>\n<p>To get to NFLabs, go to exit 1 at gangnam station, walk straight\n(~150m) until a street corner with Seven Springs restaurant. Go into\nthis street, the building is the second after the motel on the left, 8th\nFloor: <a href=\'http://me2.do/Fe7IxuUM\'>Picture of the building</a></p>\n<p><strong>About AngelHack :</strong></p>\n<ul>\n<li><p><a href=\'http://angelhack.com/\'>http://angelhack.com/</a> </p>\n</li>\n<li><p>Korean Event website:\n<a href=\'http://onoffmix.com/event/14637\'></a><a href=\'http://onoffmix.com/event/14637\'>http://onoffmix.com/event/14637</a></p>\n</li>\n</ul>\n<p>It will take place at Seoul on June, 8-9. Registration is already open.\n(It is about 20,000 wons as an inscription fee).</p>\n<p>Contest includes real-time implementation of an idea, however the\ndesign, logo, wireframes, digital mockups can be made prior to this time\n(i.e at this meetup).</p>\n<p>Winners will get mentoring and be brought out to Silicon Valley to raise\ninvestment and introduce them to incubators.</p>\n<p>Check out previous awarded projects\n<a href=\'http://techcrunch.com/2012/07/13/angelhack-winners/\'></a><a href=\'http://techcrunch.com/2012/07/13/angelhack-winners/\'>http://techcrunch.com/2012/07/13/angelhack-winners/</a> :</p>\n<ul>\n<li><p>Appetas</p>\n</li>\n<li><p>GiveGo</p>\n</li>\n<li><p>ShareBrowse</p>\n</li>\n</ul>\n'
-
-/***/ },
-/* 32 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'upcoming-tech-events-in-korea-keeping-updated-\'>Upcoming tech events in Korea (keeping updated)</h1>\n<p>Hey Seoul Techies, what are you up to these days?\\\nHere we will keep updating the list of technology oriented events for\nyou. Please, join any of them and share experience with the rest of us\nlater on.</p>\n<p>If you know any other upcoming events or something we’ve forgot to\nmention but you think it should be here - please let us\nknow:<strong><em>contacts[at]seoultechsociety.org</em></strong></p>\n<p><strong>POC2013</strong>\\\n<a href=\'http://www.powerofcommunity.net/\'>http://www.powerofcommunity.net</a>\\\n 5th - 8th Nov., The-K Seoul Hotel\\\n Learn from hackers and security experts from everywhere and participate\nin many coding and non-coding related events.</p>\n<p>!Early birds until 30th Sep. Even if you are a foreigner but stay in\nKorea, register as REGULAR.</p>\n<p><strong>2013 Electronics &amp; IT Industry Fair</strong>\\\n<strong>Creative Economy, Happiness of People, and IT</strong>\\\n<a href=\'http://www.eif.or.kr/main.it\'>http://www.eif.or.kr/main.it</a>\\\n7th Oct., 2013 - 8th Oct. 2013, Kintex\\\nCome to get ideas from a Gartner specialist as well as many others.\\\n<strong><em>7th Oct., Monday</em>, *</strong>10:00~12:30<em>\\\n</em>Creative Futures Forum*\\</p>\n<ul>\n<li>Opening speech : Minister of MSIP\\</li>\n<li>Keynote speech : Guru of IT\\</li>\n<li>Issue presentation &amp; Panel discussion\\\nTopic : Happiness of People by Creative Economy, and the Role of IT</li>\n</ul>\n<p><strong>*7th Oct., Monday, </strong>14:00~17:30<em>\\\n<strong>**8th Oct., Monday, </strong>10:00~17:30</em> <em>\\\n</em>IT Industry Prospect Conference*\\</p>\n<ul>\n<li>Track Ⅰ : Domestic &amp; Foreign Economy and IT industry Prospect\\\n(Andy Rowsell Jones(Gartner), President of KDI, ETRI, KISDI)\\<ul>\n<li>Track Ⅱ : Issue analysis and prospect in major field\\\n(SW&amp;IT service, Smart device, Global IT market forecast, Information\nsecurity, IT main parts and strategic markets)</li>\n</ul>\n</li>\n</ul>\n<p><strong>**8th Oct., Monday, </strong>14:00~17:50<em> </em>\\\n<em>Asian IT Policy Symposium</em>\\</p>\n<ul>\n<li>Sharing major IT policies and discussing cooperative\nplans, participating the director general of Korea, Brunei, Cambodia,\nLao, India, Philippines, Vietnam in IT policy</li>\n</ul>\n<p><strong>2013 ISACA Korea Conference, 6th Sep.</strong>\\\n<strong>IT Governance, Security and Privacy in the Big Data Era</strong>\\\n<a href=\'http://www.isaca.or.kr/\'>http://www.isaca.or.kr/</a> See the notice on the news board: “Invitation\n2013 ISACA Conference - 6th Sep…”. It’s in English.</p>\n<p><strong>Youth Forum for Seoul Conference on Cyberspace 2013</strong>\\\n<a href=\'http://www.seoulcyber2013.kr/en/event/youth.html\'>http://www.seoulcyber2013.kr/en/event/youth.html</a>\\\n2nd Sep., 2013</p>\n<p>The forum is devoted to broad topics on cyberspace: Economic growth and\nsocial and cultural benefits; Cybersecurity and cybercrime; and Capacity\nbuilding.</p>\n<p>Hurry up to register for free, space is limited for 250 attendees:\n<a href=\'http://www.seoulcyber2013yf.kr/y_step0.html\'>http://www.seoulcyber2013yf.kr/y_step0.html</a></p>\n<p><strong>Korea Games Conference 2013</strong>\\\n<a href=\'http://www.kgconf.com/kor/html/main.html\'>http://www.kgconf.com</a>\\\nSeptember 25 – 27, Seoul, Korea</p>\n<p>\\\n\\\n<em>Disclaimer: Seoul Tech Society is not affiliated by any of the\ncompanies mentioned above.</em></p>\n'
-
-/***/ },
-/* 33 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'upcoming-tech-events-in-seoul-on-may-2013\'>Upcoming Tech events in Seoul on May 2013</h1>\n<p>Hey Seoul Techies, what are you up to this May?</p>\n<p>We’ve composed a list of technology oriented events this March for\nyou.Please join any of them and share experience with the rest of us\nlater on.</p>\n<hr>\n<p><strong>Facebook Mobile DevCon 2013</strong></p>\n<p><a href=\'https://developers.facebook.com/events/mobiledevcon/seoul/\'>https://developers.facebook.com/events/mobiledevcon/seoul/</a></p>\n<p><em>07/05/2013</em></p>\n<p><em>Facebook rejected all our applications to Mobile DevCon 2013 @Seoul,\nmotivating that “the space is extremely limited”.</em></p>\n<p>It is frustrating as we did not expect such thing from a big company in\nthe City with more then 30,000,000 population… </p>\n<p>Please let us know what is your experience here!</p>\n<hr>\n<p><strong>Google I\\O Extended 2013</strong></p>\n<p><a href=\'http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013\'></a><a href=\'http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013\'>http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013</a></p>\n<p><em>16/05/2013</em></p>\n<hr>\n<p><strong>Art &amp; Technology Performance - REPLICA</strong></p>\n<p><a href=\'http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043\'></a><a href=\'http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043\'>http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043</a></p>\n<p><em>17~18/05/2013</em></p>\n<hr>\n<p><strong>Amazon AWSome day @Seoul</strong></p>\n<p><a href=\'http://aws.amazon.com/apac/awsday/seoul/\'></a><a href=\'http://aws.amazon.com/apac/awsday/seoul/\'>http://aws.amazon.com/apac/awsday/seoul/</a>\\</p>\n<p><em>21/05/2013</em></p>\n<hr>\n<p>If you know any other upcoming events or something we’v forgot to\nmention but you think it should be here - please let us know:\n<strong><em>contacts[at]seoultechsociety.org</em></strong></p>\n<p>Disclaimer: Seoul Tech Society is not affiliated by any of the companies\nmentioned above.</p>\n'
-
-/***/ },
-/* 34 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'launch-lab-where-ideas-take-off-june-28\'>Launch Lab, Where Ideas Take Off, June 28</h1>\n<p>RSVP <a href=\'http://www.meetup.com/seoul-tech-society/events/187283782/\'>http://www.meetup.com/seoul-tech-society/events/187283782/</a></p>\n<p><strong>What is LaunchLab? </strong></p>\n<p>As part of the Launch - Hack - Tell cycle of innovation, SeoulTech is\nproud to announce the “Launch Lab” series of meetups.  This is a new\ntype of event where researchers, entrepreneurs and innovators discuss\nand propose (any) project, and solicit ideas and help from other\nSeoulTech members.</p>\n<p><img src=\'https://31.media.tumblr.com/d2d8faf5fae269e0c4c0296c6247527e/tumblr_inline_n721u9ZQx21rjim2g.png\' alt=\'\'></p>\n<p><strong>Why? </strong></p>\n<p>Launch Lab helps members take one giant leap beyond networking. These\nevents allow members  to get involved with the creation of new ideas or\nstartups, while forging friendships and business partnerships to last a\nlifetime. </p>\n<p><strong>How? </strong></p>\n<p>The event features a group of speakers that give a 10 to 15 minute\npresentation of their idea. The audience then discusses the idea.\nAudience members can also choose to join or further contribute to the\nproject.</p>\n<p>Open discussion sessions will also be available, so if anyone gets\ninspired they can share and discuss their ideas with the group.</p>\n<p><strong>When?</strong></p>\n<p><em>June 28th, 2014</em></p>\n<p>13:00 - 17:00: Presentations + Discussion + Coffee/Beer/Snacks</p>\n<p>17:00 - 19:00: Dinner (possible group discount depending on number)</p>\n<p>19:00 - 21:00: Open Mic Music Session</p>\n<p><strong>Call for projects and proposals (and musicians)!</strong></p>\n<p>If you are a researcher, startup founder, entrepreneur, idea generator,\nor dreamer, sign up to be a speaker!</p>\n<p>If you want to play in the Open Mic night, please let us know. Guitar\nwill be provided.</p>\n<p><strong>Please email:</strong> Joshua [at] cybercrimetech.com</p>\n<p><strong>Where?</strong></p>\n<p><strong>Coffee Zaroo *</strong>Seoul Metro Bundang Line (Yellow), Jukjeon Station*</p>\n<p><em>Address in Korean:</em> 경기도 용인시 기흥구 보정1203-12 </p>\n<p><em>Address in English:</em> 1203-12 Bojeong-dong (11-16 Jukjeon-ro 43Beon-gil)\nGiheung-gu, Yongin-si, Gyeonggi-do</p>\n<p>Map: <a href=\'http://goo.gl/maps/vLy2S\'>http://goo.gl/maps/vLy2S</a></p>\n<p><strong>Note: This event is currently hosted outside of Seoul (Jukjeon -\naccessible by bus or Seoul Metro, 25 mins from Gangnam) - think as a\nhalf day picnic-style relaxing event. If we cannot get 20+ to RSVP, the\nmain event will be moved to Seoul. Please check the map before\nRSVPing.</strong></p>\n<p>On Twitter? Follow <a href=\'https://twitter.com/FutureTenseNow\'>@Seoul_Tech</a></p>\n<p>FB? Follow us <a href=\'https://www.facebook.com/SeoulTechSociety\'>https://www.facebook.com/SeoulTechSociety</a></p>\n'
-
-/***/ },
-/* 35 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'popular-science-ehealth-trends-w-dr-ogan-gurel-march-16\'>Popular science: eHealth trends w/ Dr. Ogan Gurel, March 16</h1>\n<p>RSVP <a href=\'http://www.meetup.com/seoul-tech-society/events/169900682/\'>http://www.meetup.com/seoul-tech-society/events/169900682/</a></p>\n<p>Our speaker this time is <strong>Dr. Ogan Gurel</strong> (<a href=\'http://www.linkedin.com/profile/view?id=1531386\'>LinkedIn\nprofile</a>), a prominent\nresearcher and professional in the area\nof <a href=\'http://en.wikipedia.org/wiki/MHealth\'>mHealth</a> and <a href=\'http://www.nytimes.com/2012/10/09/science/redefining-medicine-with-apps-and-ipads-the-digital-doctor.html\'>digital\nmedicine</a>.\nHe will introduce us to the world of emerging eHealth technologies.</p>\n<p><img src=\'http://photos1.meetupstatic.com/photos/event/3/5/f/e/600_339973822.jpeg\' alt=\'image\'></p>\n<p>If you want to team-up with smart and creative people of Seoul Tech\nSociety, stay for the second part of the event! There will be a\nbrainstorming session where we can put newly acquired knowledge to work\nand come up with an idea of an eHealth application together. </p>\n<p><strong>Agenda </strong></p>\n<p>4pm–5pm: eHealth trends by Dr. Ogan Gurel</p>\n<p>5pm–6pm: brainstorming and teamup for an eHealth application</p>\n<p><strong>About Dr. Gurel </strong></p>\n<p>Dr. Gurel is a Director in the MOT Research Center / CTO Office at the\nSamsung Advanced Institute of Technology (SAIT).  He also holds an\nacademic appointment as a Visiting Professor at the Samsung Advanced\nInstitute for Health Sciences and Technology (SAIHST) of SungKyunKwan\nUniversity.  Previously he was VP &amp; Medical Director at Sg2 and an\nAssociate at Booz, Allen &amp; Hamilton where he consulted for both large\nand small clients spanning the healthcare services, health insurance,\nbiopharma and medical device sectors.  </p>\n<p>His expertise covers the healthcare industry widely, including the\nclinical, business, executive management, marketing and R&amp;D, with direct\nexperience along several verticals: medical devices, mobile health,\nhealthcare IT, medical imaging, and pharmaceuticals. His scientific\nresearch focuses on structural biology, specifically protein\nelectrodynamics and terahertz medicine. </p>\n<p>His computer science interests included work on microprocessor software\ndevelopment systems, followed by robot programming systems work.</p>\n<p><strong>Venue</strong></p>\n<p><a href=\'http://www.idea-factory.kr/index_english.html\'>Idea\nFactory</a>: Gangnam-gu,\nYeoksam-dong, 825-22, B2F Milim tower annex, Gangnam station exit 1</p>\n<p><img src=\'https://31.media.tumblr.com/61b49d90294cdb5b2e0ed6a6349f5843/tumblr_inline_n2bqcs9ZEm1rjim2g.jpg\' alt=\'\'></p>\n'
-
-/***/ },
-/* 36 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'promotion-techtalk-networking-vol-2-platoon-feb-19\'>Promotion: TechTalk &amp; Networking vol.2 @Platoon, Feb 19</h1>\n<p><img src=\'https://31.media.tumblr.com/064ee0998c8f2807c9c7351e675e2919/tumblr_inline_n159hqxwmo1rjim2g.png\' alt=\'image\'></p>\n<p><strong>Agenda</strong></p>\n<p>7pm - 8pm   : get beer (FIFO) and mingle w/ techies</p>\n<p>8pm - 11pm : start of DrinkEntrepreneurs social networking event w/\ncollege startup societies, Seoul Tech Society and Israeli VCs.</p>\n<p>네트워크 파티 (대학 창업 모임인 Seoul Tech Society and Israeli VCs 함께\n참여)</p>\n'
-
-/***/ },
-/* 37 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'promotion-wellness-it-festival-at-center-seoul-july-10\'>Promotion: Wellness IT Festival @aT Center Seoul, July 10</h1>\n<p>Register here to <strong>view &amp; network</strong>: <a href=\'http://goo.gl/u9dHBl\'>http://goo.gl/u9dHBl</a></p>\n<p>Register here to <strong>exhibit</strong>: <a href=\'http://www.wita-festival.com/register\'>http://www.wita-festival.com/register</a>\n(<em>startups in Education, Culture, Social, Finance and Health areas</em>)</p>\n<p>Dear friends, we are glad to invite you to the Wellness IT Festival\norganized by our partner WiTA. </p>\n<p><img src=\'https://31.media.tumblr.com/01c6530579bf4765f81ada1a040cfd2a/tumblr_inline_n7rvukOEIA1rjim2g.png\' alt=\'\'></p>\n<p><strong>About</strong>: The Wellness IT Festival brings together experts,\nentrepreneurs, and attendees to a startup festival &amp; networking event\nand showcases the latest in wellness technology developed in South Korea\nand around the world.\\\n<a href=\'http://www.wita-festival.com/\'>http://www.wita-festival.com/</a></p>\n<p><strong>When</strong>: </p>\n<p>Festival (July 10):\\\nFREE admission for SeoulTech members and students.</p>\n<p>1st International Conference on Wellness IT &amp; Festival (July 9 - 10):\\\nIf you are interested in attending the full event, the ticket cost is\nW200,000 (50% discount will be provided to SeoulTech members).</p>\n<p><strong>Location</strong>: aT Center Seoul <a href=\'http://atcenter.at.or.kr/\'>http://atcenter.at.or.kr/</a></p>\n'
-
-/***/ },
-/* 38 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'seoul-hack-n-te-ll-night-2\'>Seoul Hack&#39;n&#39;Te­ll night #2</h1>\n<p>RSVP <a href=\'http://www.meetup.com/seoul-tech-society/events/165322992/\'>http://www.meetup.com/seoul-tech-society/events/165322992/</a></p>\n<p><img src=\'https://31.media.tumblr.com/2fb91347a648b9dd43c850357ca82ee9/tumblr_inline_n19kgnZeDA1rjim2g.jpg\' alt=\'image\'></p>\n<p><strong>List of speakers: </strong></p>\n<hr>\n<p>• <strong>How to fail a Samsung App Challenge</strong> </p>\n<p>  Reflects the experience of a team hacking of Galaxy Note to create a\nproductivity app based on convergence of S-Pen, Chord and 2nd-screen\nSDKs. </p>\n<p><a href=\'http://seoultechsociety.org/post/70173415237/seoul-tech-rises-to-samsung-challenge\'>seoultechsociety.org/post/70173415237/seoul-tech-rises-to-samsung-challenge</a></p>\n<p>• <strong>BigData: Audit Log Manager prototype</strong></p>\n<p>   Taming big data through distributed processing and interactive\nvisualisation using hadoop and d3.js</p>\n<p>• <strong>Zeppelin: open source data analysis environment </strong></p>\n<p>   Lee Moon Soo, CTO of NFLabs will tell us how he spent this autumn:\ndesigning and implementing of the large scale data analysis\nenvironment <a href=\'https://github.com/NFLabs/zeppelin\'>github.com/NFLabs/zeppelin</a></p>\n<p>• <strong>Starting up a company:  developing and running a mobile app service\n“Mango Plate”</strong></p>\n<p>Danny Ryu, founder of <a href=\'http://www.mangoplate.com/\'>www.mangoplate.com</a></p>\n<p>• <strong>Library design: from idea to construction</strong></p>\n<p>Gorka Blas, architect will guide us through an award winning project of\nbuilding a library. </p>\n<p>• <strong>Building RFID reader on Raspberry PI from scratch, in 8 hours</strong>  </p>\n<p>If you’ve ever visited <a href=\'http://news.ycombinator.com/\'>Hacker News</a>,\nyou’ve almost certainly seen the “Show HN” or “Ask HN” posts. Well, it’s\ntime to get off the Internet and tell us about it face to face. We’ll\nprovide you with our honest feedback, you provide us with a great hack,\nor idea.</p>\n<p>We’ll give you 5 minutes to show off your tool, hack, library (did you\njust write a library to access the Meetup API in Go!?), whatever. We’re\nlanguage and software/hardware agnostic, so it’s all fair game.</p>\n<p>Your project doesn’t have to be a software project. We’re using a very\nbroad definition of hacking. Anything customized or personalized counts.\nPlease don’t feel shy.</p>\n<p>After you present, it’s an open forum. The audience will ask questions\nand provide feedback. We want to enable as much participation as\npossible at these meetups, so you’d better be able to take criticism and\ndish it out (all within reason of course).</p>\n'
-
-/***/ },
-/* 39 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'seoul-tech-ver-1-0-art-party-platoon-kunsthalle\'>SEOUL TECH VER 1.0 + ART PARTY 파티 @Platoon Kunsthalle</h1>\n<p>RSVP <a href=\'http://www.meetup.com/seoul-tech-society/events/169162582/\'>http://www.meetup.com/seoul-tech-society/events/169162582/</a></p>\n<p><img src=\'https://31.media.tumblr.com/114e328c9efe945c77b443d0cb938b4d/tumblr_inline_n2zxahIc3J1rjim2g.jpg\' alt=\'image\'></p>\n<p>This networking party w/ SeoulTech and art exhibit offers the perfect\nopportunity to shake off winter and connect with others who love tech,\nart, and ideas. New and non-members are cordially invited!</p>\n<p>Seoul Tech Society 와 함께하는 네트워킹 파티 및 전시는 봄을 맞이해\n테크놀로지와 예술, 그리고 아이디어를 사랑하는 사람들과 함께할 기회를\n마련합니다. 새로운, 그리고 비회원들도 모두 환영합니다!</p>\n<p>The worlds of art and technology are coming together to celebrate Seoul\nTech Society’s first anniversary. On April 4, Platoon Kunsthalle will be\ntransformed by “Memories of the City,” a collaboration of 15 young\ncreatives from media art, design and architecture led by media\nartist Lucia Jeesun Lee with Spanish architect Gorka Blas. </p>\n<p>Seoul Tech Society의 첫번째 생일을 기념하며 예술과 테크놀로지의 세계를\n하나로 모았습니다.  \\\n2014년 4월 4일, 플래툰 쿤스트할레는 미디어 아티스트 Lucia 이지선과\n스페인 건축가 Gorka Blas 의 기획에 의해 미디어 아트, 건축, 디자인 등\n다양한 분야의 15명의 젋은 창작자들의 협업으로 이루어진 결과물들로 채워질\n예정입니다.</p>\n<p><strong>WHEN: FRIDAY, APRIL 4 @ 7PM </strong>\\\n  \\\n<strong>About Art Director Team </strong>\\\nLucia 이지선 is a media artist working between New York and Seoul,\ngraduate of Master’s program in Interactive Telecommunication at NYU.\nShe has exhibited in The 13th Seoul International New Media Festival and\n3LD Art and Technology Center(New York). She has taught at the Queens\nMuseum of Art, Stevens Institute of Technology and Hostos\nCommunity College of New York. </p>\n<p>미디어 아티스트. 뉴욕대 Interactive Telecommunication Program 석사과정\n이후 제 13회 서울 국제 뉴미디어 축제, 3LD Art &amp; Technology Center 등\n뉴욕과 서울에서 전시 및 Queens Museum of Art, Stevens Institute of\nTechnology and Hostos Community College of New York 에서 강사로 활동 \\\n<a href=\'http://smellsdreamy.com/\'>smellsdreamy.com</a> / <a href=\'http://facebook.com/luciajeesunlee\'>facebook.com/luciajeesunlee</a></p>\n<p>Gorka Blas is an architect, born in Spain. He has worked for several\narchitectural practices in Madrid and London, including Zaha Hadid\nArchitects and Crab Architects among others. In 2012, he won UIA\nInternational Architecture competition for Daegu Gosan library in Korea\nand in 2013 he was awarded a special mention in the European 12\ncompetition. He has taught and given lectures both in Italy and Korea.\nHis project for the Daegu Gosan library is currently in  \\\nconstruction.</p>\n<p>스페인 태생의 건축가. Zaha Hadid Architects 및 Crab Architects 등\n마드리드와 런던에서 실무경력. ‘동대문디자인플라자&amp;파크’ 프로젝트 참여.\n2012년 대구 고산 공공 도서관 국제 건축 공모전 우승 (현재 준공 진행중).\n2013년 유럽 12 공모전에서 특별 표창 수상. 이태리 및 한국에서 강의 \\\n<a href=\'http://www.gorkablas.com/\'>www.gorkablas.com</a> </p>\n'
-
-/***/ },
-/* 40 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = '<h1 id=\'the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp-may-24\'>The Rise of Cryptocurrencies: Bitcoin &amp; Beyond, @DCamp, May 24</h1>\n<p>Interested in Bitcoin or other cryptocurrencies?Ever wondered how to\ntrade or spend Bitcoin in Korea? Is Bitcoin the currency of the future\nor a flop?                             </p>\n<p>Come join us at our <strong>&quot;The Rise Of Cryptocurrencies: Bitcoin &amp;\nBeyond&quot;</strong> event at <a href=\'http://dcamp.kr/about_en\'>D-Camp</a> on Saturday, May\n24!</p>\n<p><a href=\'http://www.seoultechsociety.org/\'>Seoul Tech Society</a>, <a href=\'http://www.meetup.com/Seoul-Bitcoin-Meetup-%EC%84%9C%EC%9A%B8-%EB%B9%84%ED%8A%B8%EC%BD%94%EC%9D%B8-%EB%AA%A8%EC%9E%84/\'>Seoul Bitcoin\nMeetup</a>,\nand lead Korean Bitcoin\nstartups <a href=\'https://www.korbit.co.kr/\'>Korbit</a> and <a href=\'https://www.coinplug.com/home.do\'>Coinplug</a> will\ncome together to discuss past, present, and future of cryptocurrencies. </p>\n<p>Great people and thought-provoking discussions are guaranteed!</p>\n<p><img src=\'https://31.media.tumblr.com/3d967e30abbb9ed61ed8a81dbaf98f0d/tumblr_inline_n5lxh3ORxj1qz73mc.png\' alt=\'\'></p>\n<p> <strong>Agenda</strong></p>\n<p><strong>13:00 Reception </strong></p>\n<p><strong>13:15 Introduction to Bitcoin</strong> </p>\n<p><em>Ruben Somsen, Seoul Bitcoin Meetup</em></p>\n<p><strong>13:40 The non-monetary applications of Bitcoin</strong></p>\n<p><em>Jason Park, Korbit </em> </p>\n<p><strong>14:20 Bitcoin adoption worldwide and Coinplug in Korea</strong></p>\n<p><em>Evelyn Chung, Coinplug</em>   </p>\n<p><strong>14:50 Political and philosophical ideas behind the creation\nof cryptocurrency</strong></p>\n<p><em>Terry Jang</em> </p>\n<p><strong>Hands-on part: </strong></p>\n<p><strong>15:30 Sending Money Abroad to and from Korea</strong></p>\n<p><em>Chris Williams</em> </p>\n<p><strong>15:45 Bitcoin Wallets on iOS </strong></p>\n<p><em>Jong Hun Kim </em></p>\n<p><strong>16:00 Getting paid as a freelancer in Bitcoin</strong></p>\n<p><em>Ben McDonald </em></p>\n<p><strong>16:15 Alternatives to Bitcoin: Alt Coins</strong></p>\n<p>Jeff Paik, bitPremierS</p>\n<p><strong>17:00 ~</strong>  <strong>After party and networking event</strong> (details will be\nannounced later)</p>\n<p>——————————————————————————————————</p>\n<p><strong>Speakers</strong></p>\n<p><strong>Ruben Somsen </strong></p>\n<p>Ruben is a freelance translator that has lived in Korea for three years.\nHe is the organizer of the Seoul Bitcoin Meetup and knows a lot about\nthe technical side of Bitcoin.</p>\n<p><strong>Jason Park, Korbit </strong></p>\n<p>Korbit is South Korea’s first and largest Bitcoin exchange and wallet\ncompany.  </p>\n<p><strong>Evelyn Chung, Coinplug</strong> </p>\n<p>Evelyn is Chief Marketing Officer of Coinplug, a Seoul-based Bitcoin\nstartup. Coinplug provides a Bitcoin exchange and wallet services, and\npayment processor targeting Korean and Asian markets. </p>\n<p><strong>Terry Jang </strong></p>\n<p>Terry is the owner of an e-commerce consulting company.</p>\n<p><strong>Chris Williams</strong> </p>\n<p>Chris is an English teacher who has lived and worked in Seoul for the\npast 2 years. Before that he lived in the UAE for 2 years. He became\ninterested in bitcoin because it allows people to send any amount of\nmoney, anywhere in the world, instantly, and for free. </p>\n<p><strong>Jong Hun Kim</strong> </p>\n<p>Jong Hun is a korean Bitcoin user. He’s not a tech savvy guy, but is\nreally interested in the bitcoin ecosystem and is currently researching\nand developing a Bitcoin fund. </p>\n<p><strong>Ben McDonald</strong> </p>\n<p>Ben is a freelance web developer from New Zealand living in Seoul. Ask\nhim anything about Bitcoin and he will give you an answer (after first\nasking Ruben what the answer is).</p>\n<p><strong>Jeff Paik</strong></p>\n<p>Jeff Paik is a writer for bitPremierS and co-founder of cryptocurrency\nadvisory group Coinvest.</p>\n<p>——————————————————————————————————</p>\n<p>On Twitter?\nFollow <a href=\'https://twitter.com/FutureTenseNow\'>@Seoul_Tech</a> and\nuse #CryptoCurrency.</p>\n<p>FB? Follow us <a href=\'https://www.facebook.com/SeoulTechSociety\'>https://www.facebook.com/SeoulTechSociety</a></p>\n<p><strong>Participants:  </strong></p>\n<p><a href=\'http://www.meetup.com/Seoul-Bitcoin-Meetup-%EC%84%9C%EC%9A%B8-%EB%B9%84%ED%8A%B8%EC%BD%94%EC%9D%B8-%EB%AA%A8%EC%9E%84/\'>Seoul Bitcoin\nMeetup</a> </p>\n<p><a href=\'https://www.coinplug.com/home.do\'>Coinplug</a> </p>\n<p><a href=\'https://www.korbit.co.kr/\'>Korbit</a> </p>\n<p><a href=\'http://www.bitpremiers.com/\'>bitPremierS</a></p>\n'
-
-/***/ },
-/* 41 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {"use strict";
@@ -7979,10 +7813,166 @@
 	    root._ = _;
 	  }
 	}.call(this));
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(120)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(118)(module), (function() { return this; }())))
 
 /***/ },
-/* 42 */
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"about-us\">About us</h1>\n<h2 id=\"-no-matter-what-anybody-tells-you-words-and-ideas-can-change-the-world-tom-schulman-dead-poets-society\">&quot;No matter what anybody tells you, words and ideas can change the world.&quot; — Tom Schulman, Dead Poets Society</h2>\n<h3 id=\"who-we-are\">Who we are</h3>\n<p>Seoul Tech Society is an international non-profit organization based in Seoul. It was founded in 2013 with aim to build and unite tech community all around Korea and beyond.</p>\n<h3 id=\"what-we-do\">What we do</h3>\n<p>Technology is our passion so we hold open monthly meetings to collaborate on projects, learn from each other or share knowledge through conference-like sessions.  </p>\n<p>Our interests are not centered around a specific area, all digital technologies and IT related topics are honored and welcome: mobile &amp; wearable electronics, software, web, robotics, UX, Computer Science, Maths, etc.</p>\n<p>If you are an expat interested in the Seoul tech scene or a Korean netizen interested expanding abroad, come and join us for networking and discussion, and of course a few drinks.</p>\n<h3 id=\"how-to-apply-to-present\">How to apply to present</h3>\n<p>A science, engineering or technology professional? Want to share your knowledge and passion? Need a stage to present your successful startup?</p>\n<p>If you would like to be one of our guest speakers and reach out to the international tech community of Seoul, drop us an email at contacts@seoultechsociety.org or RSVP on the next event, we’ll be glad to hear from you!</p>\n<p><a href=\"https://www.facebook.com/SeoulTechSociety\">https://www.facebook.com/SeoulTechSociety</a></p>\n<p><a href=\"https://www.facebook.com/groups/SeoulTechSociety/\">https://www.facebook.com/groups/SeoulTechSociety/</a></p>\n<p><a href=\"https://twitter.com/Seoul_Tech\">https://twitter.com/Seoul_Tech</a></p>\n";
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"angelhack-contest-in-seoul-dcamp-june-8th-2013\">AngelHack Contest in Seoul @DCAMP, June 8th 2013</h1>\n<p>Hey! What are you doing next weekend? You should check out the\n<a href=\"http://angelhack.co.kr/\" title=\"official angelhack korea site\">AngelHack event @\nDCAMP</a> on June\n8th! \\\n\\\nOver 150 developers are expected to attend and have the chance to win\nsome of \\$100,000+ in prizes and the opportunity to be flown out to\nSilicon Valley to represent Seoul at our global demo day and mentored\nfor 10 weeks prior. </p>\n<p><strong>And you know what? You can use a promo code below to get 20% off the\nticket price!</strong></p>\n<p><strong>Promo code  is ”seoultechsociety&quot; and there are only 15 spots left.</strong></p>\n<p><a href=\"http://ahsp13seoul.eventbrite.com/\">http://ahsp13seoul.eventbrite.com/</a> </p>\n<p><img src=\"http://media.tumblr.com/17ce6194a2e794032bf876bb935fec6d/tumblr_inline_mnk1ctERxk1qz4rgp.jpg\" alt=\"image\"></p>\n";
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"data-recovery-basics-bob-training-centre-jan-2-2014\">Data recovery basics @BoB Training Centre, Jan 2, 2014</h1>\n<p>Have you ever deleted a file and then realized it was a crucial mistake\nthat you have ever made to your files? Come to Seoul Tech Society event\nand learn how to recover your data! </p>\n<p>RSVP <a href=\"http://www.meetup.com/seoul-tech-society/events/147208302/\">http://www.meetup.com/seoul-tech-society/events/147208302/</a></p>\n<p><img src=\"https://31.media.tumblr.com/3443c12ddb0930ee894d06e75ac2b152/tumblr_inline_my5oh22IO81qz73mc.jpg\" alt=\"\"></p>\n<p><img src=\"https://31.media.tumblr.com/afa905a9688eef92fe958b09b71d3cdd/tumblr_inline_my5odbEkVb1qz73mc.jpg\" alt=\"\"></p>\n";
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"digital-art-lecture-series-i-when-artists-become-geeks-or-vice-versa-seoul-july-10\">Digital Art Lecture Series I: When artists become geeks or vice versa @Seoul, July 10</h1>\n<p><a href=\"http://www.smellsdreamy.com\">Digital artist</a>, educator and the Seoul\nTech Society member <a href=\"http://facebook.com/LuciaJeesunLee\">Lucia Lee</a> will\ngive a series of lectures on digital art. \\</p>\n<p>The first lecture: Introduction to Digital Art  - When artists become\ngeeks or vice versa.</p>\n<p><img src=\"http://media.tumblr.com/74213c7b105c90f5e13036e5e00ce0c1/tumblr_inline_mp22gh44Pa1qz4rgp.jpg\" alt=\"image\"></p>\n<hr>\n<p><strong>Agenda:</strong> Lucia will walk you through to the magic world of digital\nart, providing examples of inspiring artists and projects in the field.\nGet yourself ready for full of visual and creative stimuli!</p>\n<p><strong>About Lucia :</strong> Lucia Jeesun Lee is an interdisciplinary artist\nworking primarily in digital media. Born and raised in South Korea, she\nmoved to New York as she began her studies at New York University, where\nshe garnered her Master’s Degree in Interactive Telecommunication in</p>\n<ol>\n<li>Her works have been featured in various venues in New York. She\nalso has worked as a video projection designer in off-off Broadway shows\nand as an adjunct professor/ instructor in Hostos Community College,\nStevens Institute of Technology, and Queens Museum of Art</li>\n</ol>\n<p>Location: <a href=\"http://hubseoul.net/\">HUB Seoul </a> , <a href=\"https://maps.google.com/maps?q=Bongeunsa-ro+55-gil,+Gangnam-gu,+Seoul,+South+Korea&amp;hl=en&amp;sll=37.0625,-95.677068&amp;sspn=40.460237,78.662109&amp;hnear=Bongeunsa-ro+55-gil,+Gangnam-gu,+Seoul,+South+Korea&amp;t=m&amp;z=16\">17 Bongeunsa-ro 55-gil,\nSeoul</a></p>\n<p>Time: 19.00-20.30</p>\n<p>RSVP to this event\nat <a href=\"http://www.meetup.com/seoul-tech-society/events/125183962/\">http://www.meetup.com/seoul-tech-society/</a></p>\n";
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"first-friday-night-jam-meetup-follow-up\">First Friday Night Jam meetup follow-up</h1>\n<p>Firstly a big thank you to all those of you who attended and supported\nthe event. It was our largest yet, with 20+ attendees and we’re pleased\nto see that true community grows.</p>\n<p>As planned this meetup consisted of two parts:</p>\n<p><strong>Free Talk at TOZ Sinchon</strong></p>\n<blockquote>\n<p>where we made a short presentation of the Seoul Tech Society itself</p>\n<p><strong><a href=\"http://www.slideshare.net/SeoulTechSociety/seoul-tech-society\" title=\"Introduction to Seoul Tech Society\">Introduction to Seoul Tech\nSociety</a></strong></p>\n<p>\\</p>\n<p>and then had a discussion session on <em>“Modern Tech Opportunities in\nKorea”</em></p>\n<p><a href=\"http://www.slideshare.net/SeoulTechSociety/tech-opportunities-in-korea\"></a><a href=\"http://www.slideshare.net/SeoulTechSociety/tech-opportunities-in-korea\">http://www.slideshare.net/SeoulTechSociety/tech-opportunities-in-korea</a>.</p>\n<p>A lot of good tech topics popped up so event 2 hours was not enough to\nget to the last slide.</p>\n</blockquote>\n<p><strong>Afterparty</strong></p>\n<blockquote>\n<p>The rest of the evening all of us spend together at the nearest pub,\nsocializing and discussing a truly broad range of topics: from Berlin\nstartup scene and mobile OS code bases up to Pushkin and international\naffairs.</p>\n</blockquote>\n<p>It was wonderful (and nobody expected that) to see what an international\ncrowd attended the event: people all over the Europe, South America, US\nand Republic of  Korea of course. That was the diversity we are up to!\nPeople with different backgrounds, cultures, languages got together to\nmeet others who are smart, educated, enthusiastic and young at their\nhearts to share skills, knowledge and passion in business and\ntechnology.</p>\n<p>Through the evening a few things were noted as missing: a <strong><a href=\"https://www.facebook.com/SeoulTechSociety\">Seoul Tech\nSociety Facebook page</a></strong>\nwhich now exists, as the brand new twitter account\ndoes <strong><a href=\"https://twitter.com/Seoul_Tech\">@Seoul_Tech</a></strong>, so feel free to\nfollow news and updates with the way which is more convenient to you.\nBoth channels will be used  to deliver news, updates, announce events\netc.</p>\n<p>We are also <em>exploring ways to work, share and interact</em> altogether as a\ncommunity: what is the most convenient way to exchange links, suggest\ndiscussion topics and speakers you are interested to listen to on our\nnext meetups?</p>\n<ul>\n<li>Would plain-old forum work for your?</li>\n<li>Is google+ too geeky</li>\n<li>or are we eager to get something reddit\\hacker’s news style these\nwebX.Y days?</li>\n</ul>\n<p>We’d like to know what you think!</p>\n<p><strong>\\\n</strong></p>\n<p>Stay tuned, drop us a few warm words at\n <strong>contacts[at]seoultechsociety.org</strong> and don’t forget to check our next\nevent:</p>\n<p><em>&quot;Team up for AngelHack @Seoul&quot;</em></p>\n<p><a href=\"http://www.meetup.com/seoul-tech-society/events/115904382/\">http://www.meetup.com/seoul-tech-society/events/115904382/</a></p>\n<p>Seoul Tech Society team,</p>\n<p>FB       <a href=\"https://www.facebook.com/SeoulTechSociety\">https://www.facebook.com/SeoulTechSociety</a></p>\n<p>Twitter <a href=\"https://twitter.com/Seoul_Tech\">https://twitter.com/Seoul_Tech</a></p>\n<p><strong>\\\n\\\nP.S </strong>That was great to meet you all at First Friday Night Jam!</p>\n";
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"first-friday-night-tech-jam-seoul-april-19\">First Friday Night Tech Jam @Seoul, April 19</h1>\n<p>Fun People, Great Connections, and New Tech.</p>\n<p>Seoul Tech Society presents a free talk  <em>“Modern Opportunities in\nKorea, Perspectives for Tech Professionals”</em></p>\n<p>Korea’s the most innovative country in the world, local enthusiasm for\ntechnology provides developers and designers with all possible\nchallenges.</p>\n<p>Let’s discuss  Asian tech landscape and true innovation opportunities\nthat exist today in Korea.</p>\n<p><strong>Schedule</strong> (Feel free to join or leave any time)</p>\n<p><em>7-7:30PM</em> Mix and Mingle.</p>\n<blockquote>\n<p>Meet other techies</p>\n</blockquote>\n<p><em>7:30-9PM</em> Discussion session</p>\n<blockquote>\n<p><em>“Modern Opportunities in Korea, Perspectives for Tech Professionals”</em></p>\n<p>What are you passionate about? Let us know!</p>\n</blockquote>\n<p><em>9-…PM </em>Party time</p>\n<blockquote>\n<p>Free time to get along with other members. We will move to the nearest\nbar for a pint of beer. Call to Nikolay (010-9426-7394) for the exact\nlocation.</p>\n</blockquote>\n<p><strong>Place</strong></p>\n<p>We’v reserved a room at TOZ: please make sure to take your name OFF the\nRSVP list if you are not able to attend (the cost of the meetup depends\non the room size, which depends on the number of people in attendance).</p>\n<p>TOZ provides a comfortable room for ~5,000won/person for 2.5hr with\nfree refreshments.</p>\n<p>Please <a href=\"http://www.meetup.com/computer-science-society/events/111470142/\">RSVP on\nmeetup.com</a> in\ncase you plan to show up. </p>\n<p><strong>Directions: </strong><a href=\"https://maps.google.com/maps?q=37.556471,126.937097&amp;ll=37.556436,126.936927&amp;spn=0.001529,0.00327&amp;num=1&amp;t=m&amp;z=19\">Sinchon\nTOZ</a></p>\n<p>18-55 Changcheon-dong, Seodaemun-gu, Seoul, South Korea, Seoul/</p>\n<p>Sinchon subway station (line 2), exit 3, go straight 50m until\nStarbucks, 4th floor in the building of Starbucks. Call to Nikolay\n(010-9426-7394) if any difficulties.</p>\n<p><strong>Update: </strong>Afterpaty place “Warawara”</p>\n<p>\\\nView <a href=\"https://maps.google.com/maps/ms?msa=0&amp;msid=216735581831034000805.0004dab3a83fd9e6d51ce&amp;ie=UTF8&amp;t=m&amp;ll=37.557847,126.938267&amp;spn=0.005954,0.009141&amp;z=16&amp;source=embed\">45-1 Changcheon-dong (37\nMyeongmul-gil)</a>\nin a larger map</p>\n<p>Please call Nikolay in case if you get lost :)</p>\n";
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"google-i-o-extended-seoul-may-16-2013\">Google I/O Extended @Seoul, May 16 2013</h1>\n<p>Watch sessions and connect with developers at Google I/O Extended in\nSeoul. \\\n<a href=\"https://developers.google.com/events/io/about\">https://developers.google.com/events/io/about</a> </p>\n<p><strong>PLACE</strong></p>\n<p><a href=\"http://maps.google.com/maps?q=@37.499718,127.025670\" title=\"Lat: 37.499718 / Lon: 127.025670\">TOZ\nGangnam</a> 1307-26\nSeocho-dong, Seocho-gu, Seoul</p>\n<p>TOZ provides a comfortable room for ~5,000won/person for 2.5hr with\nfree refreshments.</p>\n<p>Please <a href=\"http://www.meetup.com/computer-science-society/events/111470142/\">RSVP on\nmeetup.com</a> if\nyou are planing to show up</p>\n<p><strong>SCHEDULE</strong> </p>\n<blockquote>\n<p>&quot;Best of&quot; keynote compilation</p>\n<p>Watch session video</p>\n<p>Talk</p>\n</blockquote>\n<p>(Feel free to join or leave any time)</p>\n";
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"linux-101-seoul-sydney-tafe-korea-sep-23\">Linux 101 @Seoul Sydney TAFE Korea, Sep 23</h1>\n<p><strong>Linux 101 - Introduction to Linux </strong>by Raphael Chambers, the inspiring\nmember of the Seoul Tech Society. </p>\n<p>RSVP to this event at <a href=\"http://www.meetup.com/seoul-tech-society/\">http://www.meetup.com/seoul-tech-society/</a></p>\n<p>Linux is a free and open source operating system which is gaining\nmomentum and is a great alternative to other more well marketed OS’s. </p>\n<p>In this talk I will cover some history and present some advantages (and\ndisadvantages) of the Linux OS, without getting too technical. Whats\ngood, whats new and how can we benefit from this awesome free operating\nsystem. </p>\n<p>Learn about the tech that is running the majority of web servers,\nmultiple embedded devices, and even your android phones. Browse the\nsource code, build your own distro, conquer the world… did I mention it\nwas free? </p>\n<p><strong>Location:</strong> Sydney TAFE Korea</p>\n<p>8th floor, Seoul Hyundai Occupational Training College.</p>\n<p>Near Dangsan (당산) station, green line exit 3. </p>\n<p>Sydney TAFE Korea provides us a comfortable space with a beautiful view\non the Hangan river.</p>\n<p>Don’t miss, there will be an afterparty…</p>\n";
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"promotion-chuseok-game-jam-w-joe-spradley-sep-18\">Promotion: Chuseok Game Jam! w/ Joe Spradley, Sep 18</h1>\n<p><a href=\"https://www.facebook.com/events/197105527128041/\">https://www.facebook.com/events/197105527128041/</a></p>\n<p>Follow the link and join Chuseok Game Jam hosted by our worthy member\nJoe Spradley and his startup PlayFluent.</p>\n<p><img src=\"http://media.tumblr.com/0c2a9d85114115491293f706d9271e8c/tumblr_inline_mt8loe6jYd1rjim2g.jpg\" alt=\"\"></p>\n<p>All details in the link, but for those who don’t know what a Game Jam\nis… They are going to try to make a few brand new games in a very short\namount of time. No pressure though because people of all skill levels\nwill be participating and the goal is simply to make something!</p>\n<p>Other Important Info:</p>\n<p>Wednesday 2pm - Friday 5pm is the official time but this is a causal +\nfun event so everyone is invited and can come participate as much or as\nlittle as desired. </p>\n<p>It’s FREE! + Saturday and Sunday night we will have some related social\nevents where you can show off your creation and play other games.\\^\\^</p>\n<p>Directions:</p>\n<p>Dangsan Station Exit 4. Turn left, walk down the street to the second\nbuilding. Enter and come to the 3rd Floor.</p>\n<p><a href=\"https://maps.google.com/maps?q=37.534866,126.903475&amp;num=1&amp;vpsrc=0&amp;ie=UTF8&amp;t=m&amp;z=19\">https://maps.google.com/maps?q=37.534866,126.903475&amp;num=1&amp;vpsrc=0&amp;ie=UTF8&amp;t=m&amp;z=19</a></p>\n";
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"review-of-digital-art-series-i-ii-\">Review of &quot;Digital Art Series I&amp;II&quot;</h1>\n<p>Recently, we had the honor of hosting two inspirational art lectures by\nthe internationally acclaimed and very creative media artist Lucia\nJeesun Lee (aka<a href=\"https://twitter.com/smellsdreamy\">@smellsdreamy</a>).</p>\n<p>In the first lecture, ‘Introduction to Digital Art I - When artists\nbecome geeks or vice versa’, Lucia gave us a peek into the exciting and\ndiverse trends currently happening in digital art.  Her talk took\nattendees on a fascinating journey through this colorful area of\nconverging technologies.  Where Musicians, Designers, Entrepreneurs,\nFilmmakers, Writers, Architects, Hackers, Inventors, Engineers,\nUrbanists, Scientists, Choreographers as well as Magicians are currently\nfinding new ways to use technology in their practices.</p>\n<p>You can find the slides for ‘Introduction to Digital Art I’ here:\n<a href=\"https://www.dropbox.com/s/72oekls988u494w/digital_art_lecture_1_lucia_lee.ppt\"></a><a href=\"https://www.dropbox.com/s/72oekls988u494w/digital_art_lecture_1_lucia_lee.ppt\">https://www.dropbox.com/s/72oekls988u494w/digital_art_lecture_1_lucia_lee.ppt</a></p>\n<p>The intrigued audience hurried to her second lecture, ’Introduction to\nDigital Art II - Mapping’, where she took them deeper into the curious\nworld of online digital mapping.   Lucia’s solid selection of artists\nand her thoughtful interpretations helped a very eager audience to see\nhow images of our modern, sometimes hectic world, once frozen in time\ncould be appropriated and transformed into expressive and highly\nunconventional pieces of contemporary art.  In addition, she kindly\nprovided some great resources for those looking to jump in and do their\nown projects.</p>\n<p>Both her lectures were enriched with lively discussions at the end as\nwell as a very enjoyable after-parties.</p>\n<p>These valuable events couldn’t have happened without the generous\nsupport of two great organizations, Hub Seoul and World Culture Open\nSeoul Office, who graciously opened up their wonderful venues to Seoul\nTech Society members.</p>\n<p><strong>Hub Seoul</strong>\\\n<img src=\"https://lh3.googleusercontent.com/9QPjmwC57S5muRmizwQHYCDqfgGYWVGF3xYdzF-4TmvtXrOk2TYUFVAAocRtFrfJobjAEiScUlWxwOD6MJF3a0Ty5d50fhET3uHx0nVq002nNTFkDoynfHRL\" alt=\"image\">\\\n<strong>WCO</strong>\\\n<img src=\"https://lh5.googleusercontent.com/PqLzDtQvhxhCmQcSHB5gA226FEl7hGrXsXh8-rqmOo7jdqdEJBUuTq7unWYoB2IsCL_pUCDv3cLt8NAlINEu72HcB6qTRtl0yGZ4C4FrXaweETpvMn9iFJBr\" alt=\"image\"></p>\n<p><strong>Hub Seoul</strong> <a href=\"http://www.hubseoul.net\">www.hubseoul.net</a> /\n<a href=\"http://www.facebook.com/hubseoul\">www.facebook.com/hubseoul</a>\\\nis originally a quite co-working space, where everyone can find a handy\ncorner to concentrate on their project, for a reasonable fee.\\\nFor us, It smoothly transformed in a space, which welcomed our first\nevent. It was one of the reasons to give a successful start to these\nseries of lectures.</p>\n<p><strong>World Culture Open Seoul Office</strong> <a href=\"http://wcoseoul.org/xe/\">http://wcoseoul.org/xe/</a>\\\nis the free space in the heart of Seoul for diverse cultural events. We\nare very thankful to WCO and glad that we contributed bringing culture\nand technologies closer to each other.</p>\n<p>We will look forward to hear more fascinating talks from Lucia and\ndiscover over welcoming spaces.</p>\n";
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"review-of-team-up-for-anglehack-\">Review of &quot;Team up for AngleHack&quot;</h1>\n<p>It would be enough to say that this time event was SUPER fun &amp;\nchallenging.</p>\n<p>Review in a brief:</p>\n<ul>\n<li>~20 people attended</li>\n<li>11 cool project ideas were proposed</li>\n<li>3 most promising were chosen by voting</li>\n<li>..to be continue - a plan for one more meeting exists!</li>\n</ul>\n<p>Some juicy details for whose who interested:</p>\n<p>The event was popular far beyond the expectation - more than 90% of RSVP\nshowed up - ~20 highly skilled tech enthusiasts. The atmosphere was\ncreative and cheerful, we generated 11 project proposals to compete in\nAngelHack contest. After hectic discussions 3 the most promising ideas\nwere chosen so 3 teams will participate in the hackathon.</p>\n<p>Wish a good luck to our heroes!!</p>\n<p>To chill out our burning brains later on we threw an after-party with a\ncold beer or two.</p>\n<p>As so many people were involved, excited and committed we decided to\nmake one more meeting before the actual AngelHack contest.</p>\n<p>Special shout out goes to our\nfriends <a href=\"http://www.nflabs.com/\" title=\"NFLabs\"><strong>NFLabs</strong></a> who hosted this\nevent at their nice office at Gangnam and helped most generously with,\nhm, let us say “refreshments” and “stuff”.</p>\n";
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"seoul-tech-careers-lead-developer-cto-for-a-fashtech-startup-\">Seoul Tech Careers: Lead Developer / CTO for a fashtech startup </h1>\n<p><img src=\"http://media.tumblr.com/3a0093657e210472d511353149c9ca2a/tumblr_inline_mxh2nwZ8LX1qz73mc.png\" alt=\"image\"></p>\n<p><strong>Lead Developer / CTO Candidate</strong></p>\n<p>Are you eager for an exciting opportunity to make your mark in\n“fashtech” the industry cross sector of fashion and technology?\\\nThis may be your chance.\\\nRed Carpet Closet is an upandcoming fashtech startup currently seeking\nan experienced fullstack web developer with ambitions to take the lead\nin building our ecommerce platform. We have big ideas that will\n“democratize fashion” for shoppers and designers but we need a talented\ntechnical superstar to bring these ideas to life!\\\nYou’ll work closely with the energetic founders, with international\nworking experience in leading global technology firms, who love the idea\nof working hard and playing harder.</p>\n<p>Role: FullStack Web Developer / Location: Seoul, South Korea\\\n(A candidate with the right fit and experience can be considered for the\nposition of CTO)</p>\n<p>Responsibilities</p>\n<ul>\n<li>Primary: Lead architecture of the whole site focus on initial site\ncoding and development (from frontend to backend)</li>\n<li>Secondary: Help shape the technology development roadmap for the\necommerce platform and advise in future technical hiring decisions</li>\n</ul>\n<p>Requirements</p>\n<ul>\n<li>No working restriction in South Korea (applicable to foreigners)</li>\n</ul>\n<p>Education\\</p>\n<ul>\n<li>Degree in Computer Science or Engineering (minimum)</li>\n</ul>\n<p>Experience / Skills</p>\n<ul>\n<li>Several years of programming experience; recent graduates with\npotential and a strong portfolio may also be considered</li>\n<li>Well versed in major web development and web application languages\n(backend APIs /code, e.g. python; front end code, e.g. HTML5, CSS3,\njavaScript)</li>\n<li>Strong knowledge of SQL and relational database design</li>\n<li>Proficiency with Korea’s crossbrowser, crossplatform issues, and W3C\nWeb standards</li>\n<li>Familiar with search engine optimization (SEO)</li>\n<li>Able to efficiently lead and coordinate a small team of designers\nand other developers</li>\n<li>Experience working with startups a plus</li>\n<li>Ecommerce experience a plus</li>\n</ul>\n<p>An ideal candidate would also possess the following:</p>\n<ul>\n<li>Creativity, drive, an obsessive eye for detail and rapid iteration,\nexperimentation skills</li>\n<li>Able to step back and see the big picture</li>\n<li>Ability to meet strict deadlines, efficiently juggle multiple hats\nand learn fast</li>\n<li>Good interpersonal and communication skills</li>\n</ul>\n<p>Compensation</p>\n<ul>\n<li>Open to negotiation.</li>\n</ul>\n<p>If you have what it takes, please reach out to Ellen at\nhr@redcarpetcloset.com. In your email, please include the following:</p>\n<ul>\n<li>Resume (English or Korean)</li>\n<li>Links to / examples of your portfolio that best reflect your web\ndevelopment skills; for projects that were joint collaborations,\nplease specify your role and involvement</li>\n<li>Tell us which is your favorite ecommerce website and your 3 reasons</li>\n</ul>\n<p>——————————————————————————————————————-\\\n개발자 / CTO 모집</p>\n<p>안녕하세요,</p>\n<p>레드카펫 클로젯의 ecommerce 플랫폼을 구축하기 위해, 능력있는 fullstack\n웹 개발자를 모십니다.\\\n저희의 수많은 아이디어를 현실로 이루어 지게 할 수있는 멋진 개발자. 바로\n당신을 레드카펫 클로젯 가족으로 초대하고 싶습니다.\\\n저희 레드카펫 클로젯은 초기 startup 기업이지만, 가능성이 높고 빠른\n성장이 기대됩니다. 글로벌 tech 회사에서 폭넓은 경험과 열정을 가진\nfounder들과 함께,\\\n레드카펫 클로젯의 성공을 만들어 갈 당신을 기다립니다.</p>\n<p>[모집분야]\\\nFullStack 웹 개발자 (경력 및 적임자가 CTO 포지션으로 전환 가능함)</p>\n<p>\\\n[업무영역]</p>\n<p>\\\n주요업무:</p>\n<ul>\n<li>사이트 구조 / ecommerce 플랫폼 구축 계획</li>\n<li>초기 단계부터 사이트 코딩 및 개발 (frontend/backend) 지원활동:</li>\n<li>레드카펫 ecommerce 플랫폼 개발 로드맵 계획</li>\n<li>기술 관련 포지션 채용 과정 지원</li>\n</ul>\n<p>[필수요건]</p>\n<ul>\n<li>한국에서 근무 제한 없음 (외국인 해당)</li>\n</ul>\n<p>교육\\</p>\n<ul>\n<li>CS/공대 경험/기술</li>\n<li>프로그래밍 경험 3년 이상 (잠재력 및 강한 포트폴리오를 가진\n졸업자라면 지원 가능함)</li>\n<li>주요웹개발및웹에플리케이션언어에능통 (예, backend API / code python;\nfrontend HTML, CSS3, javaScript 등)</li>\n<li>SQL 및 관계형 데이터베이스 설계에 대해 깊은 지식을 갖춘자</li>\n<li>한국과 국제의 Crossbrowser, crossplatform 이슈 및 W3C 웹 기준 능통한\n자</li>\n<li>Search engine optimization (SEO) 이해력이 높은자</li>\n<li>프로젝트 리드 경험자 우대</li>\n</ul>\n<p>[우대요건]</p>\n<ul>\n<li>스타트업 경험자</li>\n<li>Ecommerce 비지니스 및 플랫폼 관련 경험자</li>\n<li>창의력, 추진력, 빠른 반복 (iteration)/실험 (experimentation)에 대해\n섬세함을 갖춘자</li>\n<li>책임감이 강하며 배우고자 하는 마음을 강한자</li>\n<li>원활한 의사소통을 갖춘자</li>\n</ul>\n<p>[인센티브] 추 후 협상</p>\n<p>[지원방법]\\\n아래 서류를 준비하여 엘렌(Ellen)에게 hr@redcarpetcloset.com로 메일 송부\n부탁 드립니다.</p>\n<ul>\n<li>이력서(영문/국문문관)</li>\n<li>포트포리오(본인이 웹 개발자로써 제일 자랑하는 프로젝트 어떤 것인지\n표시해주시고 개인 프로젝트 아닌 경우, 본인이 역활이 무엇인지\n정확하게 알려주시기 바랍니다.)</li>\n<li>본인이 제일 마음에 들는 ecommerce 웹사이트 및 그 웹사이트 좋아하는\n3가지 이유</li>\n</ul>\n<p>많은 지원 부탁드립니다. 감사합니다!</p>\n";
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"seoul-tech-rises-to-samsung-challenge\">Seoul Tech Rises To Samsung Challenge</h1>\n<p>In the space of two weeks, the WeeSeeTeam has gone on a hackathon\njourney which began at a Seoul Tech Society event\n@<a href=\"http://www.nflabs.com/\">NFlabs</a> and has rapidly moved onto development\nat one of Samsung’s dedicated development centers in the heart of\nGangnam.</p>\n<p>In November, more than two dozen Seoul Tech Society members came\ntogether at NFLabs office space in Gangnam. Seven members discussed\nentering the final SAMSUNG App Challenge for 2013.  The contest aims to\naward innovative applications that showcase the Galaxy Note’s S-Pen. The\ngoal is ambitious: two winning teams have the potential to each get a\n\\$200,000 grand prize, and the WeeSee Team is now poised to come out a\nwinner.</p>\n<p>WeeSee is uniquely positioned because of its diversity and depth of\ntalent, which is typical of the Seoul Tech Society’s membership.\n Hailing from all around the world and from various professional\nbackgrounds, the WeeSee team has brought together a collegial group of\nvegetarians, gamers, entrepreneurs, and hackers.</p>\n<p>For the first few weeks the team had been meeting together in Mullae and\nHongdae, but later secured free office space complimentary of Samsung.\n The team has been finalizing the beta version of  their productivity\napp which aims to disrupt the way people collaborate and share notes.\nThe app developed by WeeSee will enter a crowded productivity category\nled by brands such as Evernote.  The app differentiates itself with its\nuse of the Samsung S-Pen stylus, and it allows users the ability to\nexperience more while working with others.</p>\n<p>Before submitting their application on December 31st, the team is\nsearching for additional members to join them in either a design or\ndevelopment role.  Requirements:</p>\n<p>The candidates can be a UX/UI Design specialist and/or a (mobile)\napplications developer who is familiar with any of the following:</p>\n<ul>\n<li><p>Mobile application development Samsung/Android</p>\n</li>\n<li><p>Photoshop</p>\n</li>\n<li><p>Android design guide principles</p>\n</li>\n<li><p>Action bar / status bar / navbar for current mobile applications</p>\n</li>\n<li><p>Icons for mobile apps</p>\n</li>\n<li><p>Branding and theme for Android / Samsung</p>\n</li>\n</ul>\n<p>If you think you can contribute to the team in any way, please feel free\nto send an e-mail to <a href=\"&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#58;&#119;&#x65;&#101;&#x73;&#x65;&#101;&#116;&#x65;&#97;&#x6d;&#x40;&#103;&#x6d;&#x61;&#105;&#108;&#x2e;&#99;&#111;&#109;\">&#119;&#x65;&#101;&#x73;&#x65;&#101;&#116;&#x65;&#97;&#x6d;&#x40;&#103;&#x6d;&#x61;&#105;&#108;&#x2e;&#99;&#111;&#109;</a>  or follow this\n(<a href=\"http://www.meetup.com/seoul-tech-society/messages/boards/thread/40367552#113451732\">link</a>).</p>\n<p>More info about the Samsung App Challenge here\n(<a href=\"http://developer.samsung.com/ssac2013/note/aboutTheChallenge.do\">link</a>)</p>\n<p><img src=\"https://lh3.googleusercontent.com/xQIgrpMLSuyFnO75mQUeFOKR5lBiQ_kj08eO1IWmFNM7PYeVnMo6I-JpvmZyO9RkbVFk9Vndu3BSKd91t21IqB9-MilG5ENygc6lJDWdqE8ahOj2IxEhr-rQCQ\" alt=\"image\"></p>\n<p>Inception @ Mullae Art Center</p>\n<p><img src=\"https://lh3.googleusercontent.com/WVVUTctvcvzM8gIRTNB0LSMlkiYndtqXmhc60DMpy2s8Nq4olns-pslBj-5XMqtkoBf2n_K-D-_mKD8_tmxAtZBaI82weDNjaQ1gjoR47QaUfMZDmJvDrdtV7w\" alt=\"image\"></p>\n<p>Brainstorming  → App Deep Dive II  @ Insight Hongdae</p>\n<p><img src=\"https://lh3.googleusercontent.com/lLXIXgt9LDO0hiMHhvu6EG938CpKou4Qz1PWwvRTrh2DfwIjwslOUPGeA30WSVcsGeRIooRVCqTOR5IP8ZUUX4C8bYZqjzWK04wvHV2-vNk5BplJWfzQ4EFZdA\" alt=\"image\"></p>\n<p>Cheers: first milestone  @\nNFLabs<img src=\"https://lh6.googleusercontent.com/fCzX3pYGxn36vK8Nd53ZLhrE0bF75t1ul1cx8ZMhamRFhqfqO1cuByw1OQI_jzhzVfYAxYyKQPANcb_z7IP3KSX3WEUaqR1dDBRCDYKLmnsScu9sh7KB3vwm3w\" alt=\"image\"></p>\n<p>Our first demo @ Samsung Ocean</p>\n<p><img src=\"https://lh4.googleusercontent.com/OHz8t5pQ1sYzsg3t79s8-GxhF9s99SbiBUsHUhrmitN_rPdVFXFx9V1bODtjOML1nlAdfJKbwepCt24nbUfS7wbQ4AB9zhDSrFYywBpNYQGRaLsP8KMBJWSZ9Q\" alt=\"image\"></p>\n<p>Deep immersion for the best product   →  App Deep Dive I @ NFLabs</p>\n<p><img src=\"https://lh4.googleusercontent.com/N6fBPGlzAmwYUoc6SazOE4BteT0iGMSQ33W4_gS2mRYM0IPlW3rkDw43X8R7MAUJWX2vFJdX7VuVBCPYnhPMbkQXvJExRetw2xEb3bBrqBiNumYxIOWZPXF6-g\" alt=\"image\"></p>\n<pre><code>                                                          Jackson\n</code></pre><p><a href=\"https://plus.google.com/113799495386801196546\">Google+</a></p>\n";
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"special-guest-speaker-ffventures-john-frankel-seoul-june-14\">Special Guest Speaker: ffVentures&#39; John Frankel @Seoul, June 14</h1>\n<p>Our special guest speaker is John Frankel, who is a Partner at ff\nVenture Capital. John will give a lecture:</p>\n<p><em>“YOU ARE SO LUCKY! The next great entrepreneurial opportunity: the\nmassive white space right in front of you.”</em></p>\n<p><img src=\"http://media.tumblr.com/c3bd3547ab4d80edc2a3c5f0d2f8fe61/tumblr_inline_mm9qo8U9zC1qz4rgp.png\" alt=\"image\"></p>\n<p><strong>John Frankel (<a href=\"http://ffvc.com/team/john-frankel/\">Source</a>)</strong></p>\n<p><strong><img src=\"http://media.tumblr.com/b9845c75bec9bd52b61e04f5004c8bfc/tumblr_inline_mm9qpkxgGf1qz4rgp.jpg\" alt=\"image\"></strong></p>\n<p>John Frankel has been an early-stage venture investor since 1999. Mr.\nFrankel was one of the earliest investors in Quigo Technologies, which\nwas purchased by AOL in December 2007, and in Cornerstone OnDemand (CSOD\non NASDAQ) which had a successful IPO in March 2011. He has also served\nand/or now serves on the boards of 500px, Apparel Media Group,\nAlerts.com, Centzy, ClearPath Immigration, Gobbler, Infochimps, Klout,\nPhone.com, Quigo Technologies, The Goldman Sachs Trust Company, and\nVoxy. He is also a Mentor with the Entrepreneurs Roundtable Accelerator\nprogram.</p>\n<p>In particular, he established Goldman’s Cayman offshore administration\nbusiness, their London global custody business, and reengineered their\nglobal prime brokerage business. In capital markets, he worked closely\nwith some of the world’s leading hedge funds, and developed a keen\nunderstanding of portfolio risk/return management. He started his\nbusiness career with Arthur Anderson &amp; Co. in the audit and insolvency\ndivisions.</p>\n<p>Mr. Frankel earned a Master of Arts from New College, Oxford where he\nstudied Mathematics, Philosophy and Logic, and is a Fellow Chartered\nAccountant of the Institute of Chartered Accountants in England and\nWales.</p>\n<p>Final agenda will be posted 5 to 7 days in advance of the meeting.</p>\n<p>RSVP to this event\nat <a href=\"http://www.meetup.com/seoul-tech-society/events/117773242/\"></a><a href=\"http://www.meetup.com/seoul-tech-society/events/117773242/\">http://www.meetup.com/seoul-tech-society/events/117773242/</a></p>\n";
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"stay-safe-in-the-cyberspace-dcamp-oct-18th-2013\">Stay safe in the cyberspace @DCAMP, Oct 18th 2013</h1>\n<p>Do you spend more and more time with your digital devices? So do\ncriminals who are finding new ways to take advantage of these\nhyper-connected technologies.\\\nOur honored guests Dr. Joshua James and Security Consultant Michał\nRzepka will guide you through the cyber world of white and black forces.</p>\n<p><strong>Featured</strong>\\\nBring your Windows laptop to practice being a cyber-sleuth with a\npractical lab on computer memory acquisition and analysis.\\\n<img src=\"http://3.bp.blogspot.com/_2hM3rrwU8kI/TPEkYiKDaLI/AAAAAAAAAx0/rExWBO8i1eo/s320/cyber-crime-and-identity-theft.jpg\" alt=\"image\"></p>\n<p>RSVP to this event\nat <a href=\"http://www.meetup.com/seoul-tech-society/events/144302832/\">http://www.meetup.com/seoul-tech-society/events/144302832/</a></p>\n<p><strong>Agenda</strong>\\\n<strong><em>Web vulnerabilities - what [developers do for you to stay\ninsecure</em></strong>\\\nTalk about simple, old, known, yet still very popular weaknesses in web\napps that affect users - basically everyone, since we all use web.\\\n<strong><em>Cybercrime and digital forensics - what cyber cops do</em></strong>\\\nThis talk will give an overview of what cybercrime is, what cybercops\ndo, and how digital forensic investigations are conducted.\\\n<strong><em>Memory acquisition and analysis - hands on</em></strong>\\\nDuring this practical you will learn to take a copy of Random Access\nMemory and extract evidence of user activity, such as pictures, web\naddresses and passwords.</p>\n<p><strong>Speakers</strong>\\\nDr. Joshua James is a researcher with the Digital Forensics\nInvestigation Laboratory as well as a lecturer and researcher with\nUniversity College Dublin, Korea University, Korea National Police\nUniversity and Soon Chun Hyang University. Coming from a background in\nnetwork security and administration, his focus is now on the\nformalization and automation of digital forensic investigation methods,\nand the application of these methods in low cost, open source solutions\nfor digital investigators.\\\nMichał Rzepka was previously working as a Security Engineer in national\ncomputing center and taking part in several national and European\nprojects, Michał is currently working as a Security Consultant for the\nleading IT Security company in Northern Europe. His areas of experience\ninclude penetration testing, web application security assessing, as well\nas PCI DSS compliance.</p>\n";
+
+/***/ },
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"team-up-for-angelhack-2-d-camp-may-28-2013\">Team up for AngelHack#2 @D.Camp, May 28 2013</h1>\n<p>Guys, we are just a few weeks from AngleHack 2013 contest, let’s get\nprepared to take part and win!</p>\n<p><a href=\"http://seoultechsociety.org/post/49421013070/team-up-for-angelhack-seoul-may-10\">Last time at\nNFLabs</a>\nit was a really productive session: we pre-selected three ideas and lots\nof stuff has been done by teams of devoted techies from that time so…</p>\n<p>Let’s get together once more at <a href=\"http://dreamcamp.co\">D.Camp</a> (thanks to\ntheir support)  and review our progress, refine goals and tactics to get\nready for the show time! As usual please RSVP at <a href=\"http://www.meetup.com/seoul-tech-society/events/120815772/\">Seoul Tech Society\nmeetup\npage</a>.</p>\n<p>So just to re-cap:</p>\n<p>This is the <em>second event</em> held by <em>Seoul Tech Society</em> in anticipation\nof <em>AngelHack 2013</em>. You can learn more about our previos event from our\n<a href=\"http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack\">R</a><a href=\"http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack\">eview\nof\n“</a><a href=\"http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack\">Team\nup for AngelHack\n2013”</a>. </p>\n<p>To learn more about AngleHack itself and the registration process please\nrefer to the official event materials:</p>\n<ul>\n<li>Official site: <a href=\"http://angelhack.co.kr\">http://angelhack.co.kr</a></li>\n<li>Dev invite presentation (ENG): <a href=\"http://goo.gl/XHOIk\">http://goo.gl/XHOIk</a> </li>\n<li>Dev invite presentation (KR): <a href=\"http://goo.gl/It3M1\">http://goo.gl/It3M1</a></li>\n<li>FB:\n<a href=\"http://www.facebook.com/pages/AngelHack-Seoul-Korea/133538800151630\">http://www.facebook.com/pages/AngelHack-Seoul-Korea/133538800151630</a></li>\n</ul>\n";
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"team-up-for-angelhack-seoul-may-10\">Team up for AngelHack @Seoul, May 10</h1>\n<p><strong>Update 05/14/2013: </strong>review to <a href=\"http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack\">Team up for\nAngelHack</a>\nwas added.</p>\n<p>Hey, <em>Seoul Tech Society</em>, let’s make a team and join AngelHack contest!</p>\n<p>Are you a designer, developer or entrepreneur? Do you have a cool idea,\nwant to team up and implement a new project?</p>\n<p><a href=\"http://www.meetup.com/seoul-tech-society/events/115904382/\">RSVP this\nevent</a> to\nbrainstorm ideas and discuss details with those of you who are\ninterested.</p>\n<p><strong>Join this event if you :</strong></p>\n<ul>\n<li><p>curious about AngelHack</p>\n</li>\n<li><p>looking for a team to join, to discuss ideas for a project</p>\n</li>\n<li><p>want to participate in AngelHack@Seoul on 8-9 of June</p>\n</li>\n</ul>\n<p><strong>When :</strong>  Friday, May 10th 2013.</p>\n<p>7:00pm ~ 7:30pm -> Waiting for people, mingling</p>\n<p>7:30pm ~ 9:00pm -> Angelhack preparation</p>\n<p>\\</p>\n<p><strong>Place:</strong></p>\n<p>We will use NFLabs’s conference room.</p>\n<p>To get to NFLabs, go to exit 1 at gangnam station, walk straight\n(~150m) until a street corner with Seven Springs restaurant. Go into\nthis street, the building is the second after the motel on the left, 8th\nFloor: <a href=\"http://me2.do/Fe7IxuUM\">Picture of the building</a></p>\n<p><strong>About AngelHack :</strong></p>\n<ul>\n<li><p><a href=\"http://angelhack.com/\">http://angelhack.com/</a> </p>\n</li>\n<li><p>Korean Event website:\n<a href=\"http://onoffmix.com/event/14637\"></a><a href=\"http://onoffmix.com/event/14637\">http://onoffmix.com/event/14637</a></p>\n</li>\n</ul>\n<p>It will take place at Seoul on June, 8-9. Registration is already open.\n(It is about 20,000 wons as an inscription fee).</p>\n<p>Contest includes real-time implementation of an idea, however the\ndesign, logo, wireframes, digital mockups can be made prior to this time\n(i.e at this meetup).</p>\n<p>Winners will get mentoring and be brought out to Silicon Valley to raise\ninvestment and introduce them to incubators.</p>\n<p>Check out previous awarded projects\n<a href=\"http://techcrunch.com/2012/07/13/angelhack-winners/\"></a><a href=\"http://techcrunch.com/2012/07/13/angelhack-winners/\">http://techcrunch.com/2012/07/13/angelhack-winners/</a> :</p>\n<ul>\n<li><p>Appetas</p>\n</li>\n<li><p>GiveGo</p>\n</li>\n<li><p>ShareBrowse</p>\n</li>\n</ul>\n";
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"upcoming-tech-events-in-korea-keeping-updated-\">Upcoming tech events in Korea (keeping updated)</h1>\n<p>Hey Seoul Techies, what are you up to these days?\\\nHere we will keep updating the list of technology oriented events for\nyou. Please, join any of them and share experience with the rest of us\nlater on.</p>\n<p>If you know any other upcoming events or something we’ve forgot to\nmention but you think it should be here - please let us\nknow:<strong><em>contacts[at]seoultechsociety.org</em></strong></p>\n<p><strong>POC2013</strong>\\\n<a href=\"http://www.powerofcommunity.net/\">http://www.powerofcommunity.net</a>\\\n 5th - 8th Nov., The-K Seoul Hotel\\\n Learn from hackers and security experts from everywhere and participate\nin many coding and non-coding related events.</p>\n<p>!Early birds until 30th Sep. Even if you are a foreigner but stay in\nKorea, register as REGULAR.</p>\n<p><strong>2013 Electronics &amp; IT Industry Fair</strong>\\\n<strong>Creative Economy, Happiness of People, and IT</strong>\\\n<a href=\"http://www.eif.or.kr/main.it\">http://www.eif.or.kr/main.it</a>\\\n7th Oct., 2013 - 8th Oct. 2013, Kintex\\\nCome to get ideas from a Gartner specialist as well as many others.\\\n<strong><em>7th Oct., Monday</em>, *</strong>10:00~12:30<em>\\\n</em>Creative Futures Forum*\\</p>\n<ul>\n<li>Opening speech : Minister of MSIP\\</li>\n<li>Keynote speech : Guru of IT\\</li>\n<li>Issue presentation &amp; Panel discussion\\\nTopic : Happiness of People by Creative Economy, and the Role of IT</li>\n</ul>\n<p><strong>*7th Oct., Monday, </strong>14:00~17:30<em>\\\n<strong>**8th Oct., Monday, </strong>10:00~17:30</em> <em>\\\n</em>IT Industry Prospect Conference*\\</p>\n<ul>\n<li>Track Ⅰ : Domestic &amp; Foreign Economy and IT industry Prospect\\\n(Andy Rowsell Jones(Gartner), President of KDI, ETRI, KISDI)\\<ul>\n<li>Track Ⅱ : Issue analysis and prospect in major field\\\n(SW&amp;IT service, Smart device, Global IT market forecast, Information\nsecurity, IT main parts and strategic markets)</li>\n</ul>\n</li>\n</ul>\n<p><strong>**8th Oct., Monday, </strong>14:00~17:50<em> </em>\\\n<em>Asian IT Policy Symposium</em>\\</p>\n<ul>\n<li>Sharing major IT policies and discussing cooperative\nplans, participating the director general of Korea, Brunei, Cambodia,\nLao, India, Philippines, Vietnam in IT policy</li>\n</ul>\n<p><strong>2013 ISACA Korea Conference, 6th Sep.</strong>\\\n<strong>IT Governance, Security and Privacy in the Big Data Era</strong>\\\n<a href=\"http://www.isaca.or.kr/\">http://www.isaca.or.kr/</a> See the notice on the news board: “Invitation\n2013 ISACA Conference - 6th Sep…”. It’s in English.</p>\n<p><strong>Youth Forum for Seoul Conference on Cyberspace 2013</strong>\\\n<a href=\"http://www.seoulcyber2013.kr/en/event/youth.html\">http://www.seoulcyber2013.kr/en/event/youth.html</a>\\\n2nd Sep., 2013</p>\n<p>The forum is devoted to broad topics on cyberspace: Economic growth and\nsocial and cultural benefits; Cybersecurity and cybercrime; and Capacity\nbuilding.</p>\n<p>Hurry up to register for free, space is limited for 250 attendees:\n<a href=\"http://www.seoulcyber2013yf.kr/y_step0.html\">http://www.seoulcyber2013yf.kr/y_step0.html</a></p>\n<p><strong>Korea Games Conference 2013</strong>\\\n<a href=\"http://www.kgconf.com/kor/html/main.html\">http://www.kgconf.com</a>\\\nSeptember 25 – 27, Seoul, Korea</p>\n<p>\\\n\\\n<em>Disclaimer: Seoul Tech Society is not affiliated by any of the\ncompanies mentioned above.</em></p>\n";
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"upcoming-tech-events-in-seoul-on-may-2013\">Upcoming Tech events in Seoul on May 2013</h1>\n<p>Hey Seoul Techies, what are you up to this May?</p>\n<p>We’ve composed a list of technology oriented events this March for\nyou.Please join any of them and share experience with the rest of us\nlater on.</p>\n<hr>\n<p><strong>Facebook Mobile DevCon 2013</strong></p>\n<p><a href=\"https://developers.facebook.com/events/mobiledevcon/seoul/\">https://developers.facebook.com/events/mobiledevcon/seoul/</a></p>\n<p><em>07/05/2013</em></p>\n<p><em>Facebook rejected all our applications to Mobile DevCon 2013 @Seoul,\nmotivating that “the space is extremely limited”.</em></p>\n<p>It is frustrating as we did not expect such thing from a big company in\nthe City with more then 30,000,000 population… </p>\n<p>Please let us know what is your experience here!</p>\n<hr>\n<p><strong>Google I\\O Extended 2013</strong></p>\n<p><a href=\"http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013\"></a><a href=\"http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013\">http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013</a></p>\n<p><em>16/05/2013</em></p>\n<hr>\n<p><strong>Art &amp; Technology Performance - REPLICA</strong></p>\n<p><a href=\"http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043\"></a><a href=\"http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043\">http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043</a></p>\n<p><em>17~18/05/2013</em></p>\n<hr>\n<p><strong>Amazon AWSome day @Seoul</strong></p>\n<p><a href=\"http://aws.amazon.com/apac/awsday/seoul/\"></a><a href=\"http://aws.amazon.com/apac/awsday/seoul/\">http://aws.amazon.com/apac/awsday/seoul/</a>\\</p>\n<p><em>21/05/2013</em></p>\n<hr>\n<p>If you know any other upcoming events or something we’v forgot to\nmention but you think it should be here - please let us know:\n<strong><em>contacts[at]seoultechsociety.org</em></strong></p>\n<p>Disclaimer: Seoul Tech Society is not affiliated by any of the companies\nmentioned above.</p>\n";
+
+/***/ },
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"launch-lab-where-ideas-take-off-june-28\">Launch Lab, Where Ideas Take Off, June 28</h1>\n<p>RSVP <a href=\"http://www.meetup.com/seoul-tech-society/events/187283782/\">http://www.meetup.com/seoul-tech-society/events/187283782/</a></p>\n<p><strong>What is LaunchLab? </strong></p>\n<p>As part of the Launch - Hack - Tell cycle of innovation, SeoulTech is\nproud to announce the “Launch Lab” series of meetups.  This is a new\ntype of event where researchers, entrepreneurs and innovators discuss\nand propose (any) project, and solicit ideas and help from other\nSeoulTech members.</p>\n<p><img src=\"https://31.media.tumblr.com/d2d8faf5fae269e0c4c0296c6247527e/tumblr_inline_n721u9ZQx21rjim2g.png\" alt=\"\"></p>\n<p><strong>Why? </strong></p>\n<p>Launch Lab helps members take one giant leap beyond networking. These\nevents allow members  to get involved with the creation of new ideas or\nstartups, while forging friendships and business partnerships to last a\nlifetime. </p>\n<p><strong>How? </strong></p>\n<p>The event features a group of speakers that give a 10 to 15 minute\npresentation of their idea. The audience then discusses the idea.\nAudience members can also choose to join or further contribute to the\nproject.</p>\n<p>Open discussion sessions will also be available, so if anyone gets\ninspired they can share and discuss their ideas with the group.</p>\n<p><strong>When?</strong></p>\n<p><em>June 28th, 2014</em></p>\n<p>13:00 - 17:00: Presentations + Discussion + Coffee/Beer/Snacks</p>\n<p>17:00 - 19:00: Dinner (possible group discount depending on number)</p>\n<p>19:00 - 21:00: Open Mic Music Session</p>\n<p><strong>Call for projects and proposals (and musicians)!</strong></p>\n<p>If you are a researcher, startup founder, entrepreneur, idea generator,\nor dreamer, sign up to be a speaker!</p>\n<p>If you want to play in the Open Mic night, please let us know. Guitar\nwill be provided.</p>\n<p><strong>Please email:</strong> Joshua [at] cybercrimetech.com</p>\n<p><strong>Where?</strong></p>\n<p><strong>Coffee Zaroo *</strong>Seoul Metro Bundang Line (Yellow), Jukjeon Station*</p>\n<p><em>Address in Korean:</em> 경기도 용인시 기흥구 보정1203-12 </p>\n<p><em>Address in English:</em> 1203-12 Bojeong-dong (11-16 Jukjeon-ro 43Beon-gil)\nGiheung-gu, Yongin-si, Gyeonggi-do</p>\n<p>Map: <a href=\"http://goo.gl/maps/vLy2S\">http://goo.gl/maps/vLy2S</a></p>\n<p><strong>Note: This event is currently hosted outside of Seoul (Jukjeon -\naccessible by bus or Seoul Metro, 25 mins from Gangnam) - think as a\nhalf day picnic-style relaxing event. If we cannot get 20+ to RSVP, the\nmain event will be moved to Seoul. Please check the map before\nRSVPing.</strong></p>\n<p>On Twitter? Follow <a href=\"https://twitter.com/FutureTenseNow\">@Seoul_Tech</a></p>\n<p>FB? Follow us <a href=\"https://www.facebook.com/SeoulTechSociety\">https://www.facebook.com/SeoulTechSociety</a></p>\n";
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"popular-science-ehealth-trends-w-dr-ogan-gurel-march-16\">Popular science: eHealth trends w/ Dr. Ogan Gurel, March 16</h1>\n<p>RSVP <a href=\"http://www.meetup.com/seoul-tech-society/events/169900682/\">http://www.meetup.com/seoul-tech-society/events/169900682/</a></p>\n<p>Our speaker this time is <strong>Dr. Ogan Gurel</strong> (<a href=\"http://www.linkedin.com/profile/view?id=1531386\">LinkedIn\nprofile</a>), a prominent\nresearcher and professional in the area\nof <a href=\"http://en.wikipedia.org/wiki/MHealth\">mHealth</a> and <a href=\"http://www.nytimes.com/2012/10/09/science/redefining-medicine-with-apps-and-ipads-the-digital-doctor.html\">digital\nmedicine</a>.\nHe will introduce us to the world of emerging eHealth technologies.</p>\n<p><img src=\"http://photos1.meetupstatic.com/photos/event/3/5/f/e/600_339973822.jpeg\" alt=\"image\"></p>\n<p>If you want to team-up with smart and creative people of Seoul Tech\nSociety, stay for the second part of the event! There will be a\nbrainstorming session where we can put newly acquired knowledge to work\nand come up with an idea of an eHealth application together. </p>\n<p><strong>Agenda </strong></p>\n<p>4pm–5pm: eHealth trends by Dr. Ogan Gurel</p>\n<p>5pm–6pm: brainstorming and teamup for an eHealth application</p>\n<p><strong>About Dr. Gurel </strong></p>\n<p>Dr. Gurel is a Director in the MOT Research Center / CTO Office at the\nSamsung Advanced Institute of Technology (SAIT).  He also holds an\nacademic appointment as a Visiting Professor at the Samsung Advanced\nInstitute for Health Sciences and Technology (SAIHST) of SungKyunKwan\nUniversity.  Previously he was VP &amp; Medical Director at Sg2 and an\nAssociate at Booz, Allen &amp; Hamilton where he consulted for both large\nand small clients spanning the healthcare services, health insurance,\nbiopharma and medical device sectors.  </p>\n<p>His expertise covers the healthcare industry widely, including the\nclinical, business, executive management, marketing and R&amp;D, with direct\nexperience along several verticals: medical devices, mobile health,\nhealthcare IT, medical imaging, and pharmaceuticals. His scientific\nresearch focuses on structural biology, specifically protein\nelectrodynamics and terahertz medicine. </p>\n<p>His computer science interests included work on microprocessor software\ndevelopment systems, followed by robot programming systems work.</p>\n<p><strong>Venue</strong></p>\n<p><a href=\"http://www.idea-factory.kr/index_english.html\">Idea\nFactory</a>: Gangnam-gu,\nYeoksam-dong, 825-22, B2F Milim tower annex, Gangnam station exit 1</p>\n<p><img src=\"https://31.media.tumblr.com/61b49d90294cdb5b2e0ed6a6349f5843/tumblr_inline_n2bqcs9ZEm1rjim2g.jpg\" alt=\"\"></p>\n";
+
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"promotion-techtalk-networking-vol-2-platoon-feb-19\">Promotion: TechTalk &amp; Networking vol.2 @Platoon, Feb 19</h1>\n<p><img src=\"https://31.media.tumblr.com/064ee0998c8f2807c9c7351e675e2919/tumblr_inline_n159hqxwmo1rjim2g.png\" alt=\"image\"></p>\n<p><strong>Agenda</strong></p>\n<p>7pm - 8pm   : get beer (FIFO) and mingle w/ techies</p>\n<p>8pm - 11pm : start of DrinkEntrepreneurs social networking event w/\ncollege startup societies, Seoul Tech Society and Israeli VCs.</p>\n<p>네트워크 파티 (대학 창업 모임인 Seoul Tech Society and Israeli VCs 함께\n참여)</p>\n";
+
+/***/ },
+/* 36 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"promotion-wellness-it-festival-at-center-seoul-july-10\">Promotion: Wellness IT Festival @aT Center Seoul, July 10</h1>\n<p>Register here to <strong>view &amp; network</strong>: <a href=\"http://goo.gl/u9dHBl\">http://goo.gl/u9dHBl</a></p>\n<p>Register here to <strong>exhibit</strong>: <a href=\"http://www.wita-festival.com/register\">http://www.wita-festival.com/register</a>\n(<em>startups in Education, Culture, Social, Finance and Health areas</em>)</p>\n<p>Dear friends, we are glad to invite you to the Wellness IT Festival\norganized by our partner WiTA. </p>\n<p><img src=\"https://31.media.tumblr.com/01c6530579bf4765f81ada1a040cfd2a/tumblr_inline_n7rvukOEIA1rjim2g.png\" alt=\"\"></p>\n<p><strong>About</strong>: The Wellness IT Festival brings together experts,\nentrepreneurs, and attendees to a startup festival &amp; networking event\nand showcases the latest in wellness technology developed in South Korea\nand around the world.\\\n<a href=\"http://www.wita-festival.com/\">http://www.wita-festival.com/</a></p>\n<p><strong>When</strong>: </p>\n<p>Festival (July 10):\\\nFREE admission for SeoulTech members and students.</p>\n<p>1st International Conference on Wellness IT &amp; Festival (July 9 - 10):\\\nIf you are interested in attending the full event, the ticket cost is\nW200,000 (50% discount will be provided to SeoulTech members).</p>\n<p><strong>Location</strong>: aT Center Seoul <a href=\"http://atcenter.at.or.kr/\">http://atcenter.at.or.kr/</a></p>\n";
+
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"seoul-hack-n-te-ll-night-2\">Seoul Hack&#39;n&#39;Te­ll night #2</h1>\n<p>RSVP <a href=\"http://www.meetup.com/seoul-tech-society/events/165322992/\">http://www.meetup.com/seoul-tech-society/events/165322992/</a></p>\n<p><img src=\"https://31.media.tumblr.com/2fb91347a648b9dd43c850357ca82ee9/tumblr_inline_n19kgnZeDA1rjim2g.jpg\" alt=\"image\"></p>\n<p><strong>List of speakers: </strong></p>\n<hr>\n<p>• <strong>How to fail a Samsung App Challenge</strong> </p>\n<p>  Reflects the experience of a team hacking of Galaxy Note to create a\nproductivity app based on convergence of S-Pen, Chord and 2nd-screen\nSDKs. </p>\n<p><a href=\"http://seoultechsociety.org/post/70173415237/seoul-tech-rises-to-samsung-challenge\">seoultechsociety.org/post/70173415237/seoul-tech-rises-to-samsung-challenge</a></p>\n<p>• <strong>BigData: Audit Log Manager prototype</strong></p>\n<p>   Taming big data through distributed processing and interactive\nvisualisation using hadoop and d3.js</p>\n<p>• <strong>Zeppelin: open source data analysis environment </strong></p>\n<p>   Lee Moon Soo, CTO of NFLabs will tell us how he spent this autumn:\ndesigning and implementing of the large scale data analysis\nenvironment <a href=\"https://github.com/NFLabs/zeppelin\">github.com/NFLabs/zeppelin</a></p>\n<p>• <strong>Starting up a company:  developing and running a mobile app service\n“Mango Plate”</strong></p>\n<p>Danny Ryu, founder of <a href=\"http://www.mangoplate.com/\">www.mangoplate.com</a></p>\n<p>• <strong>Library design: from idea to construction</strong></p>\n<p>Gorka Blas, architect will guide us through an award winning project of\nbuilding a library. </p>\n<p>• <strong>Building RFID reader on Raspberry PI from scratch, in 8 hours</strong>  </p>\n<p>If you’ve ever visited <a href=\"http://news.ycombinator.com/\">Hacker News</a>,\nyou’ve almost certainly seen the “Show HN” or “Ask HN” posts. Well, it’s\ntime to get off the Internet and tell us about it face to face. We’ll\nprovide you with our honest feedback, you provide us with a great hack,\nor idea.</p>\n<p>We’ll give you 5 minutes to show off your tool, hack, library (did you\njust write a library to access the Meetup API in Go!?), whatever. We’re\nlanguage and software/hardware agnostic, so it’s all fair game.</p>\n<p>Your project doesn’t have to be a software project. We’re using a very\nbroad definition of hacking. Anything customized or personalized counts.\nPlease don’t feel shy.</p>\n<p>After you present, it’s an open forum. The audience will ask questions\nand provide feedback. We want to enable as much participation as\npossible at these meetups, so you’d better be able to take criticism and\ndish it out (all within reason of course).</p>\n";
+
+/***/ },
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"seoul-tech-ver-1-0-art-party-platoon-kunsthalle\">SEOUL TECH VER 1.0 + ART PARTY 파티 @Platoon Kunsthalle</h1>\n<p>RSVP <a href=\"http://www.meetup.com/seoul-tech-society/events/169162582/\">http://www.meetup.com/seoul-tech-society/events/169162582/</a></p>\n<p><img src=\"https://31.media.tumblr.com/114e328c9efe945c77b443d0cb938b4d/tumblr_inline_n2zxahIc3J1rjim2g.jpg\" alt=\"image\"></p>\n<p>This networking party w/ SeoulTech and art exhibit offers the perfect\nopportunity to shake off winter and connect with others who love tech,\nart, and ideas. New and non-members are cordially invited!</p>\n<p>Seoul Tech Society 와 함께하는 네트워킹 파티 및 전시는 봄을 맞이해\n테크놀로지와 예술, 그리고 아이디어를 사랑하는 사람들과 함께할 기회를\n마련합니다. 새로운, 그리고 비회원들도 모두 환영합니다!</p>\n<p>The worlds of art and technology are coming together to celebrate Seoul\nTech Society’s first anniversary. On April 4, Platoon Kunsthalle will be\ntransformed by “Memories of the City,” a collaboration of 15 young\ncreatives from media art, design and architecture led by media\nartist Lucia Jeesun Lee with Spanish architect Gorka Blas. </p>\n<p>Seoul Tech Society의 첫번째 생일을 기념하며 예술과 테크놀로지의 세계를\n하나로 모았습니다.  \\\n2014년 4월 4일, 플래툰 쿤스트할레는 미디어 아티스트 Lucia 이지선과\n스페인 건축가 Gorka Blas 의 기획에 의해 미디어 아트, 건축, 디자인 등\n다양한 분야의 15명의 젋은 창작자들의 협업으로 이루어진 결과물들로 채워질\n예정입니다.</p>\n<p><strong>WHEN: FRIDAY, APRIL 4 @ 7PM </strong>\\\n  \\\n<strong>About Art Director Team </strong>\\\nLucia 이지선 is a media artist working between New York and Seoul,\ngraduate of Master’s program in Interactive Telecommunication at NYU.\nShe has exhibited in The 13th Seoul International New Media Festival and\n3LD Art and Technology Center(New York). She has taught at the Queens\nMuseum of Art, Stevens Institute of Technology and Hostos\nCommunity College of New York. </p>\n<p>미디어 아티스트. 뉴욕대 Interactive Telecommunication Program 석사과정\n이후 제 13회 서울 국제 뉴미디어 축제, 3LD Art &amp; Technology Center 등\n뉴욕과 서울에서 전시 및 Queens Museum of Art, Stevens Institute of\nTechnology and Hostos Community College of New York 에서 강사로 활동 \\\n<a href=\"http://smellsdreamy.com/\">smellsdreamy.com</a> / <a href=\"http://facebook.com/luciajeesunlee\">facebook.com/luciajeesunlee</a></p>\n<p>Gorka Blas is an architect, born in Spain. He has worked for several\narchitectural practices in Madrid and London, including Zaha Hadid\nArchitects and Crab Architects among others. In 2012, he won UIA\nInternational Architecture competition for Daegu Gosan library in Korea\nand in 2013 he was awarded a special mention in the European 12\ncompetition. He has taught and given lectures both in Italy and Korea.\nHis project for the Daegu Gosan library is currently in  \\\nconstruction.</p>\n<p>스페인 태생의 건축가. Zaha Hadid Architects 및 Crab Architects 등\n마드리드와 런던에서 실무경력. ‘동대문디자인플라자&amp;파크’ 프로젝트 참여.\n2012년 대구 고산 공공 도서관 국제 건축 공모전 우승 (현재 준공 진행중).\n2013년 유럽 12 공모전에서 특별 표창 수상. 이태리 및 한국에서 강의 \\\n<a href=\"http://www.gorkablas.com/\">www.gorkablas.com</a> </p>\n";
+
+/***/ },
+/* 39 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<h1 id=\"the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp-may-24\">The Rise of Cryptocurrencies: Bitcoin &amp; Beyond, @DCamp, May 24</h1>\n<p>Interested in Bitcoin or other cryptocurrencies?Ever wondered how to\ntrade or spend Bitcoin in Korea? Is Bitcoin the currency of the future\nor a flop?                             </p>\n<p>Come join us at our <strong>&quot;The Rise Of Cryptocurrencies: Bitcoin &amp;\nBeyond&quot;</strong> event at <a href=\"http://dcamp.kr/about_en\">D-Camp</a> on Saturday, May\n24!</p>\n<p><a href=\"http://www.seoultechsociety.org/\">Seoul Tech Society</a>, <a href=\"http://www.meetup.com/Seoul-Bitcoin-Meetup-%EC%84%9C%EC%9A%B8-%EB%B9%84%ED%8A%B8%EC%BD%94%EC%9D%B8-%EB%AA%A8%EC%9E%84/\">Seoul Bitcoin\nMeetup</a>,\nand lead Korean Bitcoin\nstartups <a href=\"https://www.korbit.co.kr/\">Korbit</a> and <a href=\"https://www.coinplug.com/home.do\">Coinplug</a> will\ncome together to discuss past, present, and future of cryptocurrencies. </p>\n<p>Great people and thought-provoking discussions are guaranteed!</p>\n<p><img src=\"https://31.media.tumblr.com/3d967e30abbb9ed61ed8a81dbaf98f0d/tumblr_inline_n5lxh3ORxj1qz73mc.png\" alt=\"\"></p>\n<p> <strong>Agenda</strong></p>\n<p><strong>13:00 Reception </strong></p>\n<p><strong>13:15 Introduction to Bitcoin</strong> </p>\n<p><em>Ruben Somsen, Seoul Bitcoin Meetup</em></p>\n<p><strong>13:40 The non-monetary applications of Bitcoin</strong></p>\n<p><em>Jason Park, Korbit </em> </p>\n<p><strong>14:20 Bitcoin adoption worldwide and Coinplug in Korea</strong></p>\n<p><em>Evelyn Chung, Coinplug</em>   </p>\n<p><strong>14:50 Political and philosophical ideas behind the creation\nof cryptocurrency</strong></p>\n<p><em>Terry Jang</em> </p>\n<p><strong>Hands-on part: </strong></p>\n<p><strong>15:30 Sending Money Abroad to and from Korea</strong></p>\n<p><em>Chris Williams</em> </p>\n<p><strong>15:45 Bitcoin Wallets on iOS </strong></p>\n<p><em>Jong Hun Kim </em></p>\n<p><strong>16:00 Getting paid as a freelancer in Bitcoin</strong></p>\n<p><em>Ben McDonald </em></p>\n<p><strong>16:15 Alternatives to Bitcoin: Alt Coins</strong></p>\n<p>Jeff Paik, bitPremierS</p>\n<p><strong>17:00 ~</strong>  <strong>After party and networking event</strong> (details will be\nannounced later)</p>\n<p>——————————————————————————————————</p>\n<p><strong>Speakers</strong></p>\n<p><strong>Ruben Somsen </strong></p>\n<p>Ruben is a freelance translator that has lived in Korea for three years.\nHe is the organizer of the Seoul Bitcoin Meetup and knows a lot about\nthe technical side of Bitcoin.</p>\n<p><strong>Jason Park, Korbit </strong></p>\n<p>Korbit is South Korea’s first and largest Bitcoin exchange and wallet\ncompany.  </p>\n<p><strong>Evelyn Chung, Coinplug</strong> </p>\n<p>Evelyn is Chief Marketing Officer of Coinplug, a Seoul-based Bitcoin\nstartup. Coinplug provides a Bitcoin exchange and wallet services, and\npayment processor targeting Korean and Asian markets. </p>\n<p><strong>Terry Jang </strong></p>\n<p>Terry is the owner of an e-commerce consulting company.</p>\n<p><strong>Chris Williams</strong> </p>\n<p>Chris is an English teacher who has lived and worked in Seoul for the\npast 2 years. Before that he lived in the UAE for 2 years. He became\ninterested in bitcoin because it allows people to send any amount of\nmoney, anywhere in the world, instantly, and for free. </p>\n<p><strong>Jong Hun Kim</strong> </p>\n<p>Jong Hun is a korean Bitcoin user. He’s not a tech savvy guy, but is\nreally interested in the bitcoin ecosystem and is currently researching\nand developing a Bitcoin fund. </p>\n<p><strong>Ben McDonald</strong> </p>\n<p>Ben is a freelance web developer from New Zealand living in Seoul. Ask\nhim anything about Bitcoin and he will give you an answer (after first\nasking Ruben what the answer is).</p>\n<p><strong>Jeff Paik</strong></p>\n<p>Jeff Paik is a writer for bitPremierS and co-founder of cryptocurrency\nadvisory group Coinvest.</p>\n<p>——————————————————————————————————</p>\n<p>On Twitter?\nFollow <a href=\"https://twitter.com/FutureTenseNow\">@Seoul_Tech</a> and\nuse #CryptoCurrency.</p>\n<p>FB? Follow us <a href=\"https://www.facebook.com/SeoulTechSociety\">https://www.facebook.com/SeoulTechSociety</a></p>\n<p><strong>Participants:  </strong></p>\n<p><a href=\"http://www.meetup.com/Seoul-Bitcoin-Meetup-%EC%84%9C%EC%9A%B8-%EB%B9%84%ED%8A%B8%EC%BD%94%EC%9D%B8-%EB%AA%A8%EC%9E%84/\">Seoul Bitcoin\nMeetup</a> </p>\n<p><a href=\"https://www.coinplug.com/home.do\">Coinplug</a> </p>\n<p><a href=\"https://www.korbit.co.kr/\">Korbit</a> </p>\n<p><a href=\"http://www.bitpremiers.com/\">bitPremierS</a></p>\n";
+
+/***/ },
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -8007,11 +7997,11 @@
 
 	"use strict";
 
-	var DOMProperty = __webpack_require__(62);
+	var DOMProperty = __webpack_require__(60);
 
-	var escapeTextForBrowser = __webpack_require__(63);
-	var memoizeStringOnly = __webpack_require__(64);
-	var warning = __webpack_require__(65);
+	var escapeTextForBrowser = __webpack_require__(61);
+	var memoizeStringOnly = __webpack_require__(62);
+	var warning = __webpack_require__(63);
 
 	function shouldIgnoreValue(name, value) {
 	  return value == null ||
@@ -8167,10 +8157,10 @@
 	};
 
 	module.exports = DOMPropertyOperations;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 43 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -8194,9 +8184,9 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(66);
+	var EventConstants = __webpack_require__(64);
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	/**
 	 * Injected dependencies:
@@ -8388,10 +8378,10 @@
 	};
 
 	module.exports = EventPluginUtils;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 44 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -8415,10 +8405,10 @@
 
 	"use strict";
 
-	var PooledClass = __webpack_require__(68);
+	var PooledClass = __webpack_require__(66);
 
-	var invariant = __webpack_require__(67);
-	var traverseAllChildren = __webpack_require__(69);
+	var invariant = __webpack_require__(65);
+	var traverseAllChildren = __webpack_require__(67);
 
 	var twoArgumentPooler = PooledClass.twoArgumentPooler;
 	var threeArgumentPooler = PooledClass.threeArgumentPooler;
@@ -8527,10 +8517,10 @@
 	};
 
 	module.exports = ReactChildren;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 45 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -8554,14 +8544,14 @@
 
 	"use strict";
 
-	var ReactCurrentOwner = __webpack_require__(48);
-	var ReactOwner = __webpack_require__(70);
-	var ReactUpdates = __webpack_require__(71);
+	var ReactCurrentOwner = __webpack_require__(46);
+	var ReactOwner = __webpack_require__(68);
+	var ReactUpdates = __webpack_require__(69);
 
-	var invariant = __webpack_require__(67);
-	var keyMirror = __webpack_require__(72);
-	var merge = __webpack_require__(73);
-	var monitorCodeUse = __webpack_require__(74);
+	var invariant = __webpack_require__(65);
+	var keyMirror = __webpack_require__(70);
+	var merge = __webpack_require__(71);
+	var monitorCodeUse = __webpack_require__(72);
 
 	/**
 	 * Every React component is in one of these life cycles.
@@ -9129,10 +9119,10 @@
 	};
 
 	module.exports = ReactComponent;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 46 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -9156,26 +9146,26 @@
 
 	"use strict";
 
-	var ReactComponent = __webpack_require__(45);
-	var ReactContext = __webpack_require__(47);
-	var ReactCurrentOwner = __webpack_require__(48);
-	var ReactErrorUtils = __webpack_require__(75);
-	var ReactOwner = __webpack_require__(70);
-	var ReactPerf = __webpack_require__(55);
-	var ReactPropTransferer = __webpack_require__(76);
-	var ReactPropTypeLocations = __webpack_require__(77);
-	var ReactPropTypeLocationNames = __webpack_require__(78);
-	var ReactUpdates = __webpack_require__(71);
+	var ReactComponent = __webpack_require__(43);
+	var ReactContext = __webpack_require__(45);
+	var ReactCurrentOwner = __webpack_require__(46);
+	var ReactErrorUtils = __webpack_require__(73);
+	var ReactOwner = __webpack_require__(68);
+	var ReactPerf = __webpack_require__(53);
+	var ReactPropTransferer = __webpack_require__(74);
+	var ReactPropTypeLocations = __webpack_require__(75);
+	var ReactPropTypeLocationNames = __webpack_require__(76);
+	var ReactUpdates = __webpack_require__(69);
 
-	var instantiateReactComponent = __webpack_require__(79);
-	var invariant = __webpack_require__(67);
-	var keyMirror = __webpack_require__(72);
-	var merge = __webpack_require__(73);
-	var mixInto = __webpack_require__(80);
-	var monitorCodeUse = __webpack_require__(74);
-	var objMap = __webpack_require__(81);
-	var shouldUpdateReactComponent = __webpack_require__(82);
-	var warning = __webpack_require__(65);
+	var instantiateReactComponent = __webpack_require__(77);
+	var invariant = __webpack_require__(65);
+	var keyMirror = __webpack_require__(70);
+	var merge = __webpack_require__(71);
+	var mixInto = __webpack_require__(78);
+	var monitorCodeUse = __webpack_require__(72);
+	var objMap = __webpack_require__(79);
+	var shouldUpdateReactComponent = __webpack_require__(80);
+	var warning = __webpack_require__(63);
 
 	/**
 	 * Policies that describe methods in `ReactCompositeComponentInterface`.
@@ -10723,10 +10713,10 @@
 	};
 
 	module.exports = ReactCompositeComponent;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 47 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -10750,7 +10740,7 @@
 
 	"use strict";
 
-	var merge = __webpack_require__(73);
+	var merge = __webpack_require__(71);
 
 	/**
 	 * Keeps track of the current context.
@@ -10799,7 +10789,7 @@
 	module.exports = ReactContext;
 
 /***/ },
-/* 48 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -10844,7 +10834,7 @@
 	module.exports = ReactCurrentOwner;
 
 /***/ },
-/* 49 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -10869,10 +10859,10 @@
 
 	"use strict";
 
-	var ReactDOMComponent = __webpack_require__(50);
+	var ReactDOMComponent = __webpack_require__(48);
 
-	var mergeInto = __webpack_require__(83);
-	var objMapKeyVal = __webpack_require__(84);
+	var mergeInto = __webpack_require__(81);
+	var objMapKeyVal = __webpack_require__(82);
 
 	/**
 	 * Creates a new React class that is idempotent and capable of containing other
@@ -11057,7 +11047,7 @@
 	module.exports = ReactDOM;
 
 /***/ },
-/* 50 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -11082,21 +11072,21 @@
 
 	"use strict";
 
-	var CSSPropertyOperations = __webpack_require__(85);
-	var DOMProperty = __webpack_require__(62);
-	var DOMPropertyOperations = __webpack_require__(42);
-	var ReactBrowserComponentMixin = __webpack_require__(86);
-	var ReactComponent = __webpack_require__(45);
-	var ReactEventEmitter = __webpack_require__(87);
-	var ReactMount = __webpack_require__(53);
-	var ReactMultiChild = __webpack_require__(54);
-	var ReactPerf = __webpack_require__(55);
+	var CSSPropertyOperations = __webpack_require__(83);
+	var DOMProperty = __webpack_require__(60);
+	var DOMPropertyOperations = __webpack_require__(40);
+	var ReactBrowserComponentMixin = __webpack_require__(84);
+	var ReactComponent = __webpack_require__(43);
+	var ReactEventEmitter = __webpack_require__(85);
+	var ReactMount = __webpack_require__(51);
+	var ReactMultiChild = __webpack_require__(52);
+	var ReactPerf = __webpack_require__(53);
 
-	var escapeTextForBrowser = __webpack_require__(63);
-	var invariant = __webpack_require__(67);
-	var keyOf = __webpack_require__(88);
-	var merge = __webpack_require__(73);
-	var mixInto = __webpack_require__(80);
+	var escapeTextForBrowser = __webpack_require__(61);
+	var invariant = __webpack_require__(65);
+	var keyOf = __webpack_require__(86);
+	var merge = __webpack_require__(71);
+	var mixInto = __webpack_require__(78);
 
 	var deleteListener = ReactEventEmitter.deleteListener;
 	var listenTo = ReactEventEmitter.listenTo;
@@ -11477,10 +11467,10 @@
 	mixInto(ReactDOMComponent, ReactBrowserComponentMixin);
 
 	module.exports = ReactDOMComponent;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 51 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -11504,39 +11494,39 @@
 
 	"use strict";
 
-	var ReactInjection = __webpack_require__(89);
+	var ReactInjection = __webpack_require__(87);
 
-	var ExecutionEnvironment = __webpack_require__(60);
+	var ExecutionEnvironment = __webpack_require__(58);
 
-	var DefaultDOMPropertyConfig = __webpack_require__(90);
+	var DefaultDOMPropertyConfig = __webpack_require__(88);
 
-	var ChangeEventPlugin = __webpack_require__(91);
-	var ClientReactRootIndex = __webpack_require__(92);
-	var CompositionEventPlugin = __webpack_require__(93);
-	var DefaultEventPluginOrder = __webpack_require__(94);
-	var EnterLeaveEventPlugin = __webpack_require__(95);
-	var MobileSafariClickEventPlugin = __webpack_require__(96);
-	var ReactBrowserComponentMixin = __webpack_require__(86);
+	var ChangeEventPlugin = __webpack_require__(89);
+	var ClientReactRootIndex = __webpack_require__(90);
+	var CompositionEventPlugin = __webpack_require__(91);
+	var DefaultEventPluginOrder = __webpack_require__(92);
+	var EnterLeaveEventPlugin = __webpack_require__(93);
+	var MobileSafariClickEventPlugin = __webpack_require__(94);
+	var ReactBrowserComponentMixin = __webpack_require__(84);
 	var ReactComponentBrowserEnvironment =
-	  __webpack_require__(97);
-	var ReactEventTopLevelCallback = __webpack_require__(98);
-	var ReactDOM = __webpack_require__(49);
-	var ReactDOMButton = __webpack_require__(99);
-	var ReactDOMForm = __webpack_require__(100);
-	var ReactDOMImg = __webpack_require__(101);
-	var ReactDOMInput = __webpack_require__(102);
-	var ReactDOMOption = __webpack_require__(103);
-	var ReactDOMSelect = __webpack_require__(104);
-	var ReactDOMTextarea = __webpack_require__(105);
-	var ReactInstanceHandles = __webpack_require__(52);
-	var ReactMount = __webpack_require__(53);
-	var SelectEventPlugin = __webpack_require__(106);
-	var ServerReactRootIndex = __webpack_require__(107);
-	var SimpleEventPlugin = __webpack_require__(108);
+	  __webpack_require__(95);
+	var ReactEventTopLevelCallback = __webpack_require__(96);
+	var ReactDOM = __webpack_require__(47);
+	var ReactDOMButton = __webpack_require__(97);
+	var ReactDOMForm = __webpack_require__(98);
+	var ReactDOMImg = __webpack_require__(99);
+	var ReactDOMInput = __webpack_require__(100);
+	var ReactDOMOption = __webpack_require__(101);
+	var ReactDOMSelect = __webpack_require__(102);
+	var ReactDOMTextarea = __webpack_require__(103);
+	var ReactInstanceHandles = __webpack_require__(50);
+	var ReactMount = __webpack_require__(51);
+	var SelectEventPlugin = __webpack_require__(104);
+	var ServerReactRootIndex = __webpack_require__(105);
+	var SimpleEventPlugin = __webpack_require__(106);
 
-	var ReactDefaultBatchingStrategy = __webpack_require__(109);
+	var ReactDefaultBatchingStrategy = __webpack_require__(107);
 
-	var createFullPageComponent = __webpack_require__(110);
+	var createFullPageComponent = __webpack_require__(108);
 
 	function inject() {
 	  ReactInjection.EventEmitter.injectTopLevelCallbackCreator(
@@ -11600,7 +11590,7 @@
 	  if ("production" !== process.env.NODE_ENV) {
 	    var url = (ExecutionEnvironment.canUseDOM && window.location.href) || '';
 	    if ((/[?&]react_perf\b/).test(url)) {
-	      var ReactDefaultPerf = __webpack_require__(111);
+	      var ReactDefaultPerf = __webpack_require__(109);
 	      ReactDefaultPerf.start();
 	    }
 	  }
@@ -11609,10 +11599,10 @@
 	module.exports = {
 	  inject: inject
 	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 52 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -11637,9 +11627,9 @@
 
 	"use strict";
 
-	var ReactRootIndex = __webpack_require__(119);
+	var ReactRootIndex = __webpack_require__(110);
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	var SEPARATOR = '.';
 	var SEPARATOR_LENGTH = SEPARATOR.length;
@@ -11954,10 +11944,10 @@
 	};
 
 	module.exports = ReactInstanceHandles;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 53 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -11981,16 +11971,16 @@
 
 	"use strict";
 
-	var DOMProperty = __webpack_require__(62);
-	var ReactEventEmitter = __webpack_require__(87);
-	var ReactInstanceHandles = __webpack_require__(52);
-	var ReactPerf = __webpack_require__(55);
+	var DOMProperty = __webpack_require__(60);
+	var ReactEventEmitter = __webpack_require__(85);
+	var ReactInstanceHandles = __webpack_require__(50);
+	var ReactPerf = __webpack_require__(53);
 
-	var containsNode = __webpack_require__(112);
-	var getReactRootElementInContainer = __webpack_require__(113);
-	var instantiateReactComponent = __webpack_require__(79);
-	var invariant = __webpack_require__(67);
-	var shouldUpdateReactComponent = __webpack_require__(82);
+	var containsNode = __webpack_require__(111);
+	var getReactRootElementInContainer = __webpack_require__(112);
+	var instantiateReactComponent = __webpack_require__(77);
+	var invariant = __webpack_require__(65);
+	var shouldUpdateReactComponent = __webpack_require__(80);
 
 	var SEPARATOR = ReactInstanceHandles.SEPARATOR;
 
@@ -12610,10 +12600,10 @@
 	};
 
 	module.exports = ReactMount;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 54 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -12638,12 +12628,12 @@
 
 	"use strict";
 
-	var ReactComponent = __webpack_require__(45);
-	var ReactMultiChildUpdateTypes = __webpack_require__(115);
+	var ReactComponent = __webpack_require__(43);
+	var ReactMultiChildUpdateTypes = __webpack_require__(113);
 
-	var flattenChildren = __webpack_require__(116);
-	var instantiateReactComponent = __webpack_require__(79);
-	var shouldUpdateReactComponent = __webpack_require__(82);
+	var flattenChildren = __webpack_require__(114);
+	var instantiateReactComponent = __webpack_require__(77);
+	var shouldUpdateReactComponent = __webpack_require__(80);
 
 	/**
 	 * Updating children of a component may trigger recursive updates. The depth is
@@ -13051,7 +13041,7 @@
 	module.exports = ReactMultiChild;
 
 /***/ },
-/* 55 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -13140,10 +13130,10 @@
 	}
 
 	module.exports = ReactPerf;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 56 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -13167,11 +13157,11 @@
 
 	"use strict";
 
-	var ReactComponent = __webpack_require__(45);
-	var ReactPropTypeLocationNames = __webpack_require__(78);
+	var ReactComponent = __webpack_require__(43);
+	var ReactPropTypeLocationNames = __webpack_require__(76);
 
-	var warning = __webpack_require__(65);
-	var createObjectFrom = __webpack_require__(114);
+	var warning = __webpack_require__(63);
+	var createObjectFrom = __webpack_require__(115);
 
 	/**
 	 * Collection of methods that allow declaration and validation of props that are
@@ -13506,10 +13496,10 @@
 	}
 
 	module.exports = Props;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 57 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -13533,14 +13523,14 @@
 	 */
 	"use strict";
 
-	var ReactComponent = __webpack_require__(45);
-	var ReactInstanceHandles = __webpack_require__(52);
-	var ReactMarkupChecksum = __webpack_require__(117);
+	var ReactComponent = __webpack_require__(43);
+	var ReactInstanceHandles = __webpack_require__(50);
+	var ReactMarkupChecksum = __webpack_require__(116);
 	var ReactServerRenderingTransaction =
-	  __webpack_require__(118);
+	  __webpack_require__(117);
 
-	var instantiateReactComponent = __webpack_require__(79);
-	var invariant = __webpack_require__(67);
+	var instantiateReactComponent = __webpack_require__(77);
+	var invariant = __webpack_require__(65);
 
 	/**
 	 * @param {ReactComponent} component
@@ -13602,10 +13592,10 @@
 	  renderComponentToString: renderComponentToString,
 	  renderComponentToStaticMarkup: renderComponentToStaticMarkup
 	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 58 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -13630,12 +13620,12 @@
 
 	"use strict";
 
-	var DOMPropertyOperations = __webpack_require__(42);
-	var ReactBrowserComponentMixin = __webpack_require__(86);
-	var ReactComponent = __webpack_require__(45);
+	var DOMPropertyOperations = __webpack_require__(40);
+	var ReactBrowserComponentMixin = __webpack_require__(84);
+	var ReactComponent = __webpack_require__(43);
 
-	var escapeTextForBrowser = __webpack_require__(63);
-	var mixInto = __webpack_require__(80);
+	var escapeTextForBrowser = __webpack_require__(61);
+	var mixInto = __webpack_require__(78);
 
 	/**
 	 * Text nodes violate a couple assumptions that React makes about components:
@@ -13732,7 +13722,7 @@
 	module.exports = ReactTextComponent;
 
 /***/ },
-/* 59 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -13755,9 +13745,9 @@
 	 */
 	"use strict";
 
-	var ReactComponent = __webpack_require__(45);
+	var ReactComponent = __webpack_require__(43);
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	/**
 	 * Returns the first child in a collection of children and verifies that there
@@ -13779,10 +13769,10 @@
 	}
 
 	module.exports = onlyChild;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 60 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -13832,7 +13822,7 @@
 	module.exports = ExecutionEnvironment;
 
 /***/ },
-/* 61 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -13901,7 +13891,7 @@
 	};
 
 /***/ },
-/* 62 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -13928,7 +13918,7 @@
 
 	"use strict";
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	var DOMPropertyInjection = {
 	  /**
@@ -14175,10 +14165,10 @@
 	};
 
 	module.exports = DOMProperty;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 63 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -14231,7 +14221,7 @@
 	module.exports = escapeTextForBrowser;
 
 /***/ },
-/* 64 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -14276,7 +14266,7 @@
 	module.exports = memoizeStringOnly;
 
 /***/ },
-/* 65 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -14300,7 +14290,7 @@
 
 	"use strict";
 
-	var emptyFunction = __webpack_require__(121);
+	var emptyFunction = __webpack_require__(119);
 
 	/**
 	 * Similar to invariant but only logs a warning if the condition is not met.
@@ -14328,10 +14318,10 @@
 	}
 
 	module.exports = warning;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 66 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -14355,7 +14345,7 @@
 
 	"use strict";
 
-	var keyMirror = __webpack_require__(72);
+	var keyMirror = __webpack_require__(70);
 
 	var PropagationPhases = keyMirror({bubbled: null, captured: null});
 
@@ -14413,7 +14403,7 @@
 	module.exports = EventConstants;
 
 /***/ },
-/* 67 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -14479,10 +14469,10 @@
 	}
 
 	module.exports = invariant;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 68 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -14506,7 +14496,7 @@
 
 	"use strict";
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	/**
 	 * Static poolers. Several custom versions for each potential number of
@@ -14605,10 +14595,10 @@
 	};
 
 	module.exports = PooledClass;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 69 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -14632,10 +14622,10 @@
 
 	"use strict";
 
-	var ReactInstanceHandles = __webpack_require__(52);
-	var ReactTextComponent = __webpack_require__(58);
+	var ReactInstanceHandles = __webpack_require__(50);
+	var ReactTextComponent = __webpack_require__(56);
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	var SEPARATOR = ReactInstanceHandles.SEPARATOR;
 	var SUBSEPARATOR = ':';
@@ -14802,10 +14792,10 @@
 	}
 
 	module.exports = traverseAllChildren;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 70 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -14829,8 +14819,8 @@
 
 	"use strict";
 
-	var emptyObject = __webpack_require__(122);
-	var invariant = __webpack_require__(67);
+	var emptyObject = __webpack_require__(120);
+	var invariant = __webpack_require__(65);
 
 	/**
 	 * ReactOwners are capable of storing references to owned components.
@@ -14968,10 +14958,10 @@
 	};
 
 	module.exports = ReactOwner;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 71 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -14995,9 +14985,9 @@
 
 	"use strict";
 
-	var ReactPerf = __webpack_require__(55);
+	var ReactPerf = __webpack_require__(53);
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	var dirtyComponents = [];
 
@@ -15123,10 +15113,10 @@
 	};
 
 	module.exports = ReactUpdates;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 72 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -15151,7 +15141,7 @@
 
 	"use strict";
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	/**
 	 * Constructs an enumeration with keys equal to their value.
@@ -15188,10 +15178,10 @@
 	};
 
 	module.exports = keyMirror;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 73 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -15215,7 +15205,7 @@
 
 	"use strict";
 
-	var mergeInto = __webpack_require__(83);
+	var mergeInto = __webpack_require__(81);
 
 	/**
 	 * Shallow merges two structures into a return value, without mutating either.
@@ -15234,7 +15224,7 @@
 	module.exports = merge;
 
 /***/ },
-/* 74 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -15258,7 +15248,7 @@
 
 	"use strict";
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	/**
 	 * Provides open-source compatible instrumentation for monitoring certain API
@@ -15275,10 +15265,10 @@
 	}
 
 	module.exports = monitorCodeUse;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 75 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -15321,7 +15311,7 @@
 	module.exports = ReactErrorUtils;
 
 /***/ },
-/* 76 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -15345,10 +15335,10 @@
 
 	"use strict";
 
-	var emptyFunction = __webpack_require__(121);
-	var invariant = __webpack_require__(67);
-	var joinClasses = __webpack_require__(123);
-	var merge = __webpack_require__(73);
+	var emptyFunction = __webpack_require__(119);
+	var invariant = __webpack_require__(65);
+	var joinClasses = __webpack_require__(121);
+	var merge = __webpack_require__(71);
 
 	/**
 	 * Creates a transfer strategy that will merge prop values using the supplied
@@ -15472,10 +15462,10 @@
 	};
 
 	module.exports = ReactPropTransferer;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 77 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -15499,7 +15489,7 @@
 
 	"use strict";
 
-	var keyMirror = __webpack_require__(72);
+	var keyMirror = __webpack_require__(70);
 
 	var ReactPropTypeLocations = keyMirror({
 	  prop: null,
@@ -15510,7 +15500,7 @@
 	module.exports = ReactPropTypeLocations;
 
 /***/ },
-/* 78 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -15545,10 +15535,10 @@
 	}
 
 	module.exports = ReactPropTypeLocationNames;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 79 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -15573,7 +15563,7 @@
 
 	"use strict";
 
-	var warning = __webpack_require__(65);
+	var warning = __webpack_require__(63);
 
 	/**
 	 * Validate a `componentDescriptor`. This should be exposed publicly in a follow
@@ -15622,10 +15612,10 @@
 	}
 
 	module.exports = instantiateReactComponent;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 80 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -15665,7 +15655,7 @@
 	module.exports = mixInto;
 
 /***/ },
-/* 81 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -15718,7 +15708,7 @@
 	module.exports = objMap;
 
 /***/ },
-/* 82 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -15783,10 +15773,10 @@
 	}
 
 	module.exports = shouldUpdateReactComponent;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 83 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -15811,7 +15801,7 @@
 
 	"use strict";
 
-	var mergeHelpers = __webpack_require__(124);
+	var mergeHelpers = __webpack_require__(122);
 
 	var checkMergeObjectArg = mergeHelpers.checkMergeObjectArg;
 
@@ -15837,7 +15827,7 @@
 	module.exports = mergeInto;
 
 /***/ },
-/* 84 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -15890,7 +15880,7 @@
 	module.exports = objMapKeyVal;
 
 /***/ },
-/* 85 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -15915,12 +15905,12 @@
 
 	"use strict";
 
-	var CSSProperty = __webpack_require__(125);
+	var CSSProperty = __webpack_require__(123);
 
-	var dangerousStyleValue = __webpack_require__(126);
-	var escapeTextForBrowser = __webpack_require__(63);
-	var hyphenate = __webpack_require__(127);
-	var memoizeStringOnly = __webpack_require__(64);
+	var dangerousStyleValue = __webpack_require__(124);
+	var escapeTextForBrowser = __webpack_require__(61);
+	var hyphenate = __webpack_require__(125);
+	var memoizeStringOnly = __webpack_require__(62);
 
 	var processStyleName = memoizeStringOnly(function(styleName) {
 	  return escapeTextForBrowser(hyphenate(styleName));
@@ -15993,7 +15983,7 @@
 	module.exports = CSSPropertyOperations;
 
 /***/ },
-/* 86 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -16017,9 +16007,9 @@
 
 	"use strict";
 
-	var ReactMount = __webpack_require__(53);
+	var ReactMount = __webpack_require__(51);
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	var ReactBrowserComponentMixin = {
 	  /**
@@ -16039,10 +16029,10 @@
 	};
 
 	module.exports = ReactBrowserComponentMixin;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 87 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -16067,17 +16057,17 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(66);
-	var EventListener = __webpack_require__(128);
-	var EventPluginHub = __webpack_require__(129);
-	var EventPluginRegistry = __webpack_require__(130);
-	var ExecutionEnvironment = __webpack_require__(60);
-	var ReactEventEmitterMixin = __webpack_require__(131);
-	var ViewportMetrics = __webpack_require__(132);
+	var EventConstants = __webpack_require__(64);
+	var EventListener = __webpack_require__(126);
+	var EventPluginHub = __webpack_require__(127);
+	var EventPluginRegistry = __webpack_require__(128);
+	var ExecutionEnvironment = __webpack_require__(58);
+	var ReactEventEmitterMixin = __webpack_require__(129);
+	var ViewportMetrics = __webpack_require__(130);
 
-	var invariant = __webpack_require__(67);
-	var isEventSupported = __webpack_require__(133);
-	var merge = __webpack_require__(73);
+	var invariant = __webpack_require__(65);
+	var isEventSupported = __webpack_require__(131);
+	var merge = __webpack_require__(71);
 
 	/**
 	 * Summary of `ReactEventEmitter` event handling:
@@ -16385,10 +16375,10 @@
 	});
 
 	module.exports = ReactEventEmitter;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 88 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -16435,7 +16425,7 @@
 	module.exports = keyOf;
 
 /***/ },
-/* 89 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -16459,15 +16449,15 @@
 
 	"use strict";
 
-	var DOMProperty = __webpack_require__(62);
-	var EventPluginHub = __webpack_require__(129);
-	var ReactComponent = __webpack_require__(45);
-	var ReactCompositeComponent = __webpack_require__(46);
-	var ReactDOM = __webpack_require__(49);
-	var ReactEventEmitter = __webpack_require__(87);
-	var ReactPerf = __webpack_require__(55);
-	var ReactRootIndex = __webpack_require__(119);
-	var ReactUpdates = __webpack_require__(71);
+	var DOMProperty = __webpack_require__(60);
+	var EventPluginHub = __webpack_require__(127);
+	var ReactComponent = __webpack_require__(43);
+	var ReactCompositeComponent = __webpack_require__(44);
+	var ReactDOM = __webpack_require__(47);
+	var ReactEventEmitter = __webpack_require__(85);
+	var ReactPerf = __webpack_require__(53);
+	var ReactRootIndex = __webpack_require__(110);
+	var ReactUpdates = __webpack_require__(69);
 
 	var ReactInjection = {
 	  Component: ReactComponent.injection,
@@ -16484,7 +16474,7 @@
 	module.exports = ReactInjection;
 
 /***/ },
-/* 90 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -16510,7 +16500,7 @@
 
 	"use strict";
 
-	var DOMProperty = __webpack_require__(62);
+	var DOMProperty = __webpack_require__(60);
 
 	var MUST_USE_ATTRIBUTE = DOMProperty.injection.MUST_USE_ATTRIBUTE;
 	var MUST_USE_PROPERTY = DOMProperty.injection.MUST_USE_PROPERTY;
@@ -16686,7 +16676,7 @@
 	module.exports = DefaultDOMPropertyConfig;
 
 /***/ },
-/* 91 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -16710,16 +16700,16 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(66);
-	var EventPluginHub = __webpack_require__(129);
-	var EventPropagators = __webpack_require__(134);
-	var ExecutionEnvironment = __webpack_require__(60);
-	var ReactUpdates = __webpack_require__(71);
-	var SyntheticEvent = __webpack_require__(135);
+	var EventConstants = __webpack_require__(64);
+	var EventPluginHub = __webpack_require__(127);
+	var EventPropagators = __webpack_require__(132);
+	var ExecutionEnvironment = __webpack_require__(58);
+	var ReactUpdates = __webpack_require__(69);
+	var SyntheticEvent = __webpack_require__(133);
 
-	var isEventSupported = __webpack_require__(133);
-	var isTextInputElement = __webpack_require__(136);
-	var keyOf = __webpack_require__(88);
+	var isEventSupported = __webpack_require__(131);
+	var isTextInputElement = __webpack_require__(134);
+	var keyOf = __webpack_require__(86);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 
@@ -17079,7 +17069,7 @@
 	module.exports = ChangeEventPlugin;
 
 /***/ },
-/* 92 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -17115,7 +17105,7 @@
 	module.exports = ClientReactRootIndex;
 
 /***/ },
-/* 93 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -17140,14 +17130,14 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(66);
-	var EventPropagators = __webpack_require__(134);
-	var ExecutionEnvironment = __webpack_require__(60);
-	var ReactInputSelection = __webpack_require__(137);
-	var SyntheticCompositionEvent = __webpack_require__(138);
+	var EventConstants = __webpack_require__(64);
+	var EventPropagators = __webpack_require__(132);
+	var ExecutionEnvironment = __webpack_require__(58);
+	var ReactInputSelection = __webpack_require__(135);
+	var SyntheticCompositionEvent = __webpack_require__(136);
 
-	var getTextContentAccessor = __webpack_require__(139);
-	var keyOf = __webpack_require__(88);
+	var getTextContentAccessor = __webpack_require__(137);
+	var keyOf = __webpack_require__(86);
 
 	var END_KEYCODES = [9, 13, 27, 32]; // Tab, Return, Esc, Space
 	var START_KEYCODE = 229;
@@ -17381,7 +17371,7 @@
 	module.exports = CompositionEventPlugin;
 
 /***/ },
-/* 94 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -17405,7 +17395,7 @@
 
 	"use strict";
 
-	 var keyOf = __webpack_require__(88);
+	 var keyOf = __webpack_require__(86);
 
 	/**
 	 * Module that is injectable into `EventPluginHub`, that specifies a
@@ -17431,7 +17421,7 @@
 	module.exports = DefaultEventPluginOrder;
 
 /***/ },
-/* 95 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -17456,12 +17446,12 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(66);
-	var EventPropagators = __webpack_require__(134);
-	var SyntheticMouseEvent = __webpack_require__(140);
+	var EventConstants = __webpack_require__(64);
+	var EventPropagators = __webpack_require__(132);
+	var SyntheticMouseEvent = __webpack_require__(138);
 
-	var ReactMount = __webpack_require__(53);
-	var keyOf = __webpack_require__(88);
+	var ReactMount = __webpack_require__(51);
+	var keyOf = __webpack_require__(86);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 	var getFirstReactDOM = ReactMount.getFirstReactDOM;
@@ -17582,7 +17572,7 @@
 	module.exports = EnterLeaveEventPlugin;
 
 /***/ },
-/* 96 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -17607,9 +17597,9 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(66);
+	var EventConstants = __webpack_require__(64);
 
-	var emptyFunction = __webpack_require__(121);
+	var emptyFunction = __webpack_require__(119);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 
@@ -17651,7 +17641,7 @@
 	module.exports = MobileSafariClickEventPlugin;
 
 /***/ },
-/* 97 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -17677,14 +17667,14 @@
 
 	"use strict";
 
-	var ReactDOMIDOperations = __webpack_require__(141);
-	var ReactMarkupChecksum = __webpack_require__(117);
-	var ReactMount = __webpack_require__(53);
-	var ReactPerf = __webpack_require__(55);
-	var ReactReconcileTransaction = __webpack_require__(142);
+	var ReactDOMIDOperations = __webpack_require__(139);
+	var ReactMarkupChecksum = __webpack_require__(116);
+	var ReactMount = __webpack_require__(51);
+	var ReactPerf = __webpack_require__(53);
+	var ReactReconcileTransaction = __webpack_require__(140);
 
-	var getReactRootElementInContainer = __webpack_require__(113);
-	var invariant = __webpack_require__(67);
+	var getReactRootElementInContainer = __webpack_require__(112);
+	var invariant = __webpack_require__(65);
 
 
 	var ELEMENT_NODE_TYPE = 1;
@@ -17779,10 +17769,10 @@
 	};
 
 	module.exports = ReactComponentBrowserEnvironment;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 98 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -17807,13 +17797,13 @@
 
 	"use strict";
 
-	var PooledClass = __webpack_require__(68);
-	var ReactEventEmitter = __webpack_require__(87);
-	var ReactInstanceHandles = __webpack_require__(52);
-	var ReactMount = __webpack_require__(53);
+	var PooledClass = __webpack_require__(66);
+	var ReactEventEmitter = __webpack_require__(85);
+	var ReactInstanceHandles = __webpack_require__(50);
+	var ReactMount = __webpack_require__(51);
 
-	var getEventTarget = __webpack_require__(143);
-	var mixInto = __webpack_require__(80);
+	var getEventTarget = __webpack_require__(141);
+	var mixInto = __webpack_require__(78);
 
 	/**
 	 * @type {boolean}
@@ -17937,7 +17927,7 @@
 	module.exports = ReactEventTopLevelCallback;
 
 /***/ },
-/* 99 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -17961,12 +17951,12 @@
 
 	"use strict";
 
-	var AutoFocusMixin = __webpack_require__(144);
-	var ReactBrowserComponentMixin = __webpack_require__(86);
-	var ReactCompositeComponent = __webpack_require__(46);
-	var ReactDOM = __webpack_require__(49);
+	var AutoFocusMixin = __webpack_require__(142);
+	var ReactBrowserComponentMixin = __webpack_require__(84);
+	var ReactCompositeComponent = __webpack_require__(44);
+	var ReactDOM = __webpack_require__(47);
 
-	var keyMirror = __webpack_require__(72);
+	var keyMirror = __webpack_require__(70);
 
 	// Store a reference to the <button> `ReactDOMComponent`.
 	var button = ReactDOM.button;
@@ -18012,7 +18002,7 @@
 	module.exports = ReactDOMButton;
 
 /***/ },
-/* 100 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -18036,11 +18026,11 @@
 
 	"use strict";
 
-	var ReactBrowserComponentMixin = __webpack_require__(86);
-	var ReactCompositeComponent = __webpack_require__(46);
-	var ReactDOM = __webpack_require__(49);
-	var ReactEventEmitter = __webpack_require__(87);
-	var EventConstants = __webpack_require__(66);
+	var ReactBrowserComponentMixin = __webpack_require__(84);
+	var ReactCompositeComponent = __webpack_require__(44);
+	var ReactDOM = __webpack_require__(47);
+	var ReactEventEmitter = __webpack_require__(85);
+	var EventConstants = __webpack_require__(64);
 
 	// Store a reference to the <form> `ReactDOMComponent`.
 	var form = ReactDOM.form;
@@ -18080,7 +18070,7 @@
 	module.exports = ReactDOMForm;
 
 /***/ },
-/* 101 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -18104,11 +18094,11 @@
 
 	"use strict";
 
-	var ReactBrowserComponentMixin = __webpack_require__(86);
-	var ReactCompositeComponent = __webpack_require__(46);
-	var ReactDOM = __webpack_require__(49);
-	var ReactEventEmitter = __webpack_require__(87);
-	var EventConstants = __webpack_require__(66);
+	var ReactBrowserComponentMixin = __webpack_require__(84);
+	var ReactCompositeComponent = __webpack_require__(44);
+	var ReactDOM = __webpack_require__(47);
+	var ReactEventEmitter = __webpack_require__(85);
+	var EventConstants = __webpack_require__(64);
 
 	// Store a reference to the <img> `ReactDOMComponent`.
 	var img = ReactDOM.img;
@@ -18147,7 +18137,7 @@
 	module.exports = ReactDOMImg;
 
 /***/ },
-/* 102 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -18171,16 +18161,16 @@
 
 	"use strict";
 
-	var AutoFocusMixin = __webpack_require__(144);
-	var DOMPropertyOperations = __webpack_require__(42);
-	var LinkedValueUtils = __webpack_require__(145);
-	var ReactBrowserComponentMixin = __webpack_require__(86);
-	var ReactCompositeComponent = __webpack_require__(46);
-	var ReactDOM = __webpack_require__(49);
-	var ReactMount = __webpack_require__(53);
+	var AutoFocusMixin = __webpack_require__(142);
+	var DOMPropertyOperations = __webpack_require__(40);
+	var LinkedValueUtils = __webpack_require__(143);
+	var ReactBrowserComponentMixin = __webpack_require__(84);
+	var ReactCompositeComponent = __webpack_require__(44);
+	var ReactDOM = __webpack_require__(47);
+	var ReactMount = __webpack_require__(51);
 
-	var invariant = __webpack_require__(67);
-	var merge = __webpack_require__(73);
+	var invariant = __webpack_require__(65);
+	var merge = __webpack_require__(71);
 
 	// Store a reference to the <input> `ReactDOMComponent`.
 	var input = ReactDOM.input;
@@ -18333,10 +18323,10 @@
 	});
 
 	module.exports = ReactDOMInput;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 103 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -18360,11 +18350,11 @@
 
 	"use strict";
 
-	var ReactBrowserComponentMixin = __webpack_require__(86);
-	var ReactCompositeComponent = __webpack_require__(46);
-	var ReactDOM = __webpack_require__(49);
+	var ReactBrowserComponentMixin = __webpack_require__(84);
+	var ReactCompositeComponent = __webpack_require__(44);
+	var ReactDOM = __webpack_require__(47);
 
-	var warning = __webpack_require__(65);
+	var warning = __webpack_require__(63);
 
 	// Store a reference to the <option> `ReactDOMComponent`.
 	var option = ReactDOM.option;
@@ -18395,10 +18385,10 @@
 	});
 
 	module.exports = ReactDOMOption;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 104 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -18422,14 +18412,14 @@
 
 	"use strict";
 
-	var AutoFocusMixin = __webpack_require__(144);
-	var LinkedValueUtils = __webpack_require__(145);
-	var ReactBrowserComponentMixin = __webpack_require__(86);
-	var ReactCompositeComponent = __webpack_require__(46);
-	var ReactDOM = __webpack_require__(49);
+	var AutoFocusMixin = __webpack_require__(142);
+	var LinkedValueUtils = __webpack_require__(143);
+	var ReactBrowserComponentMixin = __webpack_require__(84);
+	var ReactCompositeComponent = __webpack_require__(44);
+	var ReactDOM = __webpack_require__(47);
 
-	var invariant = __webpack_require__(67);
-	var merge = __webpack_require__(73);
+	var invariant = __webpack_require__(65);
+	var merge = __webpack_require__(71);
 
 	// Store a reference to the <select> `ReactDOMComponent`.
 	var select = ReactDOM.select;
@@ -18582,10 +18572,10 @@
 	});
 
 	module.exports = ReactDOMSelect;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 105 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -18609,17 +18599,17 @@
 
 	"use strict";
 
-	var AutoFocusMixin = __webpack_require__(144);
-	var DOMPropertyOperations = __webpack_require__(42);
-	var LinkedValueUtils = __webpack_require__(145);
-	var ReactBrowserComponentMixin = __webpack_require__(86);
-	var ReactCompositeComponent = __webpack_require__(46);
-	var ReactDOM = __webpack_require__(49);
+	var AutoFocusMixin = __webpack_require__(142);
+	var DOMPropertyOperations = __webpack_require__(40);
+	var LinkedValueUtils = __webpack_require__(143);
+	var ReactBrowserComponentMixin = __webpack_require__(84);
+	var ReactCompositeComponent = __webpack_require__(44);
+	var ReactDOM = __webpack_require__(47);
 
-	var invariant = __webpack_require__(67);
-	var merge = __webpack_require__(73);
+	var invariant = __webpack_require__(65);
+	var merge = __webpack_require__(71);
 
-	var warning = __webpack_require__(65);
+	var warning = __webpack_require__(63);
 
 	// Store a reference to the <textarea> `ReactDOMComponent`.
 	var textarea = ReactDOM.textarea;
@@ -18733,10 +18723,10 @@
 	});
 
 	module.exports = ReactDOMTextarea;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 106 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -18760,15 +18750,15 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(66);
-	var EventPropagators = __webpack_require__(134);
-	var ReactInputSelection = __webpack_require__(137);
-	var SyntheticEvent = __webpack_require__(135);
+	var EventConstants = __webpack_require__(64);
+	var EventPropagators = __webpack_require__(132);
+	var ReactInputSelection = __webpack_require__(135);
+	var SyntheticEvent = __webpack_require__(133);
 
-	var getActiveElement = __webpack_require__(146);
-	var isTextInputElement = __webpack_require__(136);
-	var keyOf = __webpack_require__(88);
-	var shallowEqual = __webpack_require__(147);
+	var getActiveElement = __webpack_require__(144);
+	var isTextInputElement = __webpack_require__(134);
+	var keyOf = __webpack_require__(86);
+	var shallowEqual = __webpack_require__(145);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 
@@ -18942,7 +18932,7 @@
 	module.exports = SelectEventPlugin;
 
 /***/ },
-/* 107 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -18984,7 +18974,7 @@
 	module.exports = ServerReactRootIndex;
 
 /***/ },
-/* 108 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -19008,21 +18998,21 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(66);
-	var EventPluginUtils = __webpack_require__(43);
-	var EventPropagators = __webpack_require__(134);
-	var SyntheticClipboardEvent = __webpack_require__(148);
-	var SyntheticEvent = __webpack_require__(135);
-	var SyntheticFocusEvent = __webpack_require__(149);
-	var SyntheticKeyboardEvent = __webpack_require__(150);
-	var SyntheticMouseEvent = __webpack_require__(140);
-	var SyntheticDragEvent = __webpack_require__(151);
-	var SyntheticTouchEvent = __webpack_require__(152);
-	var SyntheticUIEvent = __webpack_require__(153);
-	var SyntheticWheelEvent = __webpack_require__(154);
+	var EventConstants = __webpack_require__(64);
+	var EventPluginUtils = __webpack_require__(41);
+	var EventPropagators = __webpack_require__(132);
+	var SyntheticClipboardEvent = __webpack_require__(146);
+	var SyntheticEvent = __webpack_require__(133);
+	var SyntheticFocusEvent = __webpack_require__(147);
+	var SyntheticKeyboardEvent = __webpack_require__(148);
+	var SyntheticMouseEvent = __webpack_require__(138);
+	var SyntheticDragEvent = __webpack_require__(149);
+	var SyntheticTouchEvent = __webpack_require__(150);
+	var SyntheticUIEvent = __webpack_require__(151);
+	var SyntheticWheelEvent = __webpack_require__(152);
 
-	var invariant = __webpack_require__(67);
-	var keyOf = __webpack_require__(88);
+	var invariant = __webpack_require__(65);
+	var keyOf = __webpack_require__(86);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 
@@ -19401,10 +19391,10 @@
 	};
 
 	module.exports = SimpleEventPlugin;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 109 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -19428,11 +19418,11 @@
 
 	"use strict";
 
-	var ReactUpdates = __webpack_require__(71);
-	var Transaction = __webpack_require__(155);
+	var ReactUpdates = __webpack_require__(69);
+	var Transaction = __webpack_require__(153);
 
-	var emptyFunction = __webpack_require__(121);
-	var mixInto = __webpack_require__(80);
+	var emptyFunction = __webpack_require__(119);
+	var mixInto = __webpack_require__(78);
 
 	var RESET_BATCHED_UPDATES = {
 	  initialize: emptyFunction,
@@ -19485,7 +19475,7 @@
 	module.exports = ReactDefaultBatchingStrategy;
 
 /***/ },
-/* 110 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -19511,9 +19501,9 @@
 	"use strict";
 
 	// Defeat circular references by requiring this directly.
-	var ReactCompositeComponent = __webpack_require__(46);
+	var ReactCompositeComponent = __webpack_require__(44);
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	/**
 	 * Create a component that will throw an exception when unmounted.
@@ -19552,10 +19542,10 @@
 	}
 
 	module.exports = createFullPageComponent;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 111 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -19580,12 +19570,12 @@
 
 	"use strict";
 
-	var DOMProperty = __webpack_require__(62);
-	var ReactDefaultPerfAnalysis = __webpack_require__(156);
-	var ReactMount = __webpack_require__(53);
-	var ReactPerf = __webpack_require__(55);
+	var DOMProperty = __webpack_require__(60);
+	var ReactDefaultPerfAnalysis = __webpack_require__(154);
+	var ReactMount = __webpack_require__(51);
+	var ReactPerf = __webpack_require__(53);
 
-	var performanceNow = __webpack_require__(157);
+	var performanceNow = __webpack_require__(155);
 
 	function roundFloat(val) {
 	  return Math.floor(val * 100) / 100;
@@ -19805,7 +19795,49 @@
 	module.exports = ReactDefaultPerf;
 
 /***/ },
-/* 112 */
+/* 110 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule ReactRootIndex
+	 * @typechecks
+	 */
+
+	"use strict";
+
+	var ReactRootIndexInjection = {
+	  /**
+	   * @param {function} _createReactRootIndex
+	   */
+	  injectCreateReactRootIndex: function(_createReactRootIndex) {
+	    ReactRootIndex.createReactRootIndex = _createReactRootIndex;
+	  }
+	};
+
+	var ReactRootIndex = {
+	  createReactRootIndex: null,
+	  injection: ReactRootIndexInjection
+	};
+
+	module.exports = ReactRootIndex;
+
+/***/ },
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -19828,7 +19860,7 @@
 	 * @typechecks
 	 */
 
-	var isTextNode = __webpack_require__(158);
+	var isTextNode = __webpack_require__(156);
 
 	/*jslint bitwise:true */
 
@@ -19860,7 +19892,7 @@
 	module.exports = containsNode;
 
 /***/ },
-/* 113 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -19906,7 +19938,115 @@
 	module.exports = getReactRootElementInContainer;
 
 /***/ },
+/* 113 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule ReactMultiChildUpdateTypes
+	 */
+
+	"use strict";
+
+	var keyMirror = __webpack_require__(70);
+
+	/**
+	 * When a component's children are updated, a series of update configuration
+	 * objects are created in order to batch and serialize the required changes.
+	 *
+	 * Enumerates all the possible types of update configurations.
+	 *
+	 * @internal
+	 */
+	var ReactMultiChildUpdateTypes = keyMirror({
+	  INSERT_MARKUP: null,
+	  MOVE_EXISTING: null,
+	  REMOVE_NODE: null,
+	  TEXT_CONTENT: null
+	});
+
+	module.exports = ReactMultiChildUpdateTypes;
+
+/***/ },
 /* 114 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule flattenChildren
+	 */
+
+	"use strict";
+
+	var invariant = __webpack_require__(65);
+	var traverseAllChildren = __webpack_require__(67);
+
+	/**
+	 * @param {function} traverseContext Context passed through traversal.
+	 * @param {?ReactComponent} child React child component.
+	 * @param {!string} name String name of key path to child.
+	 */
+	function flattenSingleChildIntoContext(traverseContext, child, name) {
+	  // We found a component instance.
+	  var result = traverseContext;
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    !result.hasOwnProperty(name),
+	    'flattenChildren(...): Encountered two children with the same key, `%s`. ' +
+	    'Children keys must be unique.',
+	    name
+	  ) : invariant(!result.hasOwnProperty(name)));
+	  if (child != null) {
+	    result[name] = child;
+	  }
+	}
+
+	/**
+	 * Flattens children that are typically specified as `props.children`. Any null
+	 * children will not be included in the resulting object.
+	 * @return {!object} flattened children keyed by name.
+	 */
+	function flattenChildren(children) {
+	  if (children == null) {
+	    return children;
+	  }
+	  var result = {};
+	  traverseAllChildren(children, flattenSingleChildIntoContext, result);
+	  return result;
+	}
+
+	module.exports = flattenChildren;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
+
+/***/ },
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -19971,118 +20111,10 @@
 	}
 
 	module.exports = createObjectFrom;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
-
-/***/ },
-/* 115 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule ReactMultiChildUpdateTypes
-	 */
-
-	"use strict";
-
-	var keyMirror = __webpack_require__(72);
-
-	/**
-	 * When a component's children are updated, a series of update configuration
-	 * objects are created in order to batch and serialize the required changes.
-	 *
-	 * Enumerates all the possible types of update configurations.
-	 *
-	 * @internal
-	 */
-	var ReactMultiChildUpdateTypes = keyMirror({
-	  INSERT_MARKUP: null,
-	  MOVE_EXISTING: null,
-	  REMOVE_NODE: null,
-	  TEXT_CONTENT: null
-	});
-
-	module.exports = ReactMultiChildUpdateTypes;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
 /* 116 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule flattenChildren
-	 */
-
-	"use strict";
-
-	var invariant = __webpack_require__(67);
-	var traverseAllChildren = __webpack_require__(69);
-
-	/**
-	 * @param {function} traverseContext Context passed through traversal.
-	 * @param {?ReactComponent} child React child component.
-	 * @param {!string} name String name of key path to child.
-	 */
-	function flattenSingleChildIntoContext(traverseContext, child, name) {
-	  // We found a component instance.
-	  var result = traverseContext;
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    !result.hasOwnProperty(name),
-	    'flattenChildren(...): Encountered two children with the same key, `%s`. ' +
-	    'Children keys must be unique.',
-	    name
-	  ) : invariant(!result.hasOwnProperty(name)));
-	  if (child != null) {
-	    result[name] = child;
-	  }
-	}
-
-	/**
-	 * Flattens children that are typically specified as `props.children`. Any null
-	 * children will not be included in the resulting object.
-	 * @return {!object} flattened children keyed by name.
-	 */
-	function flattenChildren(children) {
-	  if (children == null) {
-	    return children;
-	  }
-	  var result = {};
-	  traverseAllChildren(children, flattenSingleChildIntoContext, result);
-	  return result;
-	}
-
-	module.exports = flattenChildren;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
-
-/***/ },
-/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -20106,7 +20138,7 @@
 
 	"use strict";
 
-	var adler32 = __webpack_require__(159);
+	var adler32 = __webpack_require__(157);
 
 	var ReactMarkupChecksum = {
 	  CHECKSUM_ATTR_NAME: 'data-react-checksum',
@@ -20141,7 +20173,7 @@
 	module.exports = ReactMarkupChecksum;
 
 /***/ },
-/* 118 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -20166,13 +20198,13 @@
 
 	"use strict";
 
-	var PooledClass = __webpack_require__(68);
-	var ReactMountReady = __webpack_require__(160);
-	var ReactPutListenerQueue = __webpack_require__(161);
-	var Transaction = __webpack_require__(155);
+	var PooledClass = __webpack_require__(66);
+	var ReactMountReady = __webpack_require__(158);
+	var ReactPutListenerQueue = __webpack_require__(159);
+	var Transaction = __webpack_require__(153);
 
-	var emptyFunction = __webpack_require__(121);
-	var mixInto = __webpack_require__(80);
+	var emptyFunction = __webpack_require__(119);
+	var mixInto = __webpack_require__(78);
 
 	/**
 	 * Provides a `ReactMountReady` queue for collecting `onDOMReady` callbacks
@@ -20263,49 +20295,7 @@
 	module.exports = ReactServerRenderingTransaction;
 
 /***/ },
-/* 119 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule ReactRootIndex
-	 * @typechecks
-	 */
-
-	"use strict";
-
-	var ReactRootIndexInjection = {
-	  /**
-	   * @param {function} _createReactRootIndex
-	   */
-	  injectCreateReactRootIndex: function(_createReactRootIndex) {
-	    ReactRootIndex.createReactRootIndex = _createReactRootIndex;
-	  }
-	};
-
-	var ReactRootIndex = {
-	  createReactRootIndex: null,
-	  injection: ReactRootIndexInjection
-	};
-
-	module.exports = ReactRootIndex;
-
-/***/ },
-/* 120 */
+/* 118 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -20321,7 +20311,7 @@
 	}
 
 /***/ },
-/* 121 */
+/* 119 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -20343,7 +20333,7 @@
 	 * @providesModule emptyFunction
 	 */
 
-	var copyProperties = __webpack_require__(162);
+	var copyProperties = __webpack_require__(160);
 
 	function makeEmptyFunction(arg) {
 	  return function() {
@@ -20370,7 +20360,7 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 122 */
+/* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -20401,10 +20391,10 @@
 	}
 
 	module.exports = emptyObject;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 123 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -20454,7 +20444,7 @@
 	module.exports = joinClasses;
 
 /***/ },
-/* 124 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -20480,8 +20470,8 @@
 
 	"use strict";
 
-	var invariant = __webpack_require__(67);
-	var keyMirror = __webpack_require__(72);
+	var invariant = __webpack_require__(65);
+	var keyMirror = __webpack_require__(70);
 
 	/**
 	 * Maximum number of levels to traverse. Will catch circular structures.
@@ -20594,10 +20584,10 @@
 	};
 
 	module.exports = mergeHelpers;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 125 */
+/* 123 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -20724,7 +20714,7 @@
 	module.exports = CSSProperty;
 
 /***/ },
-/* 126 */
+/* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -20749,7 +20739,7 @@
 
 	"use strict";
 
-	var CSSProperty = __webpack_require__(125);
+	var CSSProperty = __webpack_require__(123);
 
 	/**
 	 * Convert a value into the proper css writable value. The `styleName` name
@@ -20787,7 +20777,7 @@
 	module.exports = dangerousStyleValue;
 
 /***/ },
-/* 127 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -20828,7 +20818,7 @@
 	module.exports = hyphenate;
 
 /***/ },
-/* 128 */
+/* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -20836,7 +20826,7 @@
 	 * @providesModule EventListener
 	 */
 
-	var emptyFunction = __webpack_require__(121);
+	var emptyFunction = __webpack_require__(119);
 
 	/**
 	 * Upstream version of event listener. Does not take into account specific
@@ -20901,10 +20891,10 @@
 	};
 
 	module.exports = EventListener;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 129 */
+/* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -20928,15 +20918,15 @@
 
 	"use strict";
 
-	var EventPluginRegistry = __webpack_require__(130);
-	var EventPluginUtils = __webpack_require__(43);
-	var ExecutionEnvironment = __webpack_require__(60);
+	var EventPluginRegistry = __webpack_require__(128);
+	var EventPluginUtils = __webpack_require__(41);
+	var ExecutionEnvironment = __webpack_require__(58);
 
-	var accumulate = __webpack_require__(163);
-	var forEachAccumulated = __webpack_require__(164);
-	var invariant = __webpack_require__(67);
-	var isEventSupported = __webpack_require__(133);
-	var monitorCodeUse = __webpack_require__(74);
+	var accumulate = __webpack_require__(161);
+	var forEachAccumulated = __webpack_require__(162);
+	var invariant = __webpack_require__(65);
+	var isEventSupported = __webpack_require__(131);
+	var monitorCodeUse = __webpack_require__(72);
 
 	/**
 	 * Internal store for event listeners
@@ -21203,10 +21193,10 @@
 	};
 
 	module.exports = EventPluginHub;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 130 */
+/* 128 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -21231,7 +21221,7 @@
 
 	"use strict";
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	/**
 	 * Injectable ordering of event plugins.
@@ -21491,10 +21481,10 @@
 	};
 
 	module.exports = EventPluginRegistry;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 131 */
+/* 129 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -21518,8 +21508,8 @@
 
 	"use strict";
 
-	var EventPluginHub = __webpack_require__(129);
-	var ReactUpdates = __webpack_require__(71);
+	var EventPluginHub = __webpack_require__(127);
+	var ReactUpdates = __webpack_require__(69);
 
 	function runEventQueueInBatch(events) {
 	  EventPluginHub.enqueueEvents(events);
@@ -21557,7 +21547,7 @@
 	module.exports = ReactEventEmitterMixin;
 
 /***/ },
-/* 132 */
+/* 130 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -21581,7 +21571,7 @@
 
 	"use strict";
 
-	var getUnboundedScrollPosition = __webpack_require__(165);
+	var getUnboundedScrollPosition = __webpack_require__(163);
 
 	var ViewportMetrics = {
 
@@ -21600,7 +21590,7 @@
 	module.exports = ViewportMetrics;
 
 /***/ },
-/* 133 */
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -21624,7 +21614,7 @@
 
 	"use strict";
 
-	var ExecutionEnvironment = __webpack_require__(60);
+	var ExecutionEnvironment = __webpack_require__(58);
 
 	var useHasFeature;
 	if (ExecutionEnvironment.canUseDOM) {
@@ -21676,7 +21666,7 @@
 	module.exports = isEventSupported;
 
 /***/ },
-/* 134 */
+/* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -21700,11 +21690,11 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(66);
-	var EventPluginHub = __webpack_require__(129);
+	var EventConstants = __webpack_require__(64);
+	var EventPluginHub = __webpack_require__(127);
 
-	var accumulate = __webpack_require__(163);
-	var forEachAccumulated = __webpack_require__(164);
+	var accumulate = __webpack_require__(161);
+	var forEachAccumulated = __webpack_require__(162);
 
 	var PropagationPhases = EventConstants.PropagationPhases;
 	var getListener = EventPluginHub.getListener;
@@ -21823,10 +21813,10 @@
 	};
 
 	module.exports = EventPropagators;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 135 */
+/* 133 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -21851,12 +21841,12 @@
 
 	"use strict";
 
-	var PooledClass = __webpack_require__(68);
+	var PooledClass = __webpack_require__(66);
 
-	var emptyFunction = __webpack_require__(121);
-	var getEventTarget = __webpack_require__(143);
-	var merge = __webpack_require__(73);
-	var mergeInto = __webpack_require__(83);
+	var emptyFunction = __webpack_require__(119);
+	var getEventTarget = __webpack_require__(141);
+	var merge = __webpack_require__(71);
+	var mergeInto = __webpack_require__(81);
 
 	/**
 	 * @interface Event
@@ -21996,7 +21986,7 @@
 	module.exports = SyntheticEvent;
 
 /***/ },
-/* 136 */
+/* 134 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -22051,7 +22041,7 @@
 	module.exports = isTextInputElement;
 
 /***/ },
-/* 137 */
+/* 135 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -22075,11 +22065,11 @@
 
 	"use strict";
 
-	var ReactDOMSelection = __webpack_require__(166);
+	var ReactDOMSelection = __webpack_require__(164);
 
-	var containsNode = __webpack_require__(112);
-	var focusNode = __webpack_require__(167);
-	var getActiveElement = __webpack_require__(146);
+	var containsNode = __webpack_require__(111);
+	var focusNode = __webpack_require__(165);
+	var getActiveElement = __webpack_require__(144);
 
 	function isInDocument(node) {
 	  return containsNode(document.documentElement, node);
@@ -22198,7 +22188,7 @@
 	module.exports = ReactInputSelection;
 
 /***/ },
-/* 138 */
+/* 136 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -22223,7 +22213,7 @@
 
 	"use strict";
 
-	var SyntheticEvent = __webpack_require__(135);
+	var SyntheticEvent = __webpack_require__(133);
 
 	/**
 	 * @interface Event
@@ -22254,7 +22244,7 @@
 	module.exports = SyntheticCompositionEvent;
 
 /***/ },
-/* 139 */
+/* 137 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -22278,7 +22268,7 @@
 
 	"use strict";
 
-	var ExecutionEnvironment = __webpack_require__(60);
+	var ExecutionEnvironment = __webpack_require__(58);
 
 	var contentKey = null;
 
@@ -22302,7 +22292,7 @@
 	module.exports = getTextContentAccessor;
 
 /***/ },
-/* 140 */
+/* 138 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -22327,8 +22317,8 @@
 
 	"use strict";
 
-	var SyntheticUIEvent = __webpack_require__(153);
-	var ViewportMetrics = __webpack_require__(132);
+	var SyntheticUIEvent = __webpack_require__(151);
+	var ViewportMetrics = __webpack_require__(130);
 
 	/**
 	 * @interface MouseEvent
@@ -22393,7 +22383,7 @@
 	module.exports = SyntheticMouseEvent;
 
 /***/ },
-/* 141 */
+/* 139 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -22420,13 +22410,13 @@
 
 	"use strict";
 
-	var CSSPropertyOperations = __webpack_require__(85);
-	var DOMChildrenOperations = __webpack_require__(168);
-	var DOMPropertyOperations = __webpack_require__(42);
-	var ReactMount = __webpack_require__(53);
-	var ReactPerf = __webpack_require__(55);
+	var CSSPropertyOperations = __webpack_require__(83);
+	var DOMChildrenOperations = __webpack_require__(166);
+	var DOMPropertyOperations = __webpack_require__(40);
+	var ReactMount = __webpack_require__(51);
+	var ReactPerf = __webpack_require__(53);
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	/**
 	 * Errors for properties that should not be updated with `updatePropertyById()`.
@@ -22615,10 +22605,10 @@
 	};
 
 	module.exports = ReactDOMIDOperations;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 142 */
+/* 140 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -22643,14 +22633,14 @@
 
 	"use strict";
 
-	var PooledClass = __webpack_require__(68);
-	var ReactEventEmitter = __webpack_require__(87);
-	var ReactInputSelection = __webpack_require__(137);
-	var ReactMountReady = __webpack_require__(160);
-	var ReactPutListenerQueue = __webpack_require__(161);
-	var Transaction = __webpack_require__(155);
+	var PooledClass = __webpack_require__(66);
+	var ReactEventEmitter = __webpack_require__(85);
+	var ReactInputSelection = __webpack_require__(135);
+	var ReactMountReady = __webpack_require__(158);
+	var ReactPutListenerQueue = __webpack_require__(159);
+	var Transaction = __webpack_require__(153);
 
-	var mixInto = __webpack_require__(80);
+	var mixInto = __webpack_require__(78);
 
 	/**
 	 * Ensures that, when possible, the selection range (currently selected text
@@ -22806,7 +22796,7 @@
 	module.exports = ReactReconcileTransaction;
 
 /***/ },
-/* 143 */
+/* 141 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -22848,7 +22838,7 @@
 	module.exports = getEventTarget;
 
 /***/ },
-/* 144 */
+/* 142 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -22873,7 +22863,7 @@
 
 	"use strict";
 
-	var focusNode = __webpack_require__(167);
+	var focusNode = __webpack_require__(165);
 
 	var AutoFocusMixin = {
 	  componentDidMount: function() {
@@ -22886,7 +22876,7 @@
 	module.exports = AutoFocusMixin;
 
 /***/ },
-/* 145 */
+/* 143 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -22911,10 +22901,10 @@
 
 	"use strict";
 
-	var ReactPropTypes = __webpack_require__(56);
+	var ReactPropTypes = __webpack_require__(54);
 
-	var invariant = __webpack_require__(67);
-	var warning = __webpack_require__(65);
+	var invariant = __webpack_require__(65);
+	var warning = __webpack_require__(63);
 
 	var hasReadOnlyValue = {
 	  'button': true,
@@ -23050,10 +23040,10 @@
 	};
 
 	module.exports = LinkedValueUtils;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 146 */
+/* 144 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23093,7 +23083,7 @@
 	module.exports = getActiveElement;
 
 /***/ },
-/* 147 */
+/* 145 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23148,7 +23138,7 @@
 	module.exports = shallowEqual;
 
 /***/ },
-/* 148 */
+/* 146 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23173,7 +23163,7 @@
 
 	"use strict";
 
-	var SyntheticEvent = __webpack_require__(135);
+	var SyntheticEvent = __webpack_require__(133);
 
 	/**
 	 * @interface Event
@@ -23204,7 +23194,7 @@
 	module.exports = SyntheticClipboardEvent;
 
 /***/ },
-/* 149 */
+/* 147 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23229,7 +23219,7 @@
 
 	"use strict";
 
-	var SyntheticUIEvent = __webpack_require__(153);
+	var SyntheticUIEvent = __webpack_require__(151);
 
 	/**
 	 * @interface FocusEvent
@@ -23254,7 +23244,7 @@
 	module.exports = SyntheticFocusEvent;
 
 /***/ },
-/* 150 */
+/* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23279,9 +23269,9 @@
 
 	"use strict";
 
-	var SyntheticUIEvent = __webpack_require__(153);
+	var SyntheticUIEvent = __webpack_require__(151);
 
-	var getEventKey = __webpack_require__(169);
+	var getEventKey = __webpack_require__(167);
 
 	/**
 	 * @interface KeyboardEvent
@@ -23318,7 +23308,7 @@
 	module.exports = SyntheticKeyboardEvent;
 
 /***/ },
-/* 151 */
+/* 149 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23343,7 +23333,7 @@
 
 	"use strict";
 
-	var SyntheticMouseEvent = __webpack_require__(140);
+	var SyntheticMouseEvent = __webpack_require__(138);
 
 	/**
 	 * @interface DragEvent
@@ -23368,7 +23358,7 @@
 	module.exports = SyntheticDragEvent;
 
 /***/ },
-/* 152 */
+/* 150 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23393,7 +23383,7 @@
 
 	"use strict";
 
-	var SyntheticUIEvent = __webpack_require__(153);
+	var SyntheticUIEvent = __webpack_require__(151);
 
 	/**
 	 * @interface TouchEvent
@@ -23424,7 +23414,7 @@
 	module.exports = SyntheticTouchEvent;
 
 /***/ },
-/* 153 */
+/* 151 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23449,7 +23439,7 @@
 
 	"use strict";
 
-	var SyntheticEvent = __webpack_require__(135);
+	var SyntheticEvent = __webpack_require__(133);
 
 	/**
 	 * @interface UIEvent
@@ -23475,7 +23465,7 @@
 	module.exports = SyntheticUIEvent;
 
 /***/ },
-/* 154 */
+/* 152 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23500,7 +23490,7 @@
 
 	"use strict";
 
-	var SyntheticMouseEvent = __webpack_require__(140);
+	var SyntheticMouseEvent = __webpack_require__(138);
 
 	/**
 	 * @interface WheelEvent
@@ -23547,7 +23537,7 @@
 	module.exports = SyntheticWheelEvent;
 
 /***/ },
-/* 155 */
+/* 153 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -23571,7 +23561,7 @@
 
 	"use strict";
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	/**
 	 * `Transaction` creates a black box that is able to wrap any method such that
@@ -23827,10 +23817,10 @@
 	};
 
 	module.exports = Transaction;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 156 */
+/* 154 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23852,7 +23842,7 @@
 	 * @providesModule ReactDefaultPerfAnalysis
 	 */
 
-	var merge = __webpack_require__(73);
+	var merge = __webpack_require__(71);
 
 	// Don't try to save users less than 1.2ms (a number I made up)
 	var DONT_CARE_THRESHOLD = 1.2;
@@ -24035,7 +24025,7 @@
 	module.exports = ReactDefaultPerfAnalysis;
 
 /***/ },
-/* 157 */
+/* 155 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24060,7 +24050,7 @@
 
 	"use strict";
 
-	var ExecutionEnvironment = __webpack_require__(60);
+	var ExecutionEnvironment = __webpack_require__(58);
 
 	/**
 	 * Detect if we can use window.performance.now() and gracefully
@@ -24083,7 +24073,7 @@
 	module.exports = performanceNow;
 
 /***/ },
-/* 158 */
+/* 156 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24106,7 +24096,7 @@
 	 * @typechecks
 	 */
 
-	var isNode = __webpack_require__(170);
+	var isNode = __webpack_require__(168);
 
 	/**
 	 * @param {*} object The object to check.
@@ -24119,7 +24109,7 @@
 	module.exports = isTextNode;
 
 /***/ },
-/* 159 */
+/* 157 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24164,7 +24154,7 @@
 	module.exports = adler32;
 
 /***/ },
-/* 160 */
+/* 158 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24188,9 +24178,9 @@
 
 	"use strict";
 
-	var PooledClass = __webpack_require__(68);
+	var PooledClass = __webpack_require__(66);
 
-	var mixInto = __webpack_require__(80);
+	var mixInto = __webpack_require__(78);
 
 	/**
 	 * A specialized pseudo-event module to help keep track of components waiting to
@@ -24265,7 +24255,7 @@
 	module.exports = ReactMountReady;
 
 /***/ },
-/* 161 */
+/* 159 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24289,10 +24279,10 @@
 
 	"use strict";
 
-	var PooledClass = __webpack_require__(68);
-	var ReactEventEmitter = __webpack_require__(87);
+	var PooledClass = __webpack_require__(66);
+	var ReactEventEmitter = __webpack_require__(85);
 
-	var mixInto = __webpack_require__(80);
+	var mixInto = __webpack_require__(78);
 
 	function ReactPutListenerQueue() {
 	  this.listenersToPut = [];
@@ -24332,7 +24322,7 @@
 	module.exports = ReactPutListenerQueue;
 
 /***/ },
-/* 162 */
+/* 160 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -24390,10 +24380,10 @@
 	}
 
 	module.exports = copyProperties;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 163 */
+/* 161 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -24417,7 +24407,7 @@
 
 	"use strict";
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	/**
 	 * Accumulates items that must not be null or undefined.
@@ -24451,10 +24441,10 @@
 	}
 
 	module.exports = accumulate;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 164 */
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24496,7 +24486,7 @@
 	module.exports = forEachAccumulated;
 
 /***/ },
-/* 165 */
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24547,7 +24537,7 @@
 	module.exports = getUnboundedScrollPosition;
 
 /***/ },
-/* 166 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24571,8 +24561,8 @@
 
 	"use strict";
 
-	var getNodeForCharacterOffset = __webpack_require__(171);
-	var getTextContentAccessor = __webpack_require__(139);
+	var getNodeForCharacterOffset = __webpack_require__(169);
+	var getTextContentAccessor = __webpack_require__(137);
 
 	/**
 	 * Get the appropriate anchor and focus node/offset pairs for IE.
@@ -24742,7 +24732,7 @@
 	module.exports = ReactDOMSelection;
 
 /***/ },
-/* 167 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24781,7 +24771,7 @@
 	module.exports = focusNode;
 
 /***/ },
-/* 168 */
+/* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24806,10 +24796,10 @@
 
 	"use strict";
 
-	var Danger = __webpack_require__(172);
-	var ReactMultiChildUpdateTypes = __webpack_require__(115);
+	var Danger = __webpack_require__(170);
+	var ReactMultiChildUpdateTypes = __webpack_require__(113);
 
-	var getTextContentAccessor = __webpack_require__(139);
+	var getTextContentAccessor = __webpack_require__(137);
 
 	/**
 	 * The DOM property to use when setting text content.
@@ -24958,7 +24948,7 @@
 	module.exports = DOMChildrenOperations;
 
 /***/ },
-/* 169 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -25049,7 +25039,7 @@
 	module.exports = getEventKey;
 
 /***/ },
-/* 170 */
+/* 168 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -25088,7 +25078,7 @@
 	module.exports = isNode;
 
 /***/ },
-/* 171 */
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -25174,7 +25164,7 @@
 	module.exports = getNodeForCharacterOffset;
 
 /***/ },
-/* 172 */
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -25201,12 +25191,12 @@
 
 	"use strict";
 
-	var ExecutionEnvironment = __webpack_require__(60);
+	var ExecutionEnvironment = __webpack_require__(58);
 
-	var createNodesFromMarkup = __webpack_require__(173);
-	var emptyFunction = __webpack_require__(121);
-	var getMarkupWrap = __webpack_require__(174);
-	var invariant = __webpack_require__(67);
+	var createNodesFromMarkup = __webpack_require__(171);
+	var emptyFunction = __webpack_require__(119);
+	var getMarkupWrap = __webpack_require__(172);
+	var invariant = __webpack_require__(65);
 
 	var OPEN_TAG_NAME_EXP = /^(<[^ \/>]+)/;
 	var RESULT_INDEX_ATTR = 'data-danger-index';
@@ -25365,10 +25355,10 @@
 	};
 
 	module.exports = Danger;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 173 */
+/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -25393,11 +25383,11 @@
 
 	/*jslint evil: true, sub: true */
 
-	var ExecutionEnvironment = __webpack_require__(60);
+	var ExecutionEnvironment = __webpack_require__(58);
 
-	var createArrayFrom = __webpack_require__(175);
-	var getMarkupWrap = __webpack_require__(174);
-	var invariant = __webpack_require__(67);
+	var createArrayFrom = __webpack_require__(173);
+	var getMarkupWrap = __webpack_require__(172);
+	var invariant = __webpack_require__(65);
 
 	/**
 	 * Dummy container used to render all markup.
@@ -25465,10 +25455,10 @@
 	}
 
 	module.exports = createNodesFromMarkup;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 174 */
+/* 172 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -25490,9 +25480,9 @@
 	 * @providesModule getMarkupWrap
 	 */
 
-	var ExecutionEnvironment = __webpack_require__(60);
+	var ExecutionEnvironment = __webpack_require__(58);
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	/**
 	 * Dummy container used to detect which wraps are necessary.
@@ -25590,10 +25580,10 @@
 
 
 	module.exports = getMarkupWrap;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ },
-/* 175 */
+/* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -25616,7 +25606,7 @@
 	 * @typechecks
 	 */
 
-	var toArray = __webpack_require__(176);
+	var toArray = __webpack_require__(174);
 
 	/**
 	 * Perform a heuristic test to determine if an object is "array-like".
@@ -25690,7 +25680,7 @@
 	module.exports = createArrayFrom;
 
 /***/ },
-/* 176 */
+/* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -25713,7 +25703,7 @@
 	 * @typechecks
 	 */
 
-	var invariant = __webpack_require__(67);
+	var invariant = __webpack_require__(65);
 
 	/**
 	 * Convert array-like objects to arrays.
@@ -25769,14 +25759,7 @@
 	}
 
 	module.exports = toArray;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
-
-/***/ },
-/* 177 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	module.exports = {"client/content/target/blog/2013/":["angelhack-contest-in-seoul-dcamp-june-8th-2013","data-recovery-basics-bob-training-centre-jan-2-2014","digital-art-lecture-series-i-when-artists-become-geeks","first-friday-night-jam-meetup-follow-up","first-friday-night-tech-jam-seoul-april-19","google-i-o-extended-seoul-may-16-2013","linux-101-seoul-sydney-tafe-korea-sep-23","promotion-chuseok-game-jam-w-joe-spradley-sep-18","review-of-digital-art-series-i-ii","review-of-team-up-for-anglehack","seoul-tech-careers-lead-developer-cto-for-a-fashtech","seoul-tech-rises-to-samsung-challenge","special-guest-speaker-ffventures-john-frankel-seoul","stay-safe-in-the-cyberspace-dcamp-oct-18th-2013","team-up-for-angelhack-2-d-camp-may-28-2013","team-up-for-angelhack-seoul-may-10","upcoming-tech-events-in-korea-keeping-updated","upcoming-tech-events-in-seoul-on-may-2013"],"client/content/target/blog/2014/":["launch-lab-where-ideas-take-off-june-28","popular-science-ehealth-trends-w-dr-ogan-gurel","promotion-techtalk-networking-vol-2-platoon-feb-19","promotion-wellness-it-festival-at-center-seoul-july","seoul-hack-n-tell-night-2","seoul-tech-ver-1-0-art-party-platoon-kunsthalle","the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp"],"client/content/target/pages/":["about"]}
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ }
 /******/ ])

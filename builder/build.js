@@ -28,7 +28,7 @@ var fs = require('fs'),
     getDirectories(path).forEach(function(dir) {
       var inputPath = path + dir + '/',
         outputPath = inputPath.replace('source', 'target')
-      
+
       if (getFiles(path + dir + '/').length > 0) {
         inputIndex[inputPath] = getFiles(inputPath)
         outputIndex[outputPath] = getFiles(inputPath)
@@ -50,8 +50,8 @@ try {
     outputIndex = index[1]
 
   fs.writeFileSync(outputDir + 'index.js',
-    'module.exports = ' + JSON.stringify(outputIndex))
-  
+    'export default ' + JSON.stringify(outputIndex))
+
   Object.keys(outputIndex).map(function(dir) {
     mkdirp.sync(dir)
     return dir

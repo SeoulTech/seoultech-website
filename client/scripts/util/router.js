@@ -1,7 +1,7 @@
-var React = require('react'),
-  _ = require('./util');
+module _ from '../util/util';
+import {createClass} from 'react';
 
-module.exports = React.createClass({
+export default createClass({
   getNextState(props) {
     const lh = location.hash,
       hash = _.isEmpty(lh)? '/' : lh.slice(1).replace(/\/$/, ''),

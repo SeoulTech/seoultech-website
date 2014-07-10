@@ -1,5 +1,7 @@
 import {createClass, DOM} from 'react';
-const __html = require('../../content/target/pages/about')
-module.exports = createClass({
-  render: () => DOM.div({dangerouslySetInnerHTML: {__html}})
+
+export default createClass({
+  render: () => DOM.div({dangerouslySetInnerHTML: {
+    __html: require('../../content/target/pages/about.html')
+  }})
 })

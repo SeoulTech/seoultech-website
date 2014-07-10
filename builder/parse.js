@@ -33,8 +33,7 @@ var fs = require('fs'),
   },
 
   convert = function(file, data) {
-    return 'module.exports = ' +
-      JSON.stringify(parse(data)).replace(/\"/g, '\'')
+    return parse(data)
   },
 
   indent = function(n) {
@@ -46,7 +45,7 @@ var fs = require('fs'),
   },
 
   changeExt = function(file) {
-    return file.split('.').slice(0, -1).concat('.js').join('')
+    return file.split('.').slice(0, -1).concat('.html').join('')
   },
 
   log = function(file, _) {

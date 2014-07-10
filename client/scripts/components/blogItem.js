@@ -1,9 +1,10 @@
 import {createClass, DOM} from 'react';
 
-module.exports = createClass({
+export default createClass({
   render() {
-    const {year, id} = this.props
+    const p = this.props.year + '/' + this.props.id
     return DOM.div({dangerouslySetInnerHTML: {
-      __html: require('../../content/target/blog/' + `${year}/${id}`)}})
+      __html: require('../../content/target/blog/' + p + '.html')
+    }})
   }
 })

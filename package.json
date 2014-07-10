@@ -9,7 +9,8 @@
     "marked": "latest"
   },
   "devDependencies": {
-    "es6-loader": "^0.2.0",
+    "es6-loader": "latest",
+    "html-loader": "^0.2.2",
     "mkdirp": "^0.5.0"
   }
 }

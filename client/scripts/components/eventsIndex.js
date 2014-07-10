@@ -1,8 +1,8 @@
 module _ from '../util/util';
+import fetch from '../util/fetch';
 import {createClass, DOM as $} from 'react';
-const fetch = require('../util/fetch');
 
-module.exports = createClass({
+export default createClass({
   componentWillMount: _.partial(fetch, 'events'),
   render() {
     return $.ul(null, [

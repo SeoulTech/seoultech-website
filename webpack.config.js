@@ -5,8 +5,9 @@ module.exports = {
         filename: "bundle.js"
     },
     module: {
-      loaders: [{
-        test: /\.js$/, loader: 'es6-loader'
-      }]
+      loaders: [
+      {test: /\.js$/, loader: 'es6-loader'},
+      {test: /\.html$/, loader: 'html-loader'}
+      ]
     }
 };

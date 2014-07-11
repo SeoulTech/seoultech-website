@@ -1,5 +1,3 @@
-// TODO: create directories that don't exist
-
 var fs = require('fs'),
   convertDir = require('./parse'),
   mkdirp = require('mkdirp'),
@@ -12,7 +10,23 @@ var fs = require('fs'),
 
   getFiles = function(dir) {
     return fs.readdirSync(dir).filter(isMarkdown).map(function(file) {
-      return file.split('.').slice(0, -1).join('')
+      var filename = file.split('.').slice(0, -1).join(''),
+        contents = fs.readFileSync(dir + file, 'utf-8'),
+        date = contents.match(/date:(.*)/),
+        title = contents.match(/title:(.*)/),
+        tags = contents.match(/tags:(.*)/),
+        replace = function(rs, ns, string) {return string.replace(rs, ns)}
+      
+      if (contents.match(/^---/)) {
+        return {
+          filename: filename,
+          title: title? replace(/^\s/, '', title[1]) : '',
+          date: date? replace(/^\s/, '', date[1]) : '',
+          tags: tags? tags[1].split(',').map(replace.bind({}, /^\s/, '')) : []
+        }
+      }
+      
+      return {filename: filename}
     })
   },
 
@@ -26,13 +40,13 @@ var fs = require('fs'),
     inputIndex = inputIndex || {}
     outputIndex = outputIndex || {}
     // FIXME: factor out these filthy mutations
-    getDirectories(path).forEach(function(dir) {
+      getDirectories(path).forEach(function(dir) {
       var inputPath = path + dir + '/',
-        outputPath = inputPath.replace('source', 'target')
-
-      if (getFiles(path + dir + '/').length > 0) {
-        inputIndex[inputPath] = getFiles(inputPath)
-        outputIndex[outputPath] = getFiles(inputPath)
+        outputPath = inputPath.replace('source', 'target'),
+        files = getFiles(inputPath)
+      
+      if (files.length > 0) {
+        outputIndex[outputPath] = inputIndex[inputPath] = files
       }
 
       getIndex(inputPath, inputIndex, outputIndex)

@@ -1,6 +1,7 @@
-Digital Art Lecture Series I: When artists become geeks or vice versa @Seoul, July 10
-=====================================================================================
-
+---
+title: Digital Art Lecture Series I: When artists become geeks or vice versa @Seoul, July 10
+date: 2013-06-28
+---
 [Digital artist](http://www.smellsdreamy.com), educator and the Seoul
 Tech Society member [Lucia Lee](http://facebook.com/LuciaJeesunLee) will
 give a series of lectures on digital art. \

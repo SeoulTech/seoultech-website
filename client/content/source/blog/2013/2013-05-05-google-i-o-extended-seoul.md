@@ -1,6 +1,7 @@
-Google I/O Extended @Seoul, May 16 2013
-=======================================
-
+---
+title: Upcoming Tech events in Seoul on May 2013
+date: 2013-05-05
+---
 Watch sessions and connect with developers at Google I/O Extended in
 Seoul. \
 <https://developers.google.com/events/io/about> 

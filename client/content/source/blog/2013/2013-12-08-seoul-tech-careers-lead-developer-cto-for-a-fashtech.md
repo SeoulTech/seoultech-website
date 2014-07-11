@@ -1,5 +1,7 @@
-Seoul Tech Careers: Lead Developer / CTO for a fashtech startup 
-================================================================
+---
+title: Seoul Tech Careers: Lead Developer / CTO for a fashtech startup
+date: 2013-12-08
+---
 
 ![image](http://media.tumblr.com/3a0093657e210472d511353149c9ca2a/tumblr_inline_mxh2nwZ8LX1qz73mc.png)
 

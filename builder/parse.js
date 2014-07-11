@@ -33,7 +33,9 @@ var fs = require('fs'),
   },
 
   convert = function(file, data) {
-    return parse(data)
+    var body = data.split('---'),
+      title = data.match(/title:(.*)/)
+    return parse(body.length > 1? '#' + title[1] + body[2] : data)
   },
 
   indent = function(n) {

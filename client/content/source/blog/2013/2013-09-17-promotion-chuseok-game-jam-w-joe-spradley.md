@@ -1,6 +1,7 @@
-Promotion: Chuseok Game Jam! w/ Joe Spradley, Sep 18
-====================================================
-
+---
+title: Promotion: Chuseok Game Jam! w/ Joe Spradley, Sep 18
+date: 2013-09-17
+---
 <https://www.facebook.com/events/197105527128041/>
 
 Follow the link and join Chuseok Game Jam hosted by our worthy member

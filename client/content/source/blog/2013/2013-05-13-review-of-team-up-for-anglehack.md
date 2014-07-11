@@ -1,6 +1,7 @@
-Review of "Team up for AngleHack"
-=================================
-
+---
+title: Review of "Team up for AngleHack"
+date: 2013-05-13
+---
 It would be enough to say that this time event was SUPER fun &
 challenging.
 

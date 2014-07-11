@@ -1,6 +1,7 @@
-First Friday Night Jam meetup follow-up
-=======================================
-
+---
+title: First Friday Night Jam meetup follow-up
+date: 2013-04-24
+---
 Firstly a big thank you to all those of you who attended and supported
 the event. It was our largest yet, with 20+ attendees and we’re pleased
 to see that true community grows.

@@ -1,6 +1,7 @@
-Stay safe in the cyberspace @DCAMP, Oct 18th 2013
-=================================================
-
+---
+title: Stay safe in the cyberspace @DCAMP, Oct 18th 2013
+date: 2013-10-12
+---
 Do you spend more and more time with your digital devices? So do
 criminals who are finding new ways to take advantage of these
 hyper-connected technologies.\

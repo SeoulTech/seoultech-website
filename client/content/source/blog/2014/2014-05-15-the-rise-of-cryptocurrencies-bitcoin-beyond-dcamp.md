@@ -1,5 +1,7 @@
-The Rise of Cryptocurrencies: Bitcoin & Beyond, @DCamp, May 24
-==============================================================
+---
+title: The Rise of Cryptocurrencies: Bitcoin & Beyond, @DCamp, May 24
+date: 2013-05-15
+---
 
 Interested in Bitcoin or other cryptocurrencies?Ever wondered how to
 trade or spend Bitcoin in Korea? Is Bitcoin the currency of the future

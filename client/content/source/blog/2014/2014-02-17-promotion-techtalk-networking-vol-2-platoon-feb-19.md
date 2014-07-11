@@ -1,5 +1,7 @@
-Promotion: TechTalk & Networking vol.2 @Platoon, Feb 19
-=======================================================
+---
+title: Promotion: TechTalk & Networking vol.2 @Platoon, Feb 19
+date: 2013-02-17
+---
 
 ![image](https://31.media.tumblr.com/064ee0998c8f2807c9c7351e675e2919/tumblr_inline_n159hqxwmo1rjim2g.png)
 

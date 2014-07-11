@@ -1,6 +1,7 @@
-Linux 101 @Seoul Sydney TAFE Korea, Sep 23
-==========================================
-
+---
+title: Linux 101 @Seoul Sydney TAFE Korea, Sep 23
+date: 2013-09-18
+---
 **Linux 101 - Introduction to Linux **by Raphael Chambers, the inspiring
 member of the Seoul Tech Society. 
 

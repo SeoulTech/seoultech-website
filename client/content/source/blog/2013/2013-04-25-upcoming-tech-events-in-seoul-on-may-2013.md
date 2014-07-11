@@ -1,13 +1,13 @@
-Upcoming Tech events in Seoul on May 2013
-=========================================
-
+---
+title: Upcoming Tech events in Seoul on May 2013
+date: 2013-04-25
+---
 Hey Seoul Techies, what are you up to this May?
 
 We’ve composed a list of technology oriented events this March for
 you.Please join any of them and share experience with the rest of us
 later on.
 
-** **
 
 **Facebook Mobile DevCon 2013**
 
@@ -23,7 +23,6 @@ the City with more then 30,000,000 population… 
 
 Please let us know what is your experience here!
 
-** **
 
 **Google I\\O Extended 2013**
 
@@ -31,15 +30,13 @@ Please let us know what is your experience here!
 
 *16/05/2013*
 
-** **
 
 **Art & Technology Performance - REPLICA**
 
 [](http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043)<http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043>
 
-*17\~18/05/2013*
+*17-18/05/2013*
 
-** **
 
 **Amazon AWSome day @Seoul**
 
@@ -47,7 +44,6 @@ Please let us know what is your experience here!
 
 *21/05/2013*
 
-** **
 
 If you know any other upcoming events or something we’v forgot to
 mention but you think it should be here - please let us know:

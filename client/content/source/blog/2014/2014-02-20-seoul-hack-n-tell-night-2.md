@@ -1,5 +1,7 @@
-Seoul Hack'n'Te­ll night #2
-===========================
+---
+title: Seoul Hack'n'Te­ll night #2Feb 19
+date: 2013-02-20
+---
 
 RSVP <http://www.meetup.com/seoul-tech-society/events/165322992/>
 

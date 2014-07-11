@@ -1,6 +1,7 @@
-Team up for AngelHack @Seoul, May 10
-====================================
-
+---
+title: Team up for AngelHack @Seoul, May 10
+date: 2013-04-25
+---
 **Update 05/14/2013: **review to [Team up for
 AngelHack](http://seoultechsociety.org/post/50343610743/review-of-team-up-for-anglehack)
 was added.

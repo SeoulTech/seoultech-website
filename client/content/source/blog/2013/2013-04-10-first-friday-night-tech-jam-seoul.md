@@ -1,6 +1,7 @@
-First Friday Night Tech Jam @Seoul, April 19
-============================================
-
+---
+title: First Friday Night Tech Jam @Seoul, April 19
+date: 2013-04-10
+---
 Fun People, Great Connections, and New Tech.
 
 Seoul Tech Society presents a free talk  *“Modern Opportunities in

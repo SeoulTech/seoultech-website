@@ -1,6 +1,7 @@
-Data recovery basics @BoB Training Centre, Jan 2, 2014
-======================================================
-
+---
+title: Data recovery basics @BoB Training Centre, Jan 2, 2014
+date: 2013-12-21
+---
 Have you ever deleted a file and then realized it was a crucial mistake
 that you have ever made to your files? Come to Seoul Tech Society event
 and learn how to recover your data! 

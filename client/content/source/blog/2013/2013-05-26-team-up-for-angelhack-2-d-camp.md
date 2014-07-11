@@ -1,6 +1,7 @@
-Team up for AngelHack#2 @D.Camp, May 28 2013
-============================================
-
+---
+title: Team up for AngelHack#2 @D.Camp, May 28 2013
+date: 2013-05-26
+---
 Guys, we are just a few weeks from AngleHack 2013 contest, let’s get
 prepared to take part and win!
 

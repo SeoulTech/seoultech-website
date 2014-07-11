@@ -1,5 +1,7 @@
-Launch Lab, Where Ideas Take Off, June 28
-=========================================
+---
+title: Launch Lab, Where Ideas Take Off, June 28
+date: 2013-06-12
+---
 
 RSVP <http://www.meetup.com/seoul-tech-society/events/187283782/>
 

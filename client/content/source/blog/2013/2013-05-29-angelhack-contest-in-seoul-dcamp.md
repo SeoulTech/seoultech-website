@@ -1,6 +1,7 @@
-AngelHack Contest in Seoul @DCAMP, June 8th 2013
-================================================
-
+---
+title: AngelHack Contest in Seoul @DCAMP, June 8th 2013
+date: 2013-05-29
+---
 Hey! What are you doing next weekend? You should check out the
 [AngelHack event @
 DCAMP](http://angelhack.co.kr/ "official angelhack korea site") on June

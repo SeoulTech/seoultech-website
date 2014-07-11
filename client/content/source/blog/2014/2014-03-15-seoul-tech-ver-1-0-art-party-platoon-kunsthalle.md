@@ -1,5 +1,7 @@
-SEOUL TECH VER 1.0 + ART PARTY 파티 @Platoon Kunsthalle
-=====================================================
+---
+title: SEOUL TECH VER 1.0 + ART PARTY 파티 @Platoon Kunsthalle
+date: 2013-03-15
+---
 
 RSVP <http://www.meetup.com/seoul-tech-society/events/169162582/>
 

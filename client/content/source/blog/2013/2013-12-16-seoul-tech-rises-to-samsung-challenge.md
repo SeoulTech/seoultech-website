@@ -1,6 +1,7 @@
-Seoul Tech Rises To Samsung Challenge
-=====================================
-
+---
+title: Seoul Tech Rises To Samsung Challenge
+date: 2013-12-16
+---
 In the space of two weeks, the WeeSeeTeam has gone on a hackathon
 journey which began at a Seoul Tech Society event
 @[NFlabs](http://www.nflabs.com/) and has rapidly moved onto development

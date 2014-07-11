@@ -1,6 +1,7 @@
-Special Guest Speaker: ffVentures' John Frankel @Seoul, June 14
-===============================================================
-
+---
+title: Special Guest Speaker: ffVentures' John Frankel @Seoul, June 14
+date: 2013-05-27
+---
 Our special guest speaker is John Frankel, who is a Partner at ff
 Venture Capital. John will give a lecture:
 

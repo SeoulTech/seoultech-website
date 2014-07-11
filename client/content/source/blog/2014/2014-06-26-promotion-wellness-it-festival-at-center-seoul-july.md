@@ -1,6 +1,7 @@
-Promotion: Wellness IT Festival @aT Center Seoul, July 10
-=========================================================
-
+---
+title: Promotion: Wellness IT Festival @aT Center Seoul, July 10
+date: 2013-06-26
+---
 Register here to **view & network**: <http://goo.gl/u9dHBl>
 
 Register here to **exhibit**: <http://www.wita-festival.com/register>

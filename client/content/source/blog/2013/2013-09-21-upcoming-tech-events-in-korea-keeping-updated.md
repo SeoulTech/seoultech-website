@@ -1,6 +1,7 @@
-Upcoming tech events in Korea (keeping updated)
-===============================================
-
+---
+title: Upcoming tech events in Korea (keeping updated)
+date: 2013-09-21
+---
 Hey Seoul Techies, what are you up to these days?\
 Here we will keep updating the list of technology oriented events for
 you. Please, join any of them and share experience with the rest of us

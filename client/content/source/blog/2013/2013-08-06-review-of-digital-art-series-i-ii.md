@@ -1,6 +1,7 @@
-Review of "Digital Art Series I&II"
-===================================
-
+---
+title: Review of "Digital Art Series I&II"
+date: 2013-08-06
+---
 Recently, we had the honor of hosting two inspirational art lectures by
 the internationally acclaimed and very creative media artist Lucia
 Jeesun Lee (aka[@smellsdreamy](https://twitter.com/smellsdreamy)).

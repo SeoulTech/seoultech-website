@@ -4,8 +4,8 @@ export function get(...args) {
 
 export function maybe(value) {
   return {
-    map: function(f) {return value !== null? maybe(f(value)) : this},
-    fmap: function(f) {return value !== null? maybe(value.map(f)) : this},
+    map: function(f) {return value != null? maybe(f(value)) : this},
+    fmap: function(f) {return value != null? maybe(value.map(f)) : this},
     return: () => typeof value == 'function'? value() : value
   }
 };
@@ -24,5 +24,6 @@ export {
   merge,
   partial,
   reduceRight,
+  sortBy,
   zipObject
 } from 'lodash';

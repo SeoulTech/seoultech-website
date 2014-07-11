@@ -176,15 +176,16 @@
 	exports["default"] = createClass({
 	  render: function() {
 	    var div = DOM.div, h3 = DOM.h3, ul = DOM.ul, li = DOM.li, a = DOM.a
-	    
+
 	    return div(null, _.keys(index).reverse()
 	      .filter(RegExp.prototype.test.bind(/.*blog*/))
 	      .map(function(path ) {
-	        var year = path.match(/[0-9]+/)
+	        var year = path.match(/[0-9]+/),
+	          entries = _.sortBy(index[path], 'date').reverse()
 	        return [
 	          h3(null, year),
-	          ul(null, _.map(index[path].reverse(), function(entry ) 
-	            {return li({key: entry.filename}, 
+	          ul(null, _.map(entries, function(entry )
+	            {return li({key: entry.filename},
 	              a({href: (("./#/blog/" + year) + ("/" + (entry.filename)) + "")}, entry.title))}))
 	        ]
 	      }))
@@ -340,6 +341,7 @@
 	exports.merge = __webpack_require__(13).merge;
 	exports.partial = __webpack_require__(13).partial;
 	exports.reduceRight = __webpack_require__(13).reduceRight;
+	exports.sortBy = __webpack_require__(13).sortBy;
 	exports.zipObject = __webpack_require__(13).zipObject;
 
 /***/ },
@@ -546,7 +548,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	exports["default"] = {"client/content/target/blog/2013/":[{"filename":"2013-04-10-first-friday-night-tech-jam-seoul","title":"First Friday Night Tech Jam @Seoul, April 19","date":"2013-04-10","tags":[]},{"filename":"2013-04-24-first-friday-night-jam-meetup-follow-up","title":"First Friday Night Jam meetup follow-up","date":"2013-04-24","tags":[]},{"filename":"2013-04-25-team-up-for-angelhack-seoul","title":"Team up for AngelHack @Seoul, May 10","date":"2013-04-25","tags":[]},{"filename":"2013-04-25-upcoming-tech-events-in-seoul-on-may-2013","title":"Upcoming Tech events in Seoul on May 2013","date":"2013-04-25","tags":[]},{"filename":"2013-05-05-google-i-o-extended-seoul","title":"Upcoming Tech events in Seoul on May 2013","date":"2013-05-05","tags":[]},{"filename":"2013-05-13-review-of-team-up-for-anglehack","title":"Review of \"Team up for AngleHack\"","date":"2013-05-13","tags":[]},{"filename":"2013-05-26-team-up-for-angelhack-2-d-camp","title":"Team up for AngelHack#2 @D.Camp, May 28 2013","date":"2013-05-26","tags":[]},{"filename":"2013-05-27-special-guest-speaker-ffventures-john-frankel-seoul","title":"Special Guest Speaker: ffVentures' John Frankel @Seoul, June 14","date":"2013-05-27","tags":[]},{"filename":"2013-05-29-angelhack-contest-in-seoul-dcamp","title":"AngelHack Contest in Seoul @DCAMP, June 8th 2013","date":"2013-05-29","tags":[]},{"filename":"2013-06-28-digital-art-lecture-series-i-when-artists-become-geeks","title":"Digital Art Lecture Series I: When artists become geeks or vice versa @Seoul, July 10","date":"2013-06-28","tags":[]},{"filename":"2013-08-06-review-of-digital-art-series-i-ii","title":"Review of \"Digital Art Series I&II\"","date":"2013-08-06","tags":[]},{"filename":"2013-09-17-promotion-chuseok-game-jam-w-joe-spradley","title":"Promotion: Chuseok Game Jam! w/ Joe Spradley, Sep 18","date":"2013-09-17","tags":[]},{"filename":"2013-09-18-linux-101-seoul-sydney-tafe-korea","title":"Linux 101 @Seoul Sydney TAFE Korea, Sep 23","date":"2013-09-18","tags":[]},{"filename":"2013-09-21-upcoming-tech-events-in-korea-keeping-updated","title":"Upcoming tech events in Korea (keeping updated)","date":"2013-09-21","tags":[]},{"filename":"2013-10-12-stay-safe-in-the-cyberspace-dcamp","title":"Stay safe in the cyberspace @DCAMP, Oct 18th 2013","date":"2013-10-12","tags":[]},{"filename":"2013-12-08-seoul-tech-careers-lead-developer-cto-for-a-fashtech","title":"Seoul Tech Careers: Lead Developer / CTO for a fashtech startup","date":"2013-12-08","tags":[]},{"filename":"2013-12-16-seoul-tech-rises-to-samsung-challenge","title":"Seoul Tech Rises To Samsung Challenge","date":"2013-12-16","tags":[]},{"filename":"2013-12-21-data-recovery-basics-bob-training-centre-jan-2-2014","title":"Data recovery basics @BoB Training Centre, Jan 2, 2014","date":"2013-12-21","tags":[]}],"client/content/target/blog/2014/":[{"filename":"2014-02-17-promotion-techtalk-networking-vol-2-platoon-feb-19","title":"Promotion: TechTalk & Networking vol.2 @Platoon, Feb 19","date":"2013-02-17","tags":[]},{"filename":"2014-02-20-seoul-hack-n-tell-night-2","title":"Seoul Hack'n'Te­ll night #2Feb 19","date":"2013-02-20","tags":[]},{"filename":"2014-03-09-popular-science-ehealth-trends-w-dr-ogan-gurel","title":"Popular science: eHealth trends w/ Dr. Ogan Gurel, March 16","date":"2013-03-09","tags":[]},{"filename":"2014-03-15-seoul-tech-ver-1-0-art-party-platoon-kunsthalle","title":"SEOUL TECH VER 1.0 + ART PARTY 파티 @Platoon Kunsthalle","date":"2013-03-15","tags":[]},{"filename":"2014-05-15-the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp","title":"The Rise of Cryptocurrencies: Bitcoin & Beyond, @DCamp, May 24","date":"2013-05-15","tags":[]},{"filename":"2014-06-12-launch-lab-where-ideas-take-off-june-28","title":"Launch Lab, Where Ideas Take Off, June 28","date":"2013-06-12","tags":[]},{"filename":"2014-06-26-promotion-wellness-it-festival-at-center-seoul-july","title":"Promotion: Wellness IT Festival @aT Center Seoul, July 10","date":"2013-06-26","tags":[]}],"client/content/target/pages/":[{"filename":"about"}]}
+	exports["default"] = {"client/content/target/blog/2013/":[{"filename":"2013-04-10-first-friday-night-tech-jam-seoul","title":"First Friday Night Tech Jam @Seoul, April 19","date":"2013-04-10","tags":[]},{"filename":"2013-04-24-first-friday-night-jam-meetup-follow-up","title":"First Friday Night Jam meetup follow-up","date":"2013-04-24","tags":[]},{"filename":"2013-04-25-team-up-for-angelhack-seoul","title":"Team up for AngelHack @Seoul, May 10","date":"2013-04-25","tags":[]},{"filename":"2013-04-25-upcoming-tech-events-in-seoul-on-may-2013","title":"Upcoming Tech events in Seoul on May 2013","date":"2013-04-25","tags":[]},{"filename":"2013-05-05-google-i-o-extended-seoul","title":"Google IO extended Seoul","date":"2013-05-05","tags":[]},{"filename":"2013-05-13-review-of-team-up-for-anglehack","title":"Review of \"Team up for AngleHack\"","date":"2013-05-13","tags":[]},{"filename":"2013-05-26-team-up-for-angelhack-2-d-camp","title":"Team up for AngelHack#2 @D.Camp, May 28 2013","date":"2013-05-26","tags":[]},{"filename":"2013-05-27-special-guest-speaker-ffventures-john-frankel-seoul","title":"Special Guest Speaker: ffVentures' John Frankel @Seoul, June 14","date":"2013-05-27","tags":[]},{"filename":"2013-05-29-angelhack-contest-in-seoul-dcamp","title":"AngelHack Contest in Seoul @DCAMP, June 8th 2013","date":"2013-05-29","tags":[]},{"filename":"2013-06-28-digital-art-lecture-series-i-when-artists-become-geeks","title":"Digital Art Lecture Series I: When artists become geeks or vice versa @Seoul, July 10","date":"2013-06-28","tags":[]},{"filename":"2013-08-06-review-of-digital-art-series-i-ii","title":"Review of \"Digital Art Series I&II\"","date":"2013-08-06","tags":[]},{"filename":"2013-09-17-promotion-chuseok-game-jam-w-joe-spradley","title":"Promotion: Chuseok Game Jam! w/ Joe Spradley, Sep 18","date":"2013-09-17","tags":[]},{"filename":"2013-09-18-linux-101-seoul-sydney-tafe-korea","title":"Linux 101 @Seoul Sydney TAFE Korea, Sep 23","date":"2013-09-18","tags":[]},{"filename":"2013-09-21-upcoming-tech-events-in-korea-keeping-updated","title":"Upcoming tech events in Korea (keeping updated)","date":"2013-09-21","tags":[]},{"filename":"2013-10-12-stay-safe-in-the-cyberspace-dcamp","title":"Stay safe in the cyberspace @DCAMP, Oct 18th 2013","date":"2013-10-12","tags":[]},{"filename":"2013-12-08-seoul-tech-careers-lead-developer-cto-for-a-fashtech","title":"Seoul Tech Careers: Lead Developer / CTO for a fashtech startup","date":"2013-12-08","tags":[]},{"filename":"2013-12-16-seoul-tech-rises-to-samsung-challenge","title":"Seoul Tech Rises To Samsung Challenge","date":"2013-12-16","tags":[]},{"filename":"2013-12-21-data-recovery-basics-bob-training-centre-jan-2-2014","title":"Data recovery basics @BoB Training Centre, Jan 2, 2014","date":"2013-12-21","tags":[]}],"client/content/target/blog/2014/":[{"filename":"2014-02-17-promotion-techtalk-networking-vol-2-platoon-feb-19","title":"Promotion: TechTalk & Networking vol.2 @Platoon, Feb 19","date":"2013-02-17","tags":[]},{"filename":"2014-02-20-seoul-hack-n-tell-night-2","title":"Seoul Hack'n'Te­ll night #2Feb 19","date":"2013-02-20","tags":[]},{"filename":"2014-03-09-popular-science-ehealth-trends-w-dr-ogan-gurel","title":"Popular science: eHealth trends w/ Dr. Ogan Gurel, March 16","date":"2013-03-09","tags":[]},{"filename":"2014-03-15-seoul-tech-ver-1-0-art-party-platoon-kunsthalle","title":"SEOUL TECH VER 1.0 + ART PARTY 파티 @Platoon Kunsthalle","date":"2013-03-15","tags":[]},{"filename":"2014-05-15-the-rise-of-cryptocurrencies-bitcoin-beyond-dcamp","title":"The Rise of Cryptocurrencies: Bitcoin & Beyond, @DCamp, May 24","date":"2013-05-15","tags":[]},{"filename":"2014-06-12-launch-lab-where-ideas-take-off-june-28","title":"Launch Lab, Where Ideas Take Off, June 28","date":"2013-06-12","tags":[]},{"filename":"2014-06-26-promotion-wellness-it-festival-at-center-seoul-july","title":"Promotion: Wellness IT Festival @aT Center Seoul, July 10","date":"2013-06-26","tags":[]}],"client/content/target/pages/":[{"filename":"about"}]}
 
 /***/ },
 /* 12 */
@@ -7844,13 +7846,13 @@
 /* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<h1 id=\"upcoming-tech-events-in-seoul-on-may-2013\">Upcoming Tech events in Seoul on May 2013</h1>\n<p>Hey Seoul Techies, what are you up to this May?</p>\n<p>We’ve composed a list of technology oriented events this March for\nyou.Please join any of them and share experience with the rest of us\nlater on.</p>\n<hr>\n<p><strong>Facebook Mobile DevCon 2013</strong></p>\n<p><a href=\"https://developers.facebook.com/events/mobiledevcon/seoul/\">https://developers.facebook.com/events/mobiledevcon/seoul/</a></p>\n<p><em>07/05/2013</em></p>\n<p><em>Facebook rejected all our applications to Mobile DevCon 2013 @Seoul,\nmotivating that “the space is extremely limited”.</em></p>\n<p>It is frustrating as we did not expect such thing from a big company in\nthe City with more then 30,000,000 population… </p>\n<p>Please let us know what is your experience here!</p>\n<hr>\n<p><strong>Google I\\O Extended 2013</strong></p>\n<p><a href=\"http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013\"></a><a href=\"http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013\">http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013</a></p>\n<p><em>16/05/2013</em></p>\n<hr>\n<p><strong>Art &amp; Technology Performance - REPLICA</strong></p>\n<p><a href=\"http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043\"></a><a href=\"http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043\">http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043</a></p>\n<p><em>17~18/05/2013</em></p>\n<hr>\n<p><strong>Amazon AWSome day @Seoul</strong></p>\n<p><a href=\"http://aws.amazon.com/apac/awsday/seoul/\"></a><a href=\"http://aws.amazon.com/apac/awsday/seoul/\">http://aws.amazon.com/apac/awsday/seoul/</a>\\</p>\n<p><em>21/05/2013</em></p>\n<hr>\n<p>If you know any other upcoming events or something we’v forgot to\nmention but you think it should be here - please let us know:\n<strong><em>contacts[at]seoultechsociety.org</em></strong></p>\n<p>Disclaimer: Seoul Tech Society is not affiliated by any of the companies\nmentioned above.</p>\n";
+	module.exports = "<h1 id=\"upcoming-tech-events-in-seoul-on-may-2013\">Upcoming Tech events in Seoul on May 2013</h1>\n<p>Hey Seoul Techies, what are you up to this May?</p>\n<p>We’ve composed a list of technology oriented events this March for\nyou.Please join any of them and share experience with the rest of us\nlater on.</p>\n<p><strong>Facebook Mobile DevCon 2013</strong></p>\n<p><a href=\"https://developers.facebook.com/events/mobiledevcon/seoul/\">https://developers.facebook.com/events/mobiledevcon/seoul/</a></p>\n<p><em>07/05/2013</em></p>\n<p><em>Facebook rejected all our applications to Mobile DevCon 2013 @Seoul,\nmotivating that “the space is extremely limited”.</em></p>\n<p>It is frustrating as we did not expect such thing from a big company in\nthe City with more then 30,000,000 population… </p>\n<p>Please let us know what is your experience here!</p>\n<p><strong>Google I\\O Extended 2013</strong></p>\n<p><a href=\"http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013\"></a><a href=\"http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013\">http://seoultechsociety.org/post/47612787738/google-i-o-extended-seoul-may-16-2013</a></p>\n<p><em>16/05/2013</em></p>\n<p><strong>Art &amp; Technology Performance - REPLICA</strong></p>\n<p><a href=\"http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043\"></a><a href=\"http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043\">http://www.lgart.com/UIPage/perform/Calender_view.aspx?seq=252043</a></p>\n<p><em>17-18/05/2013</em></p>\n<p><strong>Amazon AWSome day @Seoul</strong></p>\n<p><a href=\"http://aws.amazon.com/apac/awsday/seoul/\"></a><a href=\"http://aws.amazon.com/apac/awsday/seoul/\">http://aws.amazon.com/apac/awsday/seoul/</a>\\</p>\n<p><em>21/05/2013</em></p>\n<p>If you know any other upcoming events or something we’v forgot to\nmention but you think it should be here - please let us know:\n<strong><em>contacts[at]seoultechsociety.org</em></strong></p>\n<p>Disclaimer: Seoul Tech Society is not affiliated by any of the companies\nmentioned above.</p>\n";
 
 /***/ },
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<h1 id=\"upcoming-tech-events-in-seoul-on-may-2013\">Upcoming Tech events in Seoul on May 2013</h1>\n<p>Watch sessions and connect with developers at Google I/O Extended in\nSeoul. \\\n<a href=\"https://developers.google.com/events/io/about\">https://developers.google.com/events/io/about</a> </p>\n<p><strong>PLACE</strong></p>\n<p><a href=\"http://maps.google.com/maps?q=@37.499718,127.025670\" title=\"Lat: 37.499718 / Lon: 127.025670\">TOZ\nGangnam</a> 1307-26\nSeocho-dong, Seocho-gu, Seoul</p>\n<p>TOZ provides a comfortable room for ~5,000won/person for 2.5hr with\nfree refreshments.</p>\n<p>Please <a href=\"http://www.meetup.com/computer-science-society/events/111470142/\">RSVP on\nmeetup.com</a> if\nyou are planing to show up</p>\n<p><strong>SCHEDULE</strong> </p>\n<blockquote>\n<p>&quot;Best of&quot; keynote compilation</p>\n<p>Watch session video</p>\n<p>Talk</p>\n</blockquote>\n<p>(Feel free to join or leave any time)</p>\n";
+	module.exports = "<h1 id=\"google-io-extended-seoul\">Google IO extended Seoul</h1>\n<p>Watch sessions and connect with developers at Google I/O Extended in\nSeoul. \\\n<a href=\"https://developers.google.com/events/io/about\">https://developers.google.com/events/io/about</a> </p>\n<p><strong>PLACE</strong></p>\n<p><a href=\"http://maps.google.com/maps?q=@37.499718,127.025670\" title=\"Lat: 37.499718 / Lon: 127.025670\">TOZ\nGangnam</a> 1307-26\nSeocho-dong, Seocho-gu, Seoul</p>\n<p>TOZ provides a comfortable room for ~5,000won/person for 2.5hr with\nfree refreshments.</p>\n<p>Please <a href=\"http://www.meetup.com/computer-science-society/events/111470142/\">RSVP on\nmeetup.com</a> if\nyou are planing to show up</p>\n<p><strong>SCHEDULE</strong> </p>\n<blockquote>\n<p>&quot;Best of&quot; keynote compilation</p>\n<p>Watch session video</p>\n<p>Talk</p>\n</blockquote>\n<p>(Feel free to join or leave any time)</p>\n";
 
 /***/ },
 /* 20 */
@@ -7922,7 +7924,7 @@
 /* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<h1 id=\"seoul-tech-rises-to-samsung-challenge\">Seoul Tech Rises To Samsung Challenge</h1>\n<p>In the space of two weeks, the WeeSeeTeam has gone on a hackathon\njourney which began at a Seoul Tech Society event\n@<a href=\"http://www.nflabs.com/\">NFlabs</a> and has rapidly moved onto development\nat one of Samsung’s dedicated development centers in the heart of\nGangnam.</p>\n<p>In November, more than two dozen Seoul Tech Society members came\ntogether at NFLabs office space in Gangnam. Seven members discussed\nentering the final SAMSUNG App Challenge for 2013.  The contest aims to\naward innovative applications that showcase the Galaxy Note’s S-Pen. The\ngoal is ambitious: two winning teams have the potential to each get a\n\\$200,000 grand prize, and the WeeSee Team is now poised to come out a\nwinner.</p>\n<p>WeeSee is uniquely positioned because of its diversity and depth of\ntalent, which is typical of the Seoul Tech Society’s membership.\n Hailing from all around the world and from various professional\nbackgrounds, the WeeSee team has brought together a collegial group of\nvegetarians, gamers, entrepreneurs, and hackers.</p>\n<p>For the first few weeks the team had been meeting together in Mullae and\nHongdae, but later secured free office space complimentary of Samsung.\n The team has been finalizing the beta version of  their productivity\napp which aims to disrupt the way people collaborate and share notes.\nThe app developed by WeeSee will enter a crowded productivity category\nled by brands such as Evernote.  The app differentiates itself with its\nuse of the Samsung S-Pen stylus, and it allows users the ability to\nexperience more while working with others.</p>\n<p>Before submitting their application on December 31st, the team is\nsearching for additional members to join them in either a design or\ndevelopment role.  Requirements:</p>\n<p>The candidates can be a UX/UI Design specialist and/or a (mobile)\napplications developer who is familiar with any of the following:</p>\n<ul>\n<li><p>Mobile application development Samsung/Android</p>\n</li>\n<li><p>Photoshop</p>\n</li>\n<li><p>Android design guide principles</p>\n</li>\n<li><p>Action bar / status bar / navbar for current mobile applications</p>\n</li>\n<li><p>Icons for mobile apps</p>\n</li>\n<li><p>Branding and theme for Android / Samsung</p>\n</li>\n</ul>\n<p>If you think you can contribute to the team in any way, please feel free\nto send an e-mail to <a href=\"&#109;&#x61;&#x69;&#108;&#x74;&#111;&#58;&#x77;&#101;&#x65;&#115;&#101;&#x65;&#x74;&#x65;&#97;&#109;&#64;&#x67;&#x6d;&#x61;&#105;&#x6c;&#x2e;&#x63;&#x6f;&#109;\">&#x77;&#101;&#x65;&#115;&#101;&#x65;&#x74;&#x65;&#97;&#109;&#64;&#x67;&#x6d;&#x61;&#105;&#x6c;&#x2e;&#x63;&#x6f;&#109;</a>  or follow this\n(<a href=\"http://www.meetup.com/seoul-tech-society/messages/boards/thread/40367552#113451732\">link</a>).</p>\n<p>More info about the Samsung App Challenge here\n(<a href=\"http://developer.samsung.com/ssac2013/note/aboutTheChallenge.do\">link</a>)</p>\n<p><img src=\"https://lh3.googleusercontent.com/xQIgrpMLSuyFnO75mQUeFOKR5lBiQ_kj08eO1IWmFNM7PYeVnMo6I-JpvmZyO9RkbVFk9Vndu3BSKd91t21IqB9-MilG5ENygc6lJDWdqE8ahOj2IxEhr-rQCQ\" alt=\"image\"></p>\n<p>Inception @ Mullae Art Center</p>\n<p><img src=\"https://lh3.googleusercontent.com/WVVUTctvcvzM8gIRTNB0LSMlkiYndtqXmhc60DMpy2s8Nq4olns-pslBj-5XMqtkoBf2n_K-D-_mKD8_tmxAtZBaI82weDNjaQ1gjoR47QaUfMZDmJvDrdtV7w\" alt=\"image\"></p>\n<p>Brainstorming  → App Deep Dive II  @ Insight Hongdae</p>\n<p><img src=\"https://lh3.googleusercontent.com/lLXIXgt9LDO0hiMHhvu6EG938CpKou4Qz1PWwvRTrh2DfwIjwslOUPGeA30WSVcsGeRIooRVCqTOR5IP8ZUUX4C8bYZqjzWK04wvHV2-vNk5BplJWfzQ4EFZdA\" alt=\"image\"></p>\n<p>Cheers: first milestone  @\nNFLabs<img src=\"https://lh6.googleusercontent.com/fCzX3pYGxn36vK8Nd53ZLhrE0bF75t1ul1cx8ZMhamRFhqfqO1cuByw1OQI_jzhzVfYAxYyKQPANcb_z7IP3KSX3WEUaqR1dDBRCDYKLmnsScu9sh7KB3vwm3w\" alt=\"image\"></p>\n<p>Our first demo @ Samsung Ocean</p>\n<p><img src=\"https://lh4.googleusercontent.com/OHz8t5pQ1sYzsg3t79s8-GxhF9s99SbiBUsHUhrmitN_rPdVFXFx9V1bODtjOML1nlAdfJKbwepCt24nbUfS7wbQ4AB9zhDSrFYywBpNYQGRaLsP8KMBJWSZ9Q\" alt=\"image\"></p>\n<p>Deep immersion for the best product   →  App Deep Dive I @ NFLabs</p>\n<p><img src=\"https://lh4.googleusercontent.com/N6fBPGlzAmwYUoc6SazOE4BteT0iGMSQ33W4_gS2mRYM0IPlW3rkDw43X8R7MAUJWX2vFJdX7VuVBCPYnhPMbkQXvJExRetw2xEb3bBrqBiNumYxIOWZPXF6-g\" alt=\"image\"></p>\n<pre><code>                                                          Jackson\n</code></pre><p><a href=\"https://plus.google.com/113799495386801196546\">Google+</a></p>\n";
+	module.exports = "<h1 id=\"seoul-tech-rises-to-samsung-challenge\">Seoul Tech Rises To Samsung Challenge</h1>\n<p>In the space of two weeks, the WeeSeeTeam has gone on a hackathon\njourney which began at a Seoul Tech Society event\n@<a href=\"http://www.nflabs.com/\">NFlabs</a> and has rapidly moved onto development\nat one of Samsung’s dedicated development centers in the heart of\nGangnam.</p>\n<p>In November, more than two dozen Seoul Tech Society members came\ntogether at NFLabs office space in Gangnam. Seven members discussed\nentering the final SAMSUNG App Challenge for 2013.  The contest aims to\naward innovative applications that showcase the Galaxy Note’s S-Pen. The\ngoal is ambitious: two winning teams have the potential to each get a\n\\$200,000 grand prize, and the WeeSee Team is now poised to come out a\nwinner.</p>\n<p>WeeSee is uniquely positioned because of its diversity and depth of\ntalent, which is typical of the Seoul Tech Society’s membership.\n Hailing from all around the world and from various professional\nbackgrounds, the WeeSee team has brought together a collegial group of\nvegetarians, gamers, entrepreneurs, and hackers.</p>\n<p>For the first few weeks the team had been meeting together in Mullae and\nHongdae, but later secured free office space complimentary of Samsung.\n The team has been finalizing the beta version of  their productivity\napp which aims to disrupt the way people collaborate and share notes.\nThe app developed by WeeSee will enter a crowded productivity category\nled by brands such as Evernote.  The app differentiates itself with its\nuse of the Samsung S-Pen stylus, and it allows users the ability to\nexperience more while working with others.</p>\n<p>Before submitting their application on December 31st, the team is\nsearching for additional members to join them in either a design or\ndevelopment role.  Requirements:</p>\n<p>The candidates can be a UX/UI Design specialist and/or a (mobile)\napplications developer who is familiar with any of the following:</p>\n<ul>\n<li><p>Mobile application development Samsung/Android</p>\n</li>\n<li><p>Photoshop</p>\n</li>\n<li><p>Android design guide principles</p>\n</li>\n<li><p>Action bar / status bar / navbar for current mobile applications</p>\n</li>\n<li><p>Icons for mobile apps</p>\n</li>\n<li><p>Branding and theme for Android / Samsung</p>\n</li>\n</ul>\n<p>If you think you can contribute to the team in any way, please feel free\nto send an e-mail to <a href=\"&#x6d;&#x61;&#105;&#x6c;&#x74;&#x6f;&#58;&#119;&#101;&#x65;&#x73;&#101;&#x65;&#x74;&#x65;&#x61;&#x6d;&#64;&#x67;&#x6d;&#x61;&#x69;&#x6c;&#x2e;&#x63;&#111;&#x6d;\">&#119;&#101;&#x65;&#x73;&#101;&#x65;&#x74;&#x65;&#x61;&#x6d;&#64;&#x67;&#x6d;&#x61;&#x69;&#x6c;&#x2e;&#x63;&#111;&#x6d;</a>  or follow this\n(<a href=\"http://www.meetup.com/seoul-tech-society/messages/boards/thread/40367552#113451732\">link</a>).</p>\n<p>More info about the Samsung App Challenge here\n(<a href=\"http://developer.samsung.com/ssac2013/note/aboutTheChallenge.do\">link</a>)</p>\n<p><img src=\"https://lh3.googleusercontent.com/xQIgrpMLSuyFnO75mQUeFOKR5lBiQ_kj08eO1IWmFNM7PYeVnMo6I-JpvmZyO9RkbVFk9Vndu3BSKd91t21IqB9-MilG5ENygc6lJDWdqE8ahOj2IxEhr-rQCQ\" alt=\"image\"></p>\n<p>Inception @ Mullae Art Center</p>\n<p><img src=\"https://lh3.googleusercontent.com/WVVUTctvcvzM8gIRTNB0LSMlkiYndtqXmhc60DMpy2s8Nq4olns-pslBj-5XMqtkoBf2n_K-D-_mKD8_tmxAtZBaI82weDNjaQ1gjoR47QaUfMZDmJvDrdtV7w\" alt=\"image\"></p>\n<p>Brainstorming  → App Deep Dive II  @ Insight Hongdae</p>\n<p><img src=\"https://lh3.googleusercontent.com/lLXIXgt9LDO0hiMHhvu6EG938CpKou4Qz1PWwvRTrh2DfwIjwslOUPGeA30WSVcsGeRIooRVCqTOR5IP8ZUUX4C8bYZqjzWK04wvHV2-vNk5BplJWfzQ4EFZdA\" alt=\"image\"></p>\n<p>Cheers: first milestone  @\nNFLabs<img src=\"https://lh6.googleusercontent.com/fCzX3pYGxn36vK8Nd53ZLhrE0bF75t1ul1cx8ZMhamRFhqfqO1cuByw1OQI_jzhzVfYAxYyKQPANcb_z7IP3KSX3WEUaqR1dDBRCDYKLmnsScu9sh7KB3vwm3w\" alt=\"image\"></p>\n<p>Our first demo @ Samsung Ocean</p>\n<p><img src=\"https://lh4.googleusercontent.com/OHz8t5pQ1sYzsg3t79s8-GxhF9s99SbiBUsHUhrmitN_rPdVFXFx9V1bODtjOML1nlAdfJKbwepCt24nbUfS7wbQ4AB9zhDSrFYywBpNYQGRaLsP8KMBJWSZ9Q\" alt=\"image\"></p>\n<p>Deep immersion for the best product   →  App Deep Dive I @ NFLabs</p>\n<p><img src=\"https://lh4.googleusercontent.com/N6fBPGlzAmwYUoc6SazOE4BteT0iGMSQ33W4_gS2mRYM0IPlW3rkDw43X8R7MAUJWX2vFJdX7VuVBCPYnhPMbkQXvJExRetw2xEb3bBrqBiNumYxIOWZPXF6-g\" alt=\"image\"></p>\n<pre><code>                                                          Jackson\n</code></pre><p><a href=\"https://plus.google.com/113799495386801196546\">Google+</a></p>\n";
 
 /***/ },
 /* 32 */
@@ -11977,8 +11979,8 @@
 	var ReactInstanceHandles = __webpack_require__(50);
 	var ReactPerf = __webpack_require__(53);
 
-	var containsNode = __webpack_require__(113);
-	var getReactRootElementInContainer = __webpack_require__(114);
+	var containsNode = __webpack_require__(111);
+	var getReactRootElementInContainer = __webpack_require__(112);
 	var instantiateReactComponent = __webpack_require__(77);
 	var invariant = __webpack_require__(65);
 	var shouldUpdateReactComponent = __webpack_require__(80);
@@ -12630,9 +12632,9 @@
 	"use strict";
 
 	var ReactComponent = __webpack_require__(43);
-	var ReactMultiChildUpdateTypes = __webpack_require__(111);
+	var ReactMultiChildUpdateTypes = __webpack_require__(113);
 
-	var flattenChildren = __webpack_require__(112);
+	var flattenChildren = __webpack_require__(114);
 	var instantiateReactComponent = __webpack_require__(77);
 	var shouldUpdateReactComponent = __webpack_require__(80);
 
@@ -17674,7 +17676,7 @@
 	var ReactPerf = __webpack_require__(53);
 	var ReactReconcileTransaction = __webpack_require__(140);
 
-	var getReactRootElementInContainer = __webpack_require__(114);
+	var getReactRootElementInContainer = __webpack_require__(112);
 	var invariant = __webpack_require__(65);
 
 
@@ -19857,6 +19859,107 @@
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 *
+	 * @providesModule containsNode
+	 * @typechecks
+	 */
+
+	var isTextNode = __webpack_require__(156);
+
+	/*jslint bitwise:true */
+
+	/**
+	 * Checks if a given DOM node contains or is another DOM node.
+	 *
+	 * @param {?DOMNode} outerNode Outer DOM node.
+	 * @param {?DOMNode} innerNode Inner DOM node.
+	 * @return {boolean} True if `outerNode` contains or is `innerNode`.
+	 */
+	function containsNode(outerNode, innerNode) {
+	  if (!outerNode || !innerNode) {
+	    return false;
+	  } else if (outerNode === innerNode) {
+	    return true;
+	  } else if (isTextNode(outerNode)) {
+	    return false;
+	  } else if (isTextNode(innerNode)) {
+	    return containsNode(outerNode, innerNode.parentNode);
+	  } else if (outerNode.contains) {
+	    return outerNode.contains(innerNode);
+	  } else if (outerNode.compareDocumentPosition) {
+	    return !!(outerNode.compareDocumentPosition(innerNode) & 16);
+	  } else {
+	    return false;
+	  }
+	}
+
+	module.exports = containsNode;
+
+/***/ },
+/* 112 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule getReactRootElementInContainer
+	 */
+
+	"use strict";
+
+	var DOC_NODE_TYPE = 9;
+
+	/**
+	 * @param {DOMElement|DOMDocument} container DOM element that may contain
+	 *                                           a React component
+	 * @return {?*} DOM element that may have the reactRoot ID, or null.
+	 */
+	function getReactRootElementInContainer(container) {
+	  if (!container) {
+	    return null;
+	  }
+
+	  if (container.nodeType === DOC_NODE_TYPE) {
+	    return container.documentElement;
+	  } else {
+	    return container.firstChild;
+	  }
+	}
+
+	module.exports = getReactRootElementInContainer;
+
+/***/ },
+/* 113 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	/**
+	 * Copyright 2013-2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
 	 * @providesModule ReactMultiChildUpdateTypes
 	 */
 
@@ -19882,7 +19985,7 @@
 	module.exports = ReactMultiChildUpdateTypes;
 
 /***/ },
-/* 112 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
@@ -19944,107 +20047,6 @@
 
 	module.exports = flattenChildren;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
-
-/***/ },
-/* 113 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule containsNode
-	 * @typechecks
-	 */
-
-	var isTextNode = __webpack_require__(156);
-
-	/*jslint bitwise:true */
-
-	/**
-	 * Checks if a given DOM node contains or is another DOM node.
-	 *
-	 * @param {?DOMNode} outerNode Outer DOM node.
-	 * @param {?DOMNode} innerNode Inner DOM node.
-	 * @return {boolean} True if `outerNode` contains or is `innerNode`.
-	 */
-	function containsNode(outerNode, innerNode) {
-	  if (!outerNode || !innerNode) {
-	    return false;
-	  } else if (outerNode === innerNode) {
-	    return true;
-	  } else if (isTextNode(outerNode)) {
-	    return false;
-	  } else if (isTextNode(innerNode)) {
-	    return containsNode(outerNode, innerNode.parentNode);
-	  } else if (outerNode.contains) {
-	    return outerNode.contains(innerNode);
-	  } else if (outerNode.compareDocumentPosition) {
-	    return !!(outerNode.compareDocumentPosition(innerNode) & 16);
-	  } else {
-	    return false;
-	  }
-	}
-
-	module.exports = containsNode;
-
-/***/ },
-/* 114 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	/**
-	 * Copyright 2013-2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule getReactRootElementInContainer
-	 */
-
-	"use strict";
-
-	var DOC_NODE_TYPE = 9;
-
-	/**
-	 * @param {DOMElement|DOMDocument} container DOM element that may contain
-	 *                                           a React component
-	 * @return {?*} DOM element that may have the reactRoot ID, or null.
-	 */
-	function getReactRootElementInContainer(container) {
-	  if (!container) {
-	    return null;
-	  }
-
-	  if (container.nodeType === DOC_NODE_TYPE) {
-	    return container.documentElement;
-	  } else {
-	    return container.firstChild;
-	  }
-	}
-
-	module.exports = getReactRootElementInContainer;
 
 /***/ },
 /* 115 */
@@ -22068,7 +22070,7 @@
 
 	var ReactDOMSelection = __webpack_require__(164);
 
-	var containsNode = __webpack_require__(113);
+	var containsNode = __webpack_require__(111);
 	var focusNode = __webpack_require__(165);
 	var getActiveElement = __webpack_require__(144);
 
@@ -24798,7 +24800,7 @@
 	"use strict";
 
 	var Danger = __webpack_require__(170);
-	var ReactMultiChildUpdateTypes = __webpack_require__(111);
+	var ReactMultiChildUpdateTypes = __webpack_require__(113);
 
 	var getTextContentAccessor = __webpack_require__(137);
 

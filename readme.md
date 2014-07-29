@@ -26,9 +26,6 @@ general:
 + add more pages to the site
 + minify scripts and styles
 
-blog:
-+ sort by post dates. how to get dates?
-
 event:
 + display userpics of guests for each meetup
 

@@ -1,84 +1,96 @@
-var fs = require('fs'),
-  convertDir = require('./parse'),
-  mkdirp = require('mkdirp'),
-  rimraf = require('rimraf'),
+var fs = require('fs-extra'),
+  webpack = require('webpack'),
+  webpackConfig = require('./webpack.config'),
+  async = require('async'),
+  _ = require('lodash'),
+  concat = require('concat-stream'),
+  htmlBoilerplate = require('./htmlBoilerplate'),
+  routes = require('./routes'),
 
-  inputDir = 'client/content/source/',
-  outputDir = 'client/content/target/',
+  wrapper = require('../scripts/components/wrapper'),
+  c = require('./build.config'),
+  outputDir = c.outputDir,
 
-  isMarkdown = RegExp.prototype.test.bind(/^.+\.(md|markdown)$/),
+  placeholder = '<-- {{content}} !-->',
+  resetColor = '\x1b[39m',
+  blueColor = '\x1b[34m',
+  greenColor = '\x1b[32m',
+  redColor = '\x1b[31m',
 
-  getFiles = function(dir) {
-    return fs.readdirSync(dir).filter(isMarkdown).map(function(file) {
-      var filename = file.split('.').slice(0, -1).join(''),
-        contents = fs.readFileSync(dir + file, 'utf-8'),
-        date = contents.match(/date:(.*)/),
-        title = contents.match(/title:(.*)/),
-        tags = contents.match(/tags:(.*)/),
-        replace = function(rs, ns, string) {return string.replace(rs, ns)}
-      
-      if (contents.match(/^---/)) {
-        return {
-          filename: filename,
-          title: title? replace(/^\s/, '', title[1]) : '',
-          date: date? replace(/^\s/, '', date[1]) : '',
-          tags: tags? tags[1].split(',').map(replace.bind({}, /^\s/, '')) : []
-        }
-      }
-      
-      return {filename: filename}
+  handleError = function(error) {
+    console.error(error.stack)
+    console.log(redColor + 'Conversion failed', resetColor)
+  },
+
+  writeFile = function(path, content) {
+    fs.mkdirsSync(_.initial(path.split('/')).join('/'))
+    fs.writeFileSync(path, content)
+  },
+
+  writeHTML = function(dir, file, config, context) {
+    writeFile(dir + file + '.html', htmlBoilerplate.replace(placeholder,
+      config.render(wrapper({
+        content: config.component(config.getProps(context))})) +
+      (config.externalScripts || '')))
+  },
+
+  getData = function(route, yield) {
+    var data,
+      writer = concat(function(buffer) {data = buffer.toString()})
+
+    route.fetch(function(res) {res.pipe(writer)})
+    writer.on('finish', function() {
+      yield(null, _.omit(JSON.parse(data), 'meta'))})
+  },
+
+  makeParent = function(route, index, yield) {
+    writeHTML(outputDir + route.out, 'index', route.parent, index)
+    yield(null, route, index)
+  },
+
+  makeChildren = function(route, index, yield) {
+    index[route.out].results.forEach(function(file) {
+      writeHTML(outputDir + route.out, file.id, route.child, file)})
+    yield(null, route, index)
+  },
+
+  makeLoader = function(route, index, yield) {
+    if (route.makeLoader) route.makeLoader(index)
+    yield(null, route)
+  },
+
+  makeBundle = function(route, yield) {
+    webpack(webpackConfig, function(error) {
+      if (error) handleError(error)
+      else yield(null, route)
     })
   },
 
-  getDirectories = function(dir) {
-    return fs.readdirSync(dir).filter(function(file) {
-      return fs.statSync(dir + file).isDirectory()
-    })
-  },
-
-  getIndex = function(path, inputIndex, outputIndex) {
-    inputIndex = inputIndex || {}
-    outputIndex = outputIndex || {}
-    // FIXME: factor out these filthy mutations
-      getDirectories(path).forEach(function(dir) {
-      var inputPath = path + dir + '/',
-        outputPath = inputPath.replace('source', 'target'),
-        files = getFiles(inputPath)
-      
-      if (files.length > 0) {
-        outputIndex[outputPath] = inputIndex[inputPath] = files
-      }
-
-      getIndex(inputPath, inputIndex, outputIndex)
-    })
-
-    return [inputIndex, outputIndex]
-  },
-
-  log = function(file, _) {
-    console.log(file, '\x1b[32m', 'OK', '\x1b[39m')
+  done = function(route) {
+    console.log(
+      'route:', blueColor + route.out,
+      greenColor + 'OK', resetColor)
   }
 
-try {
-  var index = getIndex(inputDir),
-    inputIndex = index[0],
-    outputIndex = index[1]
-
-  fs.writeFileSync(outputDir + 'index.js',
-    'export default ' + JSON.stringify(outputIndex))
-
-  Object.keys(outputIndex).map(function(dir) {
-    rimraf.sync(dir)
-    mkdirp.sync(dir)
-    return dir
-  }).map(function(_, i) {
-    return [Object.keys(inputIndex)[i], Object.keys(outputIndex)[i]]
-  }).forEach(function(args) {
-    convertDir.apply(null, args)
+async.parallel(_.map(routes, function(route) {
+  return _.partial(getData, route)
+}), function(err, data) {
+  var index = _.reduceRight(data.concat({}), function(result, value, i) {
+    return Object.defineProperty(result, routes[i].out, {
+      enumerable: true,
+      value: value
+    })
   })
 
-  console.log('\x1b[32m' + 'Done', '\x1b[39m')
-} catch (e) {
-  console.error(e.stack)
-  console.log('\x1b[31m', 'Conversion failed', '\x1b[39m')
-}
+  _.forEach(routes, function(route) {
+    fs.removeSync(outputDir + route.out)
+
+    async.seq(
+      _.partial(makeParent, route, index),
+      makeChildren,
+      makeLoader,
+      makeBundle,
+      done
+    )()
+  })
+})

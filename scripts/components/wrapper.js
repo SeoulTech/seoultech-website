@@ -1,5 +1,6 @@
 var React = require('react'),
-  $ = React.DOM
+  $ = React.DOM,
+  url = require('../../builder/build.config').url
 
 module.exports = React.createClass({
   componentDidMount: function() {
@@ -14,14 +15,14 @@ module.exports = React.createClass({
       content = content(this.state)}
 
     return $.div({className: 'wrapper'}, [
-      $.a({key: 'link-to-home', href: '/'}, 'Home'),
-      $.a({key: 'link-to-blog', href: '/blog'}, 'Blog'),
-      $.a({key: 'link-to-events', href: '/events'}, 'Events'),
-      $.a({key: 'link-to-about', href: '/about'}, 'About'),
+      $.a({key: 'link-to-home', href: url}, 'Home'),
+      $.a({key: 'link-to-blog', href: url + 'blog'}, 'Blog'),
+      $.a({key: 'link-to-events', href: url + 'events'}, 'Events'),
+      $.a({key: 'link-to-about', href: url + 'about'}, 'About'),
       $.br({key: 'break'}),
       $.img({
         key: 'image',
-        src: '/source/images/banner.png',
+        src: url + 'source/images/banner.png',
         alt: 'Seoul Tech Society',
         width: '800px',
         height: '364px',

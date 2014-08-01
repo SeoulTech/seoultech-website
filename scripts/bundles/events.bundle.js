@@ -62,7 +62,8 @@
 
 	"use strict";
 	var React = __webpack_require__(1),
-	  $ = React.DOM
+	  $ = React.DOM,
+	  url = __webpack_require__(7).url
 
 	module.exports = React.createClass({
 	  componentDidMount: function() {
@@ -77,14 +78,14 @@
 	      content = content(this.state)}
 
 	    return $.div({className: 'wrapper'}, [
-	      $.a({key: 'link-to-home', href: '/'}, 'Home'),
-	      $.a({key: 'link-to-blog', href: '/blog'}, 'Blog'),
-	      $.a({key: 'link-to-events', href: '/events'}, 'Events'),
-	      $.a({key: 'link-to-about', href: '/about'}, 'About'),
+	      $.a({key: 'link-to-home', href: url}, 'Home'),
+	      $.a({key: 'link-to-blog', href: url + 'blog'}, 'Blog'),
+	      $.a({key: 'link-to-events', href: url + 'events'}, 'Events'),
+	      $.a({key: 'link-to-about', href: url + 'about'}, 'About'),
 	      $.br({key: 'break'}),
 	      $.img({
 	        key: 'image',
-	        src: '/source/images/banner.png',
+	        src: url + 'source/images/banner.png',
 	        alt: 'Seoul Tech Society',
 	        width: '800px',
 	        height: '364px',
@@ -99,8 +100,9 @@
 	"use strict";
 	var React = __webpack_require__(1),
 	  $ = React.DOM,
-	  fetch = __webpack_require__(8),
-	  _ = __webpack_require__(9)
+	  fetch = __webpack_require__(9),
+	  _ = __webpack_require__(10),
+	  url = __webpack_require__(7).url
 
 	module.exports = React.createClass({
 	  getInitialState: function() {return this.props},
@@ -114,21 +116,34 @@
 	          noun = ' guest' + (rsvp == 1? '' : 's')
 
 	        return $.li({key: event.id}, [
-	          $.a({key: 'link' + event.id, href: '/events/' + event.id + '.html'},
+	          $.a({key: 'link' + event.id, href: url + '/events/' + event.id + '.html'},
 	            event.name),
 	          $.label({key: 'rsvp' + event.id}, ' (' + rsvp + noun + ')')])}))}})
 
 /***/ },
 /* 5 */,
 /* 6 */,
-/* 7 */,
-/* 8 */
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(__dirname) {"use strict";
+	module.exports = {
+	  inputDir: 'source/',
+	  outputDir: __dirname + '/..',
+	  scriptDir: __dirname + '/../scripts/',
+	  url: 'http://seoultech.github.io/seoultech-website/'
+	}
+	/* WEBPACK VAR INJECTION */}.call(exports, "/"))
+
+/***/ },
+/* 8 */,
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	module.exports = function(component, id) {
 	  var callback = '__j' + document.getElementsByClassName('jsonp').length,
-	    getUrl = __webpack_require__(10),
+	    getUrl = __webpack_require__(11),
 	    script = document.createElement('script')
 
 	  script.type = 'text/javascript'
@@ -152,11 +167,11 @@
 	}
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var _ = __webpack_require__(11),
+	var _ = __webpack_require__(12),
 	  util = {
 	    get: function(/* obj, nested keys */) {
 	      return [].slice.call(arguments).reduce(function(obj, key) {
@@ -201,11 +216,11 @@
 	module.exports = util
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	_ = __webpack_require__(9)
+	_ = __webpack_require__(10)
 
 	module.exports = function(component, id) {
 	  var p = {
@@ -234,7 +249,7 @@
 	}
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {"use strict";
@@ -7395,10 +7410,10 @@
 	    root._ = _;
 	  }
 	}.call(this));
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)(module), (function() { return this; }())))
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";

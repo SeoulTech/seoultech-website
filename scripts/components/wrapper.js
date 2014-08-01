@@ -16,9 +16,9 @@ module.exports = React.createClass({
 
     return $.div({className: 'wrapper'}, [
       $.a({key: 'link-to-home', href: url}, 'Home'),
-      $.a({key: 'link-to-blog', href: url + 'blog'}, 'Blog'),
-      $.a({key: 'link-to-events', href: url + 'events'}, 'Events'),
-      $.a({key: 'link-to-about', href: url + 'about'}, 'About'),
+      $.a({key: 'link-to-blog', href: url + 'blog/'}, 'Blog'),
+      $.a({key: 'link-to-events', href: url + 'events/'}, 'Events'),
+      $.a({key: 'link-to-about', href: url + 'about/'}, 'About'),
       $.br({key: 'break'}),
       $.img({
         key: 'image',

@@ -1,4 +1,4 @@
-var _ = require('lodash'),
+var _ = require('./lodash.custom.min'),
   util = {
     get: function(/* obj, nested keys */) {
       return [].slice.call(arguments).reduce(function(obj, key) {
@@ -24,20 +24,8 @@ var _ = require('lodash'),
 
     // list of lodash methods used; either to make a custom lodash build
     // or replace lodash with something else
-    assign: _.assign,
-    cloneDeep: _.cloneDeep,
-    compact: _.compact,
-    compose: _.compose,
-    filter: _.filter,
     has: _.has,
-    isEmpty: _.isEmpty,
-    keys: _.keys,
-    map: _.map,
-    merge: _.merge,
-    partial: _.partial,
-    reduceRight: _.reduceRight,
     sortBy: _.sortBy,
-    zipObject: _.zipObject
   }
 
 module.exports = util

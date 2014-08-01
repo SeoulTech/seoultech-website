@@ -5,7 +5,7 @@ processKeyword = function(status) {
     newest: function(data) {return _.sortBy(data, 'date')},
     oldest: function(data) {return _.reverse(keywords.newest(data))},
     default: function(data) {
-      return _.filter(data, function(d) {return d.status == status})}}
+      return data.filter(function(d) {return d.status == status})}}
 
   return keywords[status] || keywords.default
 },

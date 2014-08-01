@@ -8,5 +8,6 @@ module.exports = React.createClass({
     return $.ul({key: 'blog-index'},
       _.reverse(this.props.results).map(function(post, i) {
         return $.li({key: post.id},
-          $.a({key: 'link' + post.id, href: url + '/blog/' + post.id + '.html'},
-            post.title))}))}})
+          $.a({
+            key: 'link' + post.id,
+            href: url + '/blog/' + post.id + '.html'}, post.title))}))}})

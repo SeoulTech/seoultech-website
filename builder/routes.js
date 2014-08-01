@@ -12,8 +12,10 @@ var React = require('react'),
   eventsIndex = require('../scripts/components/eventsIndex'),
   blogIndex = require('../scripts/components/blogIndex'),
 
-  reactCDN = '//cdnjs.cloudflare.com/ajax/libs/react/0.11.0/react.min.js',
-  scriptDir = require('./build.config').scriptDir,
+  c = require('./build.config'),
+  url = c.url,
+  reactCDN = c.reactCDN,
+  scriptDir = c.scriptDir,
   nameOnly = /^.+\/(.+).md|markdown$/,
   nameFolder = /^.+\/(.+\/.+).md|markdown$/,
 
@@ -32,7 +34,7 @@ var React = require('react'),
       getProps: function(context) {return context[eventsConfig.out]},
       render: React.renderComponentToString,
       externalScripts: '<script src="' + reactCDN + '"></script>' +
-        '<script src="../scripts/bundles/events.bundle.js"></script>'
+        '<script src="' + url + 'scripts/bundles/events.bundle.js"></script>'
     },
 
     child: staticConfig,
@@ -84,7 +86,7 @@ var React = require('react'),
       },
       render: React.renderComponentToString,
       externalScripts: '<script src="' + reactCDN + '"></script>' +
-        '<script src="../scripts/bundles/home.bundle.js"></script>'
+        '<script src="' + url + 'scripts/bundles/home.bundle.js"></script>'
     },
 
     child: staticConfig,

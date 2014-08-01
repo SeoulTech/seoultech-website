@@ -16,6 +16,7 @@ module.exports = React.createClass({
           noun = ' guest' + (rsvp == 1? '' : 's')
 
         return $.li({key: event.id}, [
-          $.a({key: 'link' + event.id, href: url + '/events/' + event.id + '.html'},
-            event.name),
+          $.a({
+            key: 'link' + event.id,
+            href: url + '/events/' + event.id + '.html'}, event.name),
           $.label({key: 'rsvp' + event.id}, ' (' + rsvp + noun + ')')])}))}})

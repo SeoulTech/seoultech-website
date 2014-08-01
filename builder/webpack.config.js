@@ -1,3 +1,5 @@
+var webpack = require('webpack')
+
 module.exports = {
   context: __dirname + '/../scripts/loaders',
   entry: {
@@ -14,7 +16,7 @@ module.exports = {
     ]
   },
   plugins: [
-    // new webpack.optimize.UglifyJsPlugin()
+    new webpack.optimize.UglifyJsPlugin()
   ],
   externals: {
     'react': 'React'

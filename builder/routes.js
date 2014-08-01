@@ -12,7 +12,7 @@ var React = require('react'),
   eventsIndex = require('../scripts/components/eventsIndex'),
   blogIndex = require('../scripts/components/blogIndex'),
 
-  reactCDN = 'http://fb.me/react-0.11.1.js',
+  reactCDN = '//cdnjs.cloudflare.com/ajax/libs/react/0.11.0/react.min.js',
   scriptDir = require('./build.config').scriptDir,
   nameOnly = /^.+\/(.+).md|markdown$/,
   nameFolder = /^.+\/(.+\/.+).md|markdown$/,

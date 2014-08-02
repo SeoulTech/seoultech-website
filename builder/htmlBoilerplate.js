@@ -5,7 +5,7 @@ module.exports = [
   '<html lang="en">',
   '<head>',
   '<meta charset="UTF-8">',
-  '<link rel="stylesheet" href="' + url + '/styles/style.css" />',
+  '<link rel="stylesheet" href="' + url + 'styles/style.css" />',
   '<title>Seoul Tech Society</title>',
   '</head>',
   '<body>',

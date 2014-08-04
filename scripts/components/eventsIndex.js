@@ -12,11 +12,8 @@ module.exports = React.createClass({
   render: function() {
     return $.ul({key: 'events'},
       _.reverse(this.props.results).map(function(event, i) {
-        var rsvp = event.yes_rsvp_count,
-          noun = ' guest' + (rsvp == 1? '' : 's')
-
         return $.li({key: event.id}, [
+          $.label({key: 'rsvp' + event.id}, '(' + event.yes_rsvp_count + ') '),
           $.a({
             key: 'link' + event.id,
-            href: url + 'events/' + event.id + '.html'}, event.name),
-          $.label({key: 'rsvp' + event.id}, ' (' + rsvp + noun + ')')])}))}})
+            href: url + 'events/' + event.id + '.html'}, event.name)])}))}})

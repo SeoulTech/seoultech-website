@@ -1,4 +1,5 @@
 var url = 'http://seoultech.github.io/seoultech-website/'
+// var url = 'http://localhost:8080/'
 module.exports = {
   inputDir: 'source/',
   outputDir: __dirname + '/..',

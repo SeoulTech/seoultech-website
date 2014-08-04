@@ -4,7 +4,7 @@ var fs = require('fs-extra'),
   inputDir = buildConfig.inputDir,
   siteUrl = buildConfig.url,
   siteSource = buildConfig.siteSource,
-  markdown = require('marked'),
+  toMarkdown = require('marked'),
   walkSync = require('file').walkSync,
   _ = require('../scripts/utilities/util')
 
@@ -22,6 +22,7 @@ module.exports = function(dir, config, callback) {
     results: flatten(Object.keys(index).map(function(dir) {return index[dir]}))
       .map(function(file, i, files) {
         var trimSpace = function(s) {return s? s.replace(/^\s/, '') : ''},
+          getExcerpt = function(s) {return s? s.split('{{fold}}')[0] : ''},
           getPathToImages = function(file) {
             return siteUrl + file.split('/').slice(0, -1).join('/')
               .replace('source', 'source/images')},
@@ -40,7 +41,8 @@ module.exports = function(dir, config, callback) {
           title: title.slice(1),
           date: trimSpace(date),
           tags: tags? tags.split(',').map(trimSpace) : [],
-          description: markdown(hasMetadata? title + body : content)}})}))
+          excerpt: toMarkdown(getExcerpt(body)),
+          description: toMarkdown(hasMetadata? title + body : content)}})}))
 
   stream.push(null)
   callback(stream)

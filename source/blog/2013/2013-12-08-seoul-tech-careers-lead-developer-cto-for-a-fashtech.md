@@ -7,6 +7,8 @@ date: 2013-12-08
 
 **Lead Developer / CTO Candidate**
 
+{{fold}}
+
 Are you eager for an exciting opportunity to make your mark in
 “fashtech” the industry cross sector of fashion and technology?\
 This may be your chance.\

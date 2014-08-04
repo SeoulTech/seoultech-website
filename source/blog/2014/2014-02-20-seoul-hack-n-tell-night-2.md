@@ -7,6 +7,8 @@ RSVP <http://www.meetup.com/seoul-tech-society/events/165322992/>
 
 ![image]({{images}}/hack-tell-2.jpg)
 
+{{fold}}
+
 **List of speakers: **
 
 ****

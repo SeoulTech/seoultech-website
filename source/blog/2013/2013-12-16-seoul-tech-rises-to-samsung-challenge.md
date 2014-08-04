@@ -8,6 +8,8 @@ journey which began at a Seoul Tech Society event
 at one of Samsung’s dedicated development centers in the heart of
 Gangnam.
 
+{{fold}}
+
 In November, more than two dozen Seoul Tech Society members came
 together at NFLabs office space in Gangnam. Seven members discussed
 entering the final SAMSUNG App Challenge for 2013.  The contest aims to

@@ -9,6 +9,8 @@ give a series of lectures on digital art. \
 The first lecture: Introduction to Digital Art  - When artists become
 geeks or vice versa.
 
+{{fold}}
+
 ![image]({{images}}/digital-art-poster.jpg)
 
 ****

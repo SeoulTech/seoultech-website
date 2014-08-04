@@ -5,6 +5,8 @@ date: 2014-03-09
 
 RSVP <http://www.meetup.com/seoul-tech-society/events/169900682/>
 
+{{fold}}
+
 Our speaker this time is **Dr. Ogan Gurel** ([LinkedIn
 profile](http://www.linkedin.com/profile/view?id=1531386)), a prominent
 researcher and professional in the area

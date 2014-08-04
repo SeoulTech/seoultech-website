@@ -6,6 +6,8 @@ Firstly a big thank you to all those of you who attended and supported
 the event. It was our largest yet, with 20+ attendees and we’re pleased
 to see that true community grows.
 
+{{fold}}
+
 As planned this meetup consisted of two parts:
 
 **Free Talk at TOZ Sinchon**

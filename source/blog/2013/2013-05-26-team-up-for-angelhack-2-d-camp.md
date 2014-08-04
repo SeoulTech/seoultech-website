@@ -5,6 +5,8 @@ date: 2013-05-26
 Guys, we are just a few weeks from AngleHack 2013 contest, let’s get
 prepared to take part and win!
 
+{{fold}}
+
 [Last time at
 NFLabs](http://seoultechsociety.org/post/49421013070/team-up-for-angelhack-seoul-may-10)
 it was a really productive session: we pre-selected three ideas and lots

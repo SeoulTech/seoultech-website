@@ -8,6 +8,8 @@ and learn how to recover your data! 
 
 RSVP <http://www.meetup.com/seoul-tech-society/events/147208302/>
 
+{{fold}}
+
 ![]({{images}}/data-recovery-poster-en.jpg)
 
 ![]({{images}}/data-recovery-poster-kr.jpg)

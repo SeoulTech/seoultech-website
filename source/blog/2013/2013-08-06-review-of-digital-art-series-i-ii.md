@@ -6,6 +6,8 @@ Recently, we had the honor of hosting two inspirational art lectures by
 the internationally acclaimed and very creative media artist Lucia
 Jeesun Lee (aka[@smellsdreamy](https://twitter.com/smellsdreamy)).
 
+{{fold}}
+
 In the first lecture, ‘Introduction to Digital Art I - When artists
 become geeks or vice versa’, Lucia gave us a peek into the exciting and
 diverse trends currently happening in digital art.  Her talk took

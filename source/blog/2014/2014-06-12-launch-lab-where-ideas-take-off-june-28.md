@@ -5,6 +5,8 @@ date: 2014-06-12
 
 RSVP <http://www.meetup.com/seoul-tech-society/events/187283782/>
 
+{{fold}}
+
 **What is LaunchLab? **
 
 As part of the Launch - Hack - Tell cycle of innovation, SeoulTech is

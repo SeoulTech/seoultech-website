@@ -5,6 +5,8 @@ date: 2014-02-17
 
 ![image]({{images}}/techtalk-networking-poster.png)
 
+{{fold}}
+
 **Agenda**
 
 7pm - 8pm   : get beer (FIFO) and mingle w/ techies

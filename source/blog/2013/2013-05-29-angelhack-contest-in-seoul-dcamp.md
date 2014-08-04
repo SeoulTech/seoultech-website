@@ -5,8 +5,10 @@ date: 2013-05-29
 Hey! What are you doing next weekend? You should check out the
 [AngelHack event @
 DCAMP](http://angelhack.co.kr/ "official angelhack korea site") on June
-8th! \
-\
+8th! 
+
+{{fold}}
+
 Over 150 developers are expected to attend and have the chance to win
 some of \$100,000+ in prizes and the opportunity to be flown out to
 Silicon Valley to represent Seoul at our global demo day and mentored

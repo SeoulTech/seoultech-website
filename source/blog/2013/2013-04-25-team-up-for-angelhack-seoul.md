@@ -8,6 +8,8 @@ was added.
 
 Hey, *Seoul Tech Society*, let’s make a team and join AngelHack contest!
 
+{{fold}}
+
 Are you a designer, developer or entrepreneur? Do you have a cool idea,
 want to team up and implement a new project?
 

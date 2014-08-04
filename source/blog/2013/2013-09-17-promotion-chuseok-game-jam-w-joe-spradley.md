@@ -7,6 +7,8 @@ date: 2013-09-17
 Follow the link and join Chuseok Game Jam hosted by our worthy member
 Joe Spradley and his startup PlayFluent.
 
+{{fold}}
+
 ![]({{images}}/game-jam-poster.jpg)
 
 All details in the link, but for those who don’t know what a Game Jam

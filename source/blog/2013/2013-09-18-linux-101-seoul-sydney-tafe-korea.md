@@ -7,6 +7,8 @@ member of the Seoul Tech Society. 
 
 RSVP to this event at <http://www.meetup.com/seoul-tech-society/>
 
+{{fold}}
+
 Linux is a free and open source operating system which is gaining
 momentum and is a great alternative to other more well marketed OS’s. 
 

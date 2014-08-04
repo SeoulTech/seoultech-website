@@ -8,6 +8,8 @@ hyper-connected technologies.\
 Our honored guests Dr. Joshua James and Security Consultant Michał
 Rzepka will guide you through the cyber world of white and black forces.
 
+{{fold}}
+
 **Featured**\
 Bring your Windows laptop to practice being a cyber-sleuth with a
 practical lab on computer memory acquisition and analysis.\

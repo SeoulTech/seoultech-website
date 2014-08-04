@@ -8,6 +8,8 @@ Venture Capital. John will give a lecture:
 *“YOU ARE SO LUCKY! The next great entrepreneurial opportunity: the
 massive white space right in front of you.”*
 
+{{fold}}
+
 ![image]({{images}}/frankel-poster.png)
 
 **John Frankel ([Source](http://ffvc.com/team/john-frankel/))**

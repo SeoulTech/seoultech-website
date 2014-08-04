@@ -5,6 +5,8 @@ date: 2014-07-11
 
 ![]({{images}}/hack-tell-3.jpeg)
 
+{{fold}}
+
 If you’ve ever visited [Hacker News](http://news.ycombinator.com/),
 you’ve almost certainly seen the “Show HN” or “Ask HN” posts. Well, it’s
 time to get off the Internet and tell us about it face to face. We’ll

@@ -11,6 +11,8 @@ Come join us at our **"The Rise Of Cryptocurrencies: Bitcoin &
 Beyond"** event at [D-Camp](http://dcamp.kr/about_en) on Saturday, May
 24!
 
+{{fold}}
+
 [Seoul Tech Society](http://www.seoultechsociety.org/), [Seoul Bitcoin
 Meetup](http://www.meetup.com/Seoul-Bitcoin-Meetup-%EC%84%9C%EC%9A%B8-%EB%B9%84%ED%8A%B8%EC%BD%94%EC%9D%B8-%EB%AA%A8%EC%9E%84/),
 and lead Korean Bitcoin

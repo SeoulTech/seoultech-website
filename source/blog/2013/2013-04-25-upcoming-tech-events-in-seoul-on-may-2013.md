@@ -4,10 +4,9 @@ date: 2013-04-25
 ---
 Hey Seoul Techies, what are you up to this May?
 
-We’ve composed a list of technology oriented events this March for
-you.Please join any of them and share experience with the rest of us
-later on.
+We’ve composed a list of technology oriented events this March for you. Please join any of them and share experience with the rest of us later on.
 
+{{fold}}
 
 **Facebook Mobile DevCon 2013**
 

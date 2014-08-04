@@ -7,7 +7,7 @@ processKeyword = function(status) {
     default: function(data) {
       return data.filter(function(d) {return d.status == status})}}
 
-  return keywords[status] || keywords.default
+  return keywords[status] || keywords['default']
 },
 
 extract = function(config, data) {
@@ -18,7 +18,7 @@ extract = function(config, data) {
 
   if (results.length > 0) return {results: results, title: config.title}
 
-  return extract(config.default, data)
+  return extract(config['default'], data)
 }
 
 module.exports = extract

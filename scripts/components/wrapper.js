@@ -3,6 +3,18 @@ var React = require('react'),
   url = require('../../builder/build.config').url
 
 module.exports = React.createClass({
+  getBanner: function() {
+    if (typeof window !== 'undefined') {
+      var b = /(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i,
+        browser = window.navigator.userAgent.match(b)
+      console.log(browser)
+      if (browser[1] == 'MSIE' && browser[2] <= 8) {
+        console.log('it is ie8')
+        return url + 'source/images/banner.png'
+      }
+    }
+    return url + 'source/images/banner.svg'
+  },
   componentDidMount: function() {
     var _this = this
     window.addEventListener('fetch', function(event) {
@@ -34,8 +46,8 @@ module.exports = React.createClass({
           href: url + 'about/'}, 'About')]),
       $.img({
         key: 'image',
-        src: url + 'source/images/banner.svg', //'source/images/banner.png',
-        alt: 'Seoul Tech Society',
+        src: this.getBanner(),
+        alt: 'Seoul Tech Society Banner',
         width: '800px',
         height: '364px',
         className: 'wrapper--logo'}),

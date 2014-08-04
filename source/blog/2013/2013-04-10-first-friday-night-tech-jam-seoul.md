@@ -7,6 +7,8 @@ Fun People, Great Connections, and New Tech.
 Seoul Tech Society presents a free talk  *“Modern Opportunities in
 Korea, Perspectives for Tech Professionals”*
 
+{{fold}}
+
 Korea’s the most innovative country in the world, local enthusiasm for
 technology provides developers and designers with all possible
 challenges.

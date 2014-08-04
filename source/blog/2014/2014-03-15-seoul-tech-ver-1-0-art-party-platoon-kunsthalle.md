@@ -7,6 +7,8 @@ RSVP <http://www.meetup.com/seoul-tech-society/events/169162582/>
 
 ![image]({{images}}/birthday-party-poster.jpg)
 
+{{fold}}
+
 This networking party w/ SeoulTech and art exhibit offers the perfect
 opportunity to shake off winter and connect with others who love tech,
 art, and ideas. New and non-members are cordially invited!

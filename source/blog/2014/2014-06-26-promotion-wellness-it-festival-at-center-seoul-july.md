@@ -7,6 +7,8 @@ Register here to **view & network**: <http://goo.gl/u9dHBl>
 Register here to **exhibit**: <http://www.wita-festival.com/register>
 (*startups in Education, Culture, Social, Finance and Health areas*)
 
+{{fold}}
+
 Dear friends, we are glad to invite you to the Wellness IT Festival
 organized by our partner WiTA. 
 

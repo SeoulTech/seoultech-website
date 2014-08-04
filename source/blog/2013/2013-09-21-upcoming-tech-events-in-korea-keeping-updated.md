@@ -7,6 +7,8 @@ Here we will keep updating the list of technology oriented events for
 you. Please, join any of them and share experience with the rest of us
 later on.
 
+{{fold}}
+
 If you know any other upcoming events or something we’ve forgot to
 mention but you think it should be here - please let us
 know:***contacts[at]seoultechsociety.org***

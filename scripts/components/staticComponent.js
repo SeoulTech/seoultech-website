@@ -3,4 +3,6 @@ var React = require('react'),
 
 module.exports = React.createClass({
   render: function() {
-    return $.div({dangerouslySetInnerHTML: {__html: this.props.html}})}})
+    return $.div({
+      className: '',
+      dangerouslySetInnerHTML: {__html: this.props.html}})}})

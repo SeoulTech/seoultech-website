@@ -11,6 +11,7 @@ var React = require('react'),
   staticComponent = require('../scripts/components/staticComponent'),
   eventsIndex = require('../scripts/components/eventsIndex'),
   blogIndex = require('../scripts/components/blogIndex'),
+  blogPost = require('../scripts/components/blogPost'),
 
   c = require('./build.config'),
   url = c.url,
@@ -63,7 +64,11 @@ var React = require('react'),
       render: React.renderComponentToStaticMarkup
     },
 
-    child: staticConfig
+    child: {
+      component: blogPost,
+      getProps: function(file) {return file},
+      render: React.renderComponentToStaticMarkup
+    }
   },
 
   homeConfig = {

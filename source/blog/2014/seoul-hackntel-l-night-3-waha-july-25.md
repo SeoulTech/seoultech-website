@@ -5,7 +5,6 @@ date: 2014-07-11
 
 ![]({{images}}/hack-tell-3.jpeg)
 
-{{fold}}
 
 If you’ve ever visited [Hacker News](http://news.ycombinator.com/),
 you’ve almost certainly seen the “Show HN” or “Ask HN” posts. Well, it’s
@@ -17,6 +16,8 @@ We’ll give you 10 minutes to show off your tool, hack, library, an art
 project.  Great feedback from highly engaged audience is guaranteed! 
 
 RSVP:http://www.meetup.com/seoul-tech-society/events/193865442/
+
+{{fold}}
 
 List of speakers:  
 

@@ -1,0 +1,35 @@
+/**** wrapper ****/
+
+.wrapper {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 800px;
+}
+
+.wrapper--nav {
+  height: 3em;
+  line-height: 4em;
+  text-align: center;
+  vertical-align: middle;
+  /*border-bottom: 1px solid #ccc;*/
+}
+
+.wrapper--nav--link {
+  font-size: 1.2em;
+  margin: 0 0.4em;
+  text-decoration: none;
+  color: #000;
+  font-family: Futura, 'Questrial', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrapper--nav--link:hover {
+  color: #666;
+}
+
+.wrapper--logo {
+  width: 100%;
+  height: auto;
+  max-width: 800px;
+}
+

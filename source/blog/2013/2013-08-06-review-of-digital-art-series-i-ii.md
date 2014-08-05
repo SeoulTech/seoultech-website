@@ -39,7 +39,7 @@ Seoul Office, who graciously opened up their wonderful venues to Seoul
 Tech Society members.
 
 **Hub Seoul**\
-![image]({{images}}/digital-art-review-photo1.jpg}})\
+![image]({{images}}/digital-art-review-photo1.jpg)\
 **WCO**\
 ![image]({{images}}/digital-art-review-photo2.jpg)
 

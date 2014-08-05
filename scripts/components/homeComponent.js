@@ -11,11 +11,11 @@ module.exports = React.createClass({
     this.setState({events: extract(this.state.config.events, props.results)})
   },
   render: function() {
-    return $.div(null, [
-      $.h1(null, this.state.events.title),
+    return $.div({key: 'contentInner', className: 'content--inner'}, [
+      $.h1({key: 'home--events-title'}, this.state.events.title),
       eventsIndex(this.state.events),
-      $.h1(null, this.state.blog.title),
-      blogIndex(this.state.blog),
+      $.h1({key: 'home--blog-title'}, this.state.blog.title),
+      blogIndex({results: this.state.blog.results, titleOnly: true}),
       staticComponent(this.state.custom)
     ])
   }

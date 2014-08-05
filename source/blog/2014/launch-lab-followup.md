@@ -1,17 +1,19 @@
 ---
 title: Launch Lab followup
 date: 2014-07-11
+tags: lauch lab, followup, more tags, so many more tags, tags, tagss, and even more
 ---
 There was a relaxing, fun and engaging exchange of ideas at Coffee Zaroo
 in Bojeong during the 1st Seoul Tech Society ‘Launch Lab’.
 
-{{fold}}
 
 Brief presentations were followed by inspirational discussions that
 varied between highly technical to philosophical implications about the
 ideas presented.
 
 ![image]({{images}}/launchlab-followup-1.jpg)
+
+{{fold}}
 
 Mobile malware analysis plugin
 

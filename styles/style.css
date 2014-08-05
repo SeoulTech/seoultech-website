@@ -1,3 +1,12 @@
-.main--logo {
-  width: 800px;
-}
+@import url('./normalize.css');
+@import url('./wrapper.css');
+@import url('./content.css');
+@import url('./blog.css');
+@import url('./events.css');
+@import url('./home.css');
+
+*, *:before, *:after {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+ }

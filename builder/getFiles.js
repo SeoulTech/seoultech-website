@@ -23,6 +23,7 @@ module.exports = function(dir, config, callback) {
       .map(function(file, i, files) {
         var trimSpace = function(s) {return s? s.replace(/^\s/, '') : ''},
           getExcerpt = function(s) {return s? s.split('{{fold}}')[0] : ''},
+          removeFold = function(s) {return s.replace('{{fold}}', '')},
           getPathToImages = function(file) {
             return siteUrl + file.split('/').slice(0, -1).join('/')
               .replace('source', 'source/images')},
@@ -34,15 +35,16 @@ module.exports = function(dir, config, callback) {
           date = _.get(content.match(/date:(.*)/), 1),
           title = '#' + trimSpace(_.get(content.match(/title:(.*)/), 1)),
           tags = _.get(content.match(/tags:(.*)/), 1),
-          body = content.split('---')[2]
+          article = content.split('---')[2]
 
         return {
           id: config.getFilename(file),
           title: title.slice(1),
           date: trimSpace(date),
           tags: tags? tags.split(',').map(trimSpace) : [],
-          excerpt: toMarkdown(getExcerpt(body)),
-          description: toMarkdown(hasMetadata? title + body : content)}})}))
+          excerpt: toMarkdown(getExcerpt(article)),
+          description: toMarkdown(removeFold(hasMetadata? article : content))
+        }})}))
 
   stream.push(null)
   callback(stream)

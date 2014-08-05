@@ -3,13 +3,12 @@ var React = require('react'),
   url = require('../../builder/build.config').url
 
 module.exports = React.createClass({
-  getBanner: function() {
+  selectBannerConditionally: function() {
     if (typeof window !== 'undefined') {
       var b = /(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i,
         browser = window.navigator.userAgent.match(b)
-      console.log(browser)
+
       if (browser[1] == 'MSIE' && browser[2] <= 8) {
-        console.log('it is ie8')
         return url + 'source/images/banner.png'
       }
     }
@@ -46,7 +45,7 @@ module.exports = React.createClass({
           href: url + 'about/'}, 'About')]),
       $.img({
         key: 'image',
-        src: this.getBanner(),
+        src: this.selectBannerConditionally(),
         alt: 'Seoul Tech Society Banner',
         width: '800px',
         height: '364px',

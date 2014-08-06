@@ -13,7 +13,7 @@ Rzepka will guide you through the cyber world of white and black forces.
 **Featured**\
 Bring your Windows laptop to practice being a cyber-sleuth with a
 practical lab on computer memory acquisition and analysis.\
-![image]({{images}}/stay-safe-poster.jpg)
+![event poster]({{images}}/stay-safe-poster.jpg)
 
 RSVP to this event
 at <http://www.meetup.com/seoul-tech-society/events/144302832/>

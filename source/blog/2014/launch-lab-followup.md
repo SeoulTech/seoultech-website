@@ -11,7 +11,7 @@ Brief presentations were followed by inspirational discussions that
 varied between highly technical to philosophical implications about the
 ideas presented.
 
-![image]({{images}}/launchlab-followup-1.jpg)
+![image followup-1]({{images}}/launchlab-followup-1.jpg)
 
 {{fold}}
 
@@ -67,7 +67,7 @@ allows users to use peer-based language learning in their normal social
 networking activities. Participate with Jan if you want to learn a
 language, be a beta tester or design/develop the new version of the app.
 
-![image]({{images}}/launchlab-followup-2.jpg)
+![image followup-2]({{images}}/launchlab-followup-2.jpg)
 
 **Idea Open Mic**
 
@@ -85,7 +85,7 @@ social service app that is popular in Asia and should be adopted in
 Indonesia? Please contact her if you have ideas about the best way to
 share information about local attractions, and walking tours.
 
-![image]({{images}}/launchlab-followup-3.jpg)
+![image followup-3]({{images}}/launchlab-followup-3.jpg)
 
 **Open Mic Music Night**
 

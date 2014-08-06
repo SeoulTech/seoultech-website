@@ -11,7 +11,7 @@ Register here to **exhibit**: <http://www.wita-festival.com/register>
 Dear friends, we are glad to invite you to the Wellness IT Festival
 organized by our partner WiTA. 
 
-![]({{images}}/wita-poster.png)
+![event poster]({{images}}/wita-poster.png)
 
 {{fold}}
 

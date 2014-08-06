@@ -15,7 +15,7 @@ type of event where researchers, entrepreneurs and innovators discuss
 and propose (any) project, and solicit ideas and help from other
 SeoulTech members.
 
-![]({{images}}/launch-lab-poster.png)
+![event poster]({{images}}/launch-lab-poster.png)
 
 **Why? **
 

@@ -5,7 +5,7 @@ date: 2014-02-20
 
 RSVP <http://www.meetup.com/seoul-tech-society/events/165322992/>
 
-![image]({{images}}/hack-tell-2.jpg)
+![event poster]({{images}}/hack-tell-2.jpg)
 
 {{fold}}
 

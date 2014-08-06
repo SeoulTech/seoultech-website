@@ -3,7 +3,7 @@ title: Seoul Hack'n'Tel­l night #3 @WAHA, July 25
 date: 2014-07-11
 ---
 
-![]({{images}}/hack-tell-3.jpeg)
+![event poster]({{images}}/hack-tell-3.jpeg)
 
 
 If you’ve ever visited [Hacker News](http://news.ycombinator.com/),
@@ -59,8 +59,8 @@ transform ideas into sustainable and profitable business.  
 Seoul, Korea \
 [www.waha.asia](http://www.waha.asia/) 
 
-![]({{images}}/hack-tell-3-waha-1.jpeg)
+![waha-poster-1]({{images}}/hack-tell-3-waha-1.jpeg)
 
-![]({{images}}/hack-tell-3-waha-2.jpeg)
+![waha-poster-2]({{images}}/hack-tell-3-waha-2.jpeg)
 
 

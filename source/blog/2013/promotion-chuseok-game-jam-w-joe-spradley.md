@@ -9,7 +9,7 @@ Joe Spradley and his startup PlayFluent.
 
 {{fold}}
 
-![]({{images}}/game-jam-poster.jpg)
+![event poster]({{images}}/game-jam-poster.jpg)
 
 All details in the link, but for those who don’t know what a Game Jam
 is… They are going to try to make a few brand new games in a very short

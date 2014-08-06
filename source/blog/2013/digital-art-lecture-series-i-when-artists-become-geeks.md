@@ -11,7 +11,7 @@ geeks or vice versa.
 
 {{fold}}
 
-![image]({{images}}/digital-art-poster.jpg)
+![event poster]({{images}}/digital-art-poster.jpg)
 
 ****
 

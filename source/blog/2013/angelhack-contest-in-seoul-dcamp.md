@@ -21,6 +21,6 @@ ticket price!**
 
 <http://ahsp13seoul.eventbrite.com/> 
 
-![image]({{images}}/angelhack-poster.jpg)
+![event poster]({{images}}/angelhack-poster.jpg)
 
 

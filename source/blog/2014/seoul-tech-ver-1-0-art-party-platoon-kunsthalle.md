@@ -5,7 +5,7 @@ date: 2014-03-15
 
 RSVP <http://www.meetup.com/seoul-tech-society/events/169162582/>
 
-![image]({{images}}/birthday-party-poster.jpg)
+![event poster]({{images}}/birthday-party-poster.jpg)
 
 {{fold}}
 

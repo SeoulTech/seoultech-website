@@ -21,7 +21,7 @@ come together to discuss past, present, and future of cryptocurrencies. 
 
 Great people and thought-provoking discussions are guaranteed!
 
-![]({{images}}/bitcoin-poster.png)
+![event poster]({{images}}/bitcoin-poster.png)
 
  **Agenda**
 

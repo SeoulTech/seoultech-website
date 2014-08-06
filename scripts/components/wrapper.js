@@ -26,7 +26,10 @@ module.exports = React.createClass({
       content = content(this.state)}
 
     return $.div({className: 'wrapper'}, [
-      $.div({key: 'wrapper--nav', className: 'wrapper--nav'}, [
+      $.div({
+        key: 'wrapper--nav',
+        className: 'wrapper--nav',
+        role: 'navigation'}, [
         $.a({
           key: 'link-to-home',
           className: 'wrapper--nav--link',
@@ -50,4 +53,7 @@ module.exports = React.createClass({
         width: '800px',
         height: '364px',
         className: 'wrapper--logo'}),
-      $.div({key: 'content', className: 'content'}, content)])}})
+      $.div({
+        key: 'content',
+        className: 'content',
+        role: 'main'}, content)])}})

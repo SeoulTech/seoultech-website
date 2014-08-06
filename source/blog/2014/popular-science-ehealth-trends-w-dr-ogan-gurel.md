@@ -14,7 +14,7 @@ of [mHealth](http://en.wikipedia.org/wiki/MHealth) and [digital
 medicine](http://www.nytimes.com/2012/10/09/science/redefining-medicine-with-apps-and-ipads-the-digital-doctor.html).
 He will introduce us to the world of emerging eHealth technologies.
 
-![image]({{images}}/ehealth-poster.jpeg)
+![event poster]({{images}}/ehealth-poster.jpeg)
 
 If you want to team-up with smart and creative people of Seoul Tech
 Society, stay for the second part of the event! There will be a

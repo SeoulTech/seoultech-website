@@ -10,11 +10,11 @@ massive white space right in front of you.”*
 
 {{fold}}
 
-![image]({{images}}/frankel-poster.png)
+![event poster]({{images}}/frankel-poster.png)
 
 **John Frankel ([Source](http://ffvc.com/team/john-frankel/))**
 
-**![image]({{images}}/frankel-photo.jpg)**
+**![John Frankel photo]({{images}}/frankel-photo.jpg)**
 
 John Frankel has been an early-stage venture investor since 1999. Mr.
 Frankel was one of the earliest investors in Quigo Technologies, which

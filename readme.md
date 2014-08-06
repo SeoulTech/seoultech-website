@@ -11,7 +11,7 @@ Markdown sources and images are in `/source/`:
 
 To reference an image in markdown file, write `{{images}}/image-name.ext`. Builder will replace `{{images}}` with the actual path. Important: `images` structure must match markdown source directories (builder will look in `images/blog/2013/image-name.ext` for an image referenced in markdown file that is located in `blog/2013`)
 
-Use {{fold}} in the markdown source to create post previews for `blog` view.
+Use `{{fold}}` in the markdown source to create post previews for `blog` view.
 
 Homepage configuration file is `builder/index.yml`.
 

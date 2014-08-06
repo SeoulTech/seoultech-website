@@ -6,12 +6,12 @@ var fs = require('fs-extra'),
   siteSource = buildConfig.siteSource,
   toMarkdown = require('marked'),
   walkSync = require('file').walkSync,
-  _ = require('../scripts/utilities/util')
+  get = require('../scripts/utilities/util').get,
+  _ = require('lodash')
 
 module.exports = function(dir, config, callback) {
   var stream = readable(),
     isMarkdown = RegExp.prototype.test.bind(/^.+\.(md|markdown)$/),
-    flatten = function(arr) {return [].concat.apply([], arr)},
     index = {}
 
   walkSync(inputDir + dir + '/', function(dir, dirs, files) {
@@ -19,7 +19,8 @@ module.exports = function(dir, config, callback) {
       .map(function(file) {return dir.replace(/\/$/, '') + '/' + file})})
 
   stream.push(JSON.stringify({
-    results: flatten(Object.keys(index).map(function(dir) {return index[dir]}))
+    results: _(index).keys()
+      .map(function(dir) {return index[dir]}).flatten()
       .map(function(file, i, files) {
         var trimSpace = function(s) {return s? s.replace(/^\s/, '') : ''},
           getExcerpt = function(s) {return s? s.split('{{fold}}')[0] : ''},
@@ -32,19 +33,19 @@ module.exports = function(dir, config, callback) {
             .replace(/\{\{images\}\}/g, getPathToImages(file)),
           hasMetadata = /^---/.test(content),
 
-          date = _.get(content.match(/date:(.*)/), 1),
-          title = '#' + trimSpace(_.get(content.match(/title:(.*)/), 1)),
-          tags = _.get(content.match(/tags:(.*)/), 1),
+          date = trimSpace(get(content.match(/date:(.*)/), 1)),
+          title = '#' + trimSpace(get(content.match(/title:(.*)/), 1)),
+          tags = get(content.match(/tags:(.*)/), 1),
           article = content.split('---')[2]
 
         return {
-          id: config.getFilename(file),
+          id: config.getFilename(file, date),
           title: title.slice(1),
-          date: trimSpace(date),
+          date: date,
           tags: tags? tags.split(',').map(trimSpace) : [],
           excerpt: toMarkdown(getExcerpt(article)),
-          description: toMarkdown(removeFold(hasMetadata? article : content))
-        }})}))
+          description: toMarkdown(removeFold(hasMetadata? article : content))}})
+      .sortBy('date').value()}))
 
   stream.push(null)
   callback(stream)

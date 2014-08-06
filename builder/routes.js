@@ -55,7 +55,8 @@ var React = require('react'),
   blogConfig = {
     out: '/blog/',
     fetch: readDir.bind(this, 'blog', {
-      getFilename: function(file) {return file.match(nameFolder)[1]}
+      getFilename: function(file, date) {
+        return date.replace(/-/g, '/') + '/' + file.match(nameOnly)[1]}
     }),
 
     parent: {

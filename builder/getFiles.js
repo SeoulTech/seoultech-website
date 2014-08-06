@@ -41,11 +41,11 @@ module.exports = function(dir, config, callback) {
         return {
           id: config.getFilename(file, date),
           title: title.slice(1),
-          date: date,
+          time: date,
           tags: tags? tags.split(',').map(trimSpace) : [],
           excerpt: toMarkdown(getExcerpt(article)),
           description: toMarkdown(removeFold(hasMetadata? article : content))}})
-      .sortBy('date').value()}))
+      .sortBy('time').value()}))
 
   stream.push(null)
   callback(stream)

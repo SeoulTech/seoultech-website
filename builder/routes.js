@@ -4,6 +4,7 @@ var React = require('react'),
   fetch = require('http').get,
   readDir = require('./getFiles'),
   yaml = require('yamljs'),
+  moment = require('moment'),
 
   getUrl = require('../scripts/utilities/getUrl'),
   extract = require('../scripts/utilities/extract')
@@ -19,6 +20,7 @@ var React = require('react'),
   scriptDir = c.scriptDir,
   nameOnly = /^.+\/(.+).md|markdown$/,
   nameFolder = /^.+\/(.+\/.+).md|markdown$/,
+  dateFormat = 'MMM D, YYYY',
 
   staticConfig = {
     component: staticComponent,
@@ -32,7 +34,12 @@ var React = require('react'),
 
     parent: {
       component: eventsIndex,
-      getProps: function(context) {return context[eventsConfig.out]},
+      getProps: function(context) {
+        return {results: context[eventsConfig.out].results
+          .map(function(event) {
+            event.date = moment(event.time).format(dateFormat)
+            return event})}
+      },
       render: React.renderComponentToString,
       externalScripts: '<script src="' + reactCDN + '"></script>' +
         '<script src="' + url + 'scripts/bundles/events.bundle.js"></script>'
@@ -61,7 +68,12 @@ var React = require('react'),
 
     parent: {
       component: blogIndex,
-      getProps: function(context) {return context[blogConfig.out]},
+      getProps: function(context) {
+        return {results: context[blogConfig.out].results
+          .map(function(post) {
+            post.date = moment(post.time).format(dateFormat)
+            return post})}
+      },
       render: React.renderComponentToStaticMarkup
     },
 

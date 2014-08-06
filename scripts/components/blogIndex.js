@@ -5,9 +5,17 @@ var React = require('react'),
   url = require('../../builder/build.config').url
 
 module.exports = React.createClass({
+  getInitialState: function() {return {data: _.reverse(this.props.results)}},
+  // componentDidMount: function() {
+  //   window.onhashchange = function() {
+  //     this.setState(this.state.filter(function(post) {
+  //       return post.tags.indexOf(window.location.hash.slice(1)) > -1
+  //     }))
+  //   }
+  // },
   render: function() {
     return $.ul({key: 'blog-index', className: 'blog--posts'},
-      _.reverse(this.props.results).map(function(post) {
+      this.state.data.map(function(post) {
         var linkToPost = url + 'blog/' + post.id + '.html',
           title = $.h1({
             key: 'link--title' + post.id,

@@ -1,5 +1,6 @@
 var React = require('react'),
-  $ = React.DOM
+  $ = React.DOM,
+  url = require('../../builder/build.config').url
 
 module.exports = React.createClass({
   getKey: function(decs) {return decs + this.props.id},
@@ -21,7 +22,9 @@ module.exports = React.createClass({
         dangerouslySetInnerHTML: {__html: this.props.description}}),
       $.div({
         key: this.getKey('read-more'),
-        className: 'blog--post--read-more'}, this.props.readMore),
+        className: this.props.readMore?
+          'blog--post--read-more'
+          : ''}, this.props.readMore),
       $.div({
         key: this.getKey('metadata'),
         className: 'blog--post--metadata'}, [
@@ -36,4 +39,6 @@ module.exports = React.createClass({
               key: this.getKey(tag),
               className: 'blog--post--tag'},
               $.a({
-                key: this.getKey(tag + 'link')}, '#' + tag))}, this))])])}})
+                key: this.getKey(tag + 'link'),
+                href: url + 'blog/#' + tag.replace(/\s/g, '-')}, '#' + tag))},
+            this))])])}})

@@ -2,7 +2,7 @@ var _ = require('./util'),
 
 processKeyword = function(status) {
   var keywords = {
-    newest: function(data) {return _.sortBy(data, 'date')},
+    newest: function(data) {return _.sortBy(data, 'time')},
     oldest: function(data) {return _.reverse(keywords.newest(data))},
     default: function(data) {
       return data.filter(function(d) {return d.status == status})}}

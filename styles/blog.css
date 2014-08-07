@@ -45,19 +45,5 @@
   font-size: 0.6em;
   color: #888;
   text-transform: uppercase;
-}
-
-.blog--post--tags {
-  margin: 1em 0;
-  padding: 0;
-}
-
-.blog--post--tag {
-  margin-right: 1em;
-  display: inline-block;
-}
-
-.blog--post--tag a {
-  cursor: pointer;
-  color: #888;
+  padding-bottom: 1em;
 }

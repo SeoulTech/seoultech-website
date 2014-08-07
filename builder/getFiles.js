@@ -42,7 +42,7 @@ module.exports = function(dir, config, callback) {
           id: config.getFilename(file, date),
           title: title.slice(1),
           time: date,
-          tags: tags? tags.split(',').map(trimSpace) : [],
+          // tags: tags? tags.split(',').map(trimSpace) : [],
           excerpt: toMarkdown(getExcerpt(article)),
           description: toMarkdown(removeFold(hasMetadata? article : content))}})
       .sortBy('time').value()}))

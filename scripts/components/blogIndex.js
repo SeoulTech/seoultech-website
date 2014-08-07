@@ -6,13 +6,6 @@ var React = require('react'),
 
 module.exports = React.createClass({
   getInitialState: function() {return {data: _.reverse(this.props.results)}},
-  // componentDidMount: function() {
-  //   window.onhashchange = function() {
-  //     this.setState(this.state.filter(function(post) {
-  //       return post.tags.indexOf(window.location.hash.slice(1)) > -1
-  //     }))
-  //   }
-  // },
   render: function() {
     return $.ul({key: 'blog-index', className: 'blog--posts'},
       this.state.data.map(function(post) {
@@ -32,5 +25,4 @@ module.exports = React.createClass({
             id: post.id,
             title: post.title,
             date: post.date,
-            tags: post.tags,
             description: post.excerpt}))}, this))}})

@@ -30,15 +30,4 @@ module.exports = React.createClass({
         className: 'blog--post--metadata'}, [
         $.label({
           key: this.getKey('date'),
-          className: 'blog--post--date'}, this.props.date),
-        $.ul({
-          key: this.getKey('tags'),
-          className: 'blog--post--tags'},
-          this.props.tags.map(function(tag) {
-            return $.li({
-              key: this.getKey(tag),
-              className: 'blog--post--tag'},
-              $.a({
-                key: this.getKey(tag + 'link'),
-                href: url + 'blog/#' + tag.replace(/\s/g, '-')}, '#' + tag))},
-            this))])])}})
+          className: 'blog--post--date'}, this.props.date)])])}})

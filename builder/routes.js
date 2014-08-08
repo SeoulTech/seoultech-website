@@ -70,8 +70,14 @@ var React = require('react'),
       component: blogIndex,
       getProps: function(context) {
         return {results: context[blogConfig.out].results
-          .map(function(post) {
+          .map(function(post, i, posts) {
             post.date = moment(post.time).format(dateFormat)
+            post.prevLink = posts[i - 1]?
+              url + 'blog/' + posts[i - 1].id + '.html'
+              : null,
+            post.nextLink = posts[i + 1]?
+              url + 'blog/' + posts[i + 1].id + '.html'
+              : null
             return post})}
       },
       render: React.renderComponentToStaticMarkup

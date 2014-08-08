@@ -5,15 +5,17 @@ var React = require('react'),
   url = require('../../builder/build.config').url
 
 module.exports = React.createClass({
-  getInitialState: function() {return {data: _.reverse(this.props.results)}},
+  getInitialState: function() {return {posts: _.reverse(this.props.results)}},
   render: function() {
     return $.ul({key: 'blog-index', className: 'blog--posts'},
-      this.state.data.map(function(post) {
+      this.state.posts.map(function(post, i, posts) {
         var linkToPost = url + 'blog/' + post.id + '.html',
           title = $.h1({
             key: 'link--title' + post.id,
             className: 'home--blog--post'},
-            $.a({key: 'link' + post.id, href: linkToPost}, post.title)),
+            $.a({
+              key: 'link' + post.id,
+              href: linkToPost}, post.title)),
           readMore = $.a({
             key: 'more' + post.id,
             href: linkToPost}, 'Read more')

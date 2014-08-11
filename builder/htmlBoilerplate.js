@@ -12,6 +12,7 @@ module.exports = [
   '<!--[if lte IE 8]>',
   '<script src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/4.0.0/es5-shim.min.js"></script>',
   '<script src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/4.0.0/es5-sham.min.js"></script>',
+  '<script src="' + url + 'scripts/bundles/ie.js"></script>',
   '<![endif]-->',
   '<title>Seoul Tech Society</title>',
   '</head>',

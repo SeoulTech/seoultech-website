@@ -3,17 +3,6 @@ var React = require('react'),
   url = require('../../builder/build.config').url
 
 module.exports = React.createClass({
-  getBannerFallback: function() {
-    if (typeof window !== 'undefined') {
-      var b = /(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i,
-        browser = window.navigator.userAgent.match(b)
-
-      if (browser[1] == 'MSIE' && browser[2] <= 8) {
-        return url + 'source/images/banner.png'
-      }
-    }
-    return url + 'source/images/banner.svg'
-  },
   componentDidMount: function() {
     var _this = this
     window.addEventListener('fetch', function(event) {
@@ -48,7 +37,8 @@ module.exports = React.createClass({
           href: url + 'about/'}, 'About'),
       $.img({
         key: 'image',
-        src: this.getBannerFallback(),
+        id: 'seoultech-logo',
+        src: url + 'source/images/banner.svg',
         alt: 'Seoul Tech Society Banner',
         width: '800px',
         height: '364px',
@@ -64,13 +54,38 @@ module.exports = React.createClass({
       $.label({
         key: 'hamburger',
         htmlFor: 'wrapper--hidden-input',
+        id: 'hamburger',
         className: 'wrapper--hamburger',
         'onclick': ''}, 'HAMBURGER'),
-      $.div({key: 'wrapper--overlay', className: 'wrapper--overlay'}, [
-        $.nav({key: 'wrapper--overlay--nav'}, [
-          $.ul({key: 'wrapper--overlay--ul'}, [
-            $.li({}, $.a({href: url}, 'Home')),
-            $.li({}, $.a({href: url + 'blog/'}, 'Blog')),
-            $.li({}, $.a({href: url + 'events/'}, 'Events')),
-            $.li({}, $.a({href: url + 'about/'}, 'About'))
+      $.div({key: 'wo', className: 'wrapper--overlay', id: 'menu'}, [
+        $.nav({key: 'won', className: 'wrapper--overlay--nav'}, [
+          $.ul({key: 'wou', className: 'wrapper--overlay--ul'}, [
+            $.li({
+              key: 'home',
+              className: 'wrapper--overlay--li'},
+              $.a({
+                key: 'home-a',
+                className: 'wrapper--overlay--link',
+                href: url}, 'Home')),
+            $.li({
+              key: 'blog',
+              className: 'wrapper--overlay--li'},
+              $.a({
+                key: 'blog-a',
+                className: 'wrapper--overlay--link',
+                href: url + 'blog/'}, 'Blog')),
+            $.li({
+              key: 'events',
+              className: 'wrapper--overlay--li'},
+              $.a({
+                key: 'events-a',
+                className: 'wrapper--overlay--link',
+                href: url + 'events/'}, 'Events')),
+            $.li({
+              key: 'about',
+              className: 'wrapper--overlay--li'},
+              $.a({
+                key: 'about-a',
+                className: 'wrapper--overlay--link',
+                href: url + 'about/'}, 'About'))
             ])])])])}})

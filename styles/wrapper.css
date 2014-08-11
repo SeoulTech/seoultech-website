@@ -33,3 +33,90 @@
   max-width: 800px;
 }
 
+
+/*** hamburger ***/
+/* Fix Android */
+body {
+  -webkit-animation: bugfix infinite 1s;
+}
+@-webkit-keyframes bugfix {
+  from {padding:0;}
+  to {padding:0;}
+}
+
+/* Hide checkbox */
+#wrapper--hidden-input {
+   position: absolute;
+   top: -9999px;
+   left: -9999px;
+}
+
+/* Like a link would behave */
+.wrapper--hamburger {
+  cursor: pointer;
+  user-select: none;
+  position: fixed;
+  top: 50px;
+  right: 100px;
+  z-index: 5000;
+}
+
+/* checked */
+#wrapper--hidden-input:checked ~ .wrapper--overlay {
+   visibility: visible;
+}
+
+#wrapper--hidden-input:checked ~ .wrapper--hamburger {
+   color: #fff;
+}
+
+/* Overlay style */
+.wrapper--overlay {
+  visibility: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0,0.8);
+}
+
+/* Menu style */
+.wrapper--overlay nav {
+  text-align: center;
+  position: relative;
+  top: 50%;
+  height: 60%;
+  font-size: 54px;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.wrapper--overlay ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  display: inline-block;
+  height: 100%;
+  position: relative;
+}
+
+.wrapper--overlay ul li {
+  display: block;
+  height: 20%;
+  height: calc(100% / 5);
+  min-height: 54px;
+}
+
+.wrapper--overlay ul li a {
+  font-weight: 300;
+  display: block;
+  color: #fff;
+  -webkit-transition: color 0.2s;
+  transition: color 0.2s;
+}
+
+.wrapper--overlay ul li a:hover,
+.wrapper--overlay ul li a:focus {
+  color: #e3fcb1;
+}

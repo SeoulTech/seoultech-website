@@ -3,7 +3,7 @@ var React = require('react'),
   url = require('../../builder/build.config').url
 
 module.exports = React.createClass({
-  selectBannerConditionally: function() {
+  getBannerFallback: function() {
     if (typeof window !== 'undefined') {
       var b = /(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i,
         browser = window.navigator.userAgent.match(b)
@@ -45,10 +45,10 @@ module.exports = React.createClass({
         $.a({
           key: 'link-to-about',
           className: 'wrapper--nav--link',
-          href: url + 'about/'}, 'About')]),
+          href: url + 'about/'}, 'About'),
       $.img({
         key: 'image',
-        src: this.selectBannerConditionally(),
+        src: this.getBannerFallback(),
         alt: 'Seoul Tech Society Banner',
         width: '800px',
         height: '364px',
@@ -56,4 +56,21 @@ module.exports = React.createClass({
       $.div({
         key: 'content',
         className: 'content',
-        role: 'main'}, content)])}})
+        role: 'main'}, content)]),
+      $.input({
+        key: 'hidden-input',
+        type: 'checkbox',
+        id: 'wrapper--hidden-input'}),
+      $.label({
+        key: 'hamburger',
+        htmlFor: 'wrapper--hidden-input',
+        className: 'wrapper--hamburger',
+        'onclick': ''}, 'HAMBURGER'),
+      $.div({key: 'wrapper--overlay', className: 'wrapper--overlay'}, [
+        $.nav({key: 'wrapper--overlay--nav'}, [
+          $.ul({key: 'wrapper--overlay--ul'}, [
+            $.li({}, $.a({href: url}, 'Home')),
+            $.li({}, $.a({href: url + 'blog/'}, 'Blog')),
+            $.li({}, $.a({href: url + 'events/'}, 'Events')),
+            $.li({}, $.a({href: url + 'about/'}, 'About'))
+            ])])])])}})

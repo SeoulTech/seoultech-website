@@ -1,131 +1,49 @@
-var React = require('react'),
-  parse = require('marked'),
-  fs = require('fs-extra'),
-  fetch = require('http').get,
-  readDir = require('./getFiles'),
-  yaml = require('yamljs'),
-  moment = require('moment'),
+var React = require('react')
+var Router = require('react-router-component')
 
-  getUrl = require('../scripts/utilities/getUrl'),
-  extract = require('../scripts/utilities/extract')
-  homeComponent = require('../scripts/components/homeComponent'),
-  staticComponent = require('../scripts/components/staticComponent'),
-  eventsIndex = require('../scripts/components/eventsIndex'),
-  blogIndex = require('../scripts/components/blogIndex'),
-  blogPost = require('../scripts/components/blogPost'),
+var c = require('./config')
 
-  c = require('./build.config'),
-  url = c.url,
-  reactCDN = c.reactCDN,
-  scriptDir = c.scriptDir,
-  nameOnly = /^.+\/(.+).md|markdown$/,
-  nameFolder = /^.+\/(.+\/.+).md|markdown$/,
-  dateFormat = 'MMM D, YYYY',
+var Wrapper = require(c.componentsDir + 'Wrapper/main')
+var Static = require(c.componentsDir + 'Static/main')
+var Home = require(c.componentsDir + 'Home/main')
+var Events = require(c.componentsDir + 'Events/main')
+var News = require(c.componentsDir + 'News/main')
 
-  staticConfig = {
-    component: staticComponent,
-    getProps: function(file) {return {html: file.description}},
-    render: React.renderComponentToStaticMarkup
-  },
-
-  eventsConfig = {
-    out: '/events/',
-    fetch: fetch.bind(this, getUrl('events')),
-
-    parent: {
-      component: eventsIndex,
-      getProps: function(context) {
-        return {results: context[eventsConfig.out].results
-          .map(function(event) {
-            event.date = moment(event.time).format(dateFormat)
-            return event})}
-      },
-      render: React.renderComponentToString,
-      externalScripts: '<script src="' + reactCDN + '"></script>' +
-        '<script src="' + url + 'scripts/bundles/events.bundle.js"></script>'
-    },
-
-    child: staticConfig,
-
-    makeLoader: function(context) {
-      fs.writeFileSync(scriptDir + 'loaders/loaderEvents.js', [
-        'var React = require(\'react\'),',
-        'Wrapper = require(\'../components/wrapper\'),',
-        'EventsIndex = require(\'../components/eventsIndex\')',
-        'React.renderComponent(Wrapper({content: EventsIndex(' +
-          JSON.stringify(this.parent.getProps(context)) +
-        ')}), document.body)'
-      ].join('\n'))
-    }
-  },
-
-  blogConfig = {
-    out: '/blog/',
-    fetch: readDir.bind(this, 'blog', {
-      getFilename: function(file, date) {
-        return date.replace(/-/g, '/') + '/' + file.match(nameOnly)[1]}
-    }),
-
-    parent: {
-      component: blogIndex,
-      getProps: function(context) {
-        return {results: context[blogConfig.out].results
-          .map(function(post, i, posts) {
-            post.date = moment(post.time).format(dateFormat)
-            post.prevLink = posts[i - 1]?
-              url + 'blog/' + posts[i - 1].id + '.html'
-              : null,
-            post.nextLink = posts[i + 1]?
-              url + 'blog/' + posts[i + 1].id + '.html'
-              : null
-            return post})}
-      },
-      render: React.renderComponentToStaticMarkup
-    },
-
-    child: {
-      component: blogPost,
-      getProps: function(file) {return file},
-      render: React.renderComponentToStaticMarkup
-    }
-  },
-
-  homeConfig = {
-    out: '/',
-    fetch: readDir.bind(this, 'pages', {
-      getFilename: function(file) {return file.match(nameOnly)[1] + '/index'}
-    }),
-
-    parent: {
-      component: homeComponent,
-      getProps: function(context) {
-        var config = require(__dirname + '/index.yml')
-
-        return {
-          config: config,
-          events: extract(config.events, context['/events/'].results),
-          blog: extract(config.blog, context['/blog/'].results),
-          custom: {html: parse(config.custom)}
-        }
-      },
-      render: React.renderComponentToString,
-      externalScripts: '<script src="' + reactCDN + '"></script>' +
-        '<script src="' + url + 'scripts/bundles/home.bundle.js"></script>'
-    },
-
-    child: staticConfig,
-
-    makeLoader: function(context) {
-      fs.writeFileSync(scriptDir + 'loaders/loaderHome.js', [
-        'var React = require(\'react\'),',
-        'Wrapper = require(\'../components/wrapper\'),',
-        'HomeComponent = require(\'../components/homeComponent\')',
-        'React.renderComponent(Wrapper({content: function(props) {',
-        'return HomeComponent(props || ' +
-          JSON.stringify(this.parent.getProps(context)) +
-        ')}}), document.body)'
-      ].join('\n'))
-    }
+var Routes = React.createClass({
+  render: function() {
+    return (
+      React.DOM.div(null, [
+        Router.Locations({path: this.props.path},
+          Router.Location({
+            path: '/',
+            handler: Home,
+            results: this.props.data}),
+          Router.Location({
+            path: '/events',
+            handler: Events,
+            results: this.props.data}),
+          Router.Location({
+            path: '/events/:y/:m/:d/:id',
+            handler: Static,
+            __html: this.props.description}),
+          Router.Location({
+            path: '/news',
+            handler: News,
+            results: this.props.data}),
+          Router.Location({
+            path: '/news/:y/:m/:d/:id',
+            handler: Static,
+            __html: this.props.description}),
+          Router.Location({
+            path: '/about',
+            handler: Static,
+            __html: this.props.description})
+        )
+      ])
+    )
   }
+})
 
-module.exports = [eventsConfig, blogConfig, homeConfig]
+module.exports = function(c) {
+  return Wrapper({content: Routes(c)})
+}

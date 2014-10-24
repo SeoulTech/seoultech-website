@@ -1,12 +1,22 @@
 @import url('./normalize.css');
-@import url('./wrapper.css');
 @import url('./content.css');
-@import url('./blog.css');
-@import url('./events.css');
 @import url('./home.css');
+
+@import url('../components/Events/events.css');
+@import url('../components/Event/event.css');
+@import url('../components/News/news.css');
+@import url('../components/Wrapper/wrapper.css');
+@import url('../components/Menu/menu.css');
 
 *, *:before, *:after {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
  }
+
+.placeholder {
+  width: 100%;
+  height: 10em;
+  background-color: crimson;
+  border: 1px solid #fff;
+}

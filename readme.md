@@ -6,34 +6,32 @@ Seoul Tech Website beta
 
 ##Edit
 Markdown sources and images are in `/source/`:
-+ `pages` is for top-level pages,
-+ `blog` is for blog entries, grouped by year
++ `pages` is for top-level pages
++ `news`
++ `events`
+...
 
-To reference an image in markdown file, write `{{images}}/image-name.ext`. Builder will replace `{{images}}` with the actual path. Important: `images` structure must match markdown source directories (builder will look in `images/blog/2013/image-name.ext` for an image referenced in markdown file that is located in `blog/2013`)
+To reference an image in markdown file, write `{{images}}/image-name.ext`. Builder will replace `{{images}}` with the actual path. Important: `images` structure must match markdown source directories (builder will look in `images/news/2013/image-name.ext` for an image referenced in markdown file that is located in `news/2013`)
 
-Use `{{fold}}` in the markdown source to create post previews for `blog` view.
-
-Homepage configuration file is `builder/index.yml`.
+Use `{{fold}}` in the markdown source to create post previews for `news` view.
 
 ##Build
 To build the website run `node builder/build.js`.
-It will fetch data from meetup.com and convert local markdown files to HTML pages. Also, it will bundle up required javascripts.
+It will convert local markdown files to HTML pages.
 
 ##Internals
-Any HTTP server could be used to serve the site (a collection of directories containing HTML files). Some pages also include `bundle.js` that contains javascript for dynamic page behavior and ajax. Bundle is built by [Webpack](https://github.com/webpack/webpack)
+Any HTTP server could be used to serve the site (a collection of directories containing HTML files).
 
 ###Builder
-The purpose of builder is to fetch data from meetup.com and convert markdown sources to HTML. Build modules are:
+The purpose of builder is to convert markdown sources to HTML. Build modules are:
 + `build`: build controller.
 + `getFiles`: read and process markdown sources.
 + `routes`: configuration for site routes.
-+ `build.config`: global variables.
-+ `htmlBoilerplate`: HTML skeleton used to build dynamic pages.
-+ `webpack.config`: config front-end bundles.
++ `config`: global variables.
++ `siteTemplate`: HTML skeleton used to build pages.
 
-###Scripts
-Directories under `scripts`:
-+ `bundles`: packaged front-end scripts.
-+ `components`: [React](http://facebook.github.io/react/docs/) components that compose UI.
-+ `loaders`: files with pre-fetched data used to create bundles.
-+ `utilities`: a collection of helper functions (shared with builder)
+###Components
+UI is defined as components, completely decoupled from the backend.
+
+###Testing
+[Jest](http://facebook.github.io/jest/) is used for testing. Tests must be located in `__tests__` directories. Run `npm test`.

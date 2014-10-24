@@ -1,0 +1,46 @@
+/**************************************
+    #MENU
+***************************************/
+
+.menu {
+  display: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: #fff;
+  color: #000;
+  z-index: 100;
+}
+
+  .menu-header {text-align: center;}
+  .menu-header > * {display: inline;}
+
+  .menu-nav {
+    text-align: center;
+    height: 60%;
+    font-size: 54px;
+  }
+
+    .menu-nav-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 auto;
+      display: inline-block;
+      height: 100%;
+      position: relative;
+    }
+
+      .menu-nav-list-el {
+        display: block;
+        height: 20%;
+        height: calc(100% / 5);
+        min-height: 54px;
+      }
+
+  .menu-footer {
+    text-align: center;
+  }
+    .menu-footer-list {margin: 0;}
+      .menu-footer-list-el {display: inline;}

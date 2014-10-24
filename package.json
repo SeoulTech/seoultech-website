@@ -1,20 +1,28 @@
 {
   "name": "STS",
-  "version": "0.0.1",
-  "description": "Seoul Tech Homepage",
+  "version": "0.3.0",
+  "description": "SeoulTech Homepage",
   "private": true,
   "dependencies": {
     "fs-extra": "^0.10.0",
     "lodash": "~2.4.1",
     "marked": "latest",
-    "react": "latest"
+    "react": "latest",
+    "highland": "latest"
   },
   "devDependencies": {
-    "concat-stream": "^1.4.6",
-    "es6-loader": "latest",
     "file": "^0.2.2",
-    "html-loader": "^0.2.2",
-    "moment": "^2.8.1",
-    "yamljs": "^0.1.5"
+    "jest-cli": "^0.1.18"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "unmockedModulePathPatterns": [
+      "react",
+      "react/addons",
+      "lodash",
+      "scripts/utilities/util"
+    ]
   }
 }

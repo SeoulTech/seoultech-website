@@ -1,52 +1,134 @@
-var fs = require('fs-extra'),
-  readable = require('stream').Readable,
-  buildConfig = require('./build.config'),
-  inputDir = buildConfig.inputDir,
-  siteUrl = buildConfig.url,
-  siteSource = buildConfig.siteSource,
-  toMarkdown = require('marked'),
-  walkSync = require('file').walkSync,
-  get = require('../scripts/utilities/util').get,
-  _ = require('lodash')
+var fs = require('fs-extra')
+var stream = require('stream').Readable()
+var c = require('./config')
+var siteUrl = c.home
+var toMarkdown = require('marked')
+var get = require('../scripts/util').get
+var _ = require('lodash')
+var makeIndex = require('./makeIndex')
 
-module.exports = function(dir, config, callback) {
-  var stream = readable(),
-    isMarkdown = RegExp.prototype.test.bind(/^.+\.(md|markdown)$/),
-    index = {}
+var secondParam = /\/(\w+)/
+var imagePlaceholder = /\{\{images\}\}/g
+var dateVal = /date:\s*(.*)/
+var titleVal = /title:\s*(.*)/
+var posterVal = /poster:\s*(.*)/
+var filename = /^.+\/(.+).md|markdown$/
+var isMarkdown = /^.+\.(md|markdown)$/
 
-  walkSync(inputDir + dir + '/', function(dir, dirs, files) {
-    index[dir] = files.filter(isMarkdown)
-      .map(function(file) {return dir.replace(/\/$/, '') + '/' + file})})
+var samePath = _.curry(function(y, z) {return y == z[0]})
 
+module.exports = function(dir) {
   stream.push(JSON.stringify({
-    results: _(index).keys()
-      .map(function(dir) {return index[dir]}).flatten()
-      .map(function(file, i, files) {
-        var trimSpace = function(s) {return s? s.replace(/^\s/, '') : ''},
-          getExcerpt = function(s) {return s? s.split('{{fold}}')[0] : ''},
-          removeFold = function(s) {return s.replace('{{fold}}', '')},
-          getPathToImages = function(file) {
-            return siteUrl + file.split('/').slice(0, -1).join('/')
-              .replace('source', 'source/images')},
-
-          content = fs.readFileSync(file, 'utf-8')
-            .replace(/\{\{images\}\}/g, getPathToImages(file)),
-          hasMetadata = /^---/.test(content),
-
-          date = trimSpace(get(content.match(/date:(.*)/), 1)),
-          title = '#' + trimSpace(get(content.match(/title:(.*)/), 1)),
-          tags = get(content.match(/tags:(.*)/), 1),
-          article = content.split('---')[2]
-
-        return {
-          id: config.getFilename(file, date),
-          title: title.slice(1),
-          time: date,
-          // tags: tags? tags.split(',').map(trimSpace) : [],
-          excerpt: toMarkdown(getExcerpt(article)),
-          description: toMarkdown(removeFold(hasMetadata? article : content))}})
-      .sortBy('time').value()}))
+    results: handleDir(
+      makeIndex(c.inputDir + dir)
+        .map(normalizeDir)
+        .map(function(x, i) {return (i == 0)? x : mergeDuplicateRoutes(x)})
+      )
+  }))
 
   stream.push(null)
-  callback(stream)
+
+  return stream
+}
+
+
+function extract(x, y) {return get(x.match(y), 1)}
+
+function changeDashesToSlashes(x) {return x.replace(/-/g, '/')}
+
+function getFileDir(x) {return x.split('/').slice(0, -1).join('/')}
+
+function getPathToImages(x) {
+  return siteUrl + getFileDir(x).replace('source', 'source/images')
+}
+
+function splitOnFold(x) {return x? x.split('{{fold}}') : ''}
+
+function getPath(path, date) {
+  return [
+    '/',
+    extract(path, secondParam),
+    changeDashesToSlashes(date),
+    '/',
+    extract(path, filename)
+  ].join('')
+}
+
+function parseFile(file) {
+  var content = fs.readFileSync(file, 'utf-8')
+    .replace(imagePlaceholder, getPathToImages(file))
+
+  var hasMetadata = /^---/.test(content)
+
+  var date = extract(content, dateVal) || ''
+  var title = extract(content, titleVal)
+  var poster = extract(content, posterVal)
+  var article = hasMetadata? content.split('---')[2] : content
+
+  return {
+    id: changeDashesToSlashes(date) + '/' + extract(file, filename),
+    path: getPath(file, date? '/' + date : date),
+    filename: getPath(file, date? '/' + date : date),
+    title: title,
+    time: date,
+    poster: poster,
+    excerpt: toMarkdown(splitOnFold(article)[0] || ''),
+    description: toMarkdown(splitOnFold(article).join(''))
+  }
+}
+
+function normalizeRouteName(x) {
+  return '/'.concat(extract(x, secondParam) || '')
+}
+
+function isFile(x) {return filename.test(x)}
+
+function mergeDirs(y, z) {return [y[0], y[1].concat(z[1])]}
+
+function handlePages(x) {
+  x.path = x.id
+  x.filename = x.id + '/index'
+  return x
+}
+
+function addRouteMetadata(x) {
+  return [
+    {
+      path: x[0],
+      filename: (x[0] + '/index').replace(/\/\//g, '/'),
+      data: x[1]
+    },
+    handleDir(x[1])
+  ]
+}
+
+function handleDir(dir) {
+  return (
+    (dir[0] == '/pages')? _.map(dir[1], handlePages)
+    :
+    _.isString(dir[0])? addRouteMetadata(dir)
+    :
+    _.isArray(dir[0])? _.map(dir, handleDir)
+    :
+    dir
+  )
+}
+
+function normalizeDir(x) {
+  return (
+    _.isArray(x)? _.map(x, normalizeDir)
+    :
+    isFile(x)? parseFile(x)
+    :
+    normalizeRouteName(x)
+  )
+}
+
+function mergeDuplicateRoutes(x) {
+  return _(x)
+// remove duplicate route names
+    .map(function(y) {return y[0]}).uniq()
+// merge duplicate routes data
+    .map(function(y) {return x.filter(samePath(y)).reduce(mergeDirs)})
+    .value()
 }

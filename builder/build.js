@@ -1,96 +1,87 @@
-var fs = require('fs-extra'),
-  webpack = require('webpack'),
-  webpackConfig = require('./webpack.config'),
-  async = require('async'),
-  _ = require('lodash'),
-  concat = require('concat-stream'),
-  htmlBoilerplate = require('./htmlBoilerplate'),
-  routes = require('./routes'),
+var fs = require('fs-extra')
+var _ = require('lodash')
+var hl = require('highland')
+var React = require('react')
 
-  wrapper = require('../scripts/components/wrapper'),
-  c = require('./build.config'),
-  outputDir = c.outputDir,
+var readDir = require('./getFiles')
+var Routes = require('./routes')
 
-  placeholder = '<-- {{content}} !-->',
-  resetColor = '\x1b[39m',
-  blueColor = '\x1b[34m',
-  greenColor = '\x1b[32m',
-  redColor = '\x1b[31m',
+var c = require('./config')
 
-  handleError = function(error) {
-    console.error(error.stack)
-    console.log(redColor + 'Conversion failed', resetColor)
-  },
+var contentPlaceholder = '<!--{{content}}-->'
+var urlPlaceholder = /\{\{home\}\}/g
+var resetColor = '\x1b[39m'
+var blueColor = '\x1b[34m'
+var greenColor = '\x1b[32m'
+var redColor = '\x1b[31m'
+var siteTemplate = fs.readFileSync('./builder/siteTemplate.html', 'utf-8')
+    .replace(urlPlaceholder, c.home)
 
-  writeFile = function(path, content) {
-    fs.mkdirsSync(_.initial(path.split('/')).join('/'))
-    fs.writeFileSync(path, content)
-  },
+var render = _.curry(function(c) {
+  return {
+    name: c.filename,
+    data: hl(function(push) {push(null,
+      siteTemplate.replace(
+        contentPlaceholder,
+        React.renderComponentToStaticMarkup(Routes(c))
+      )
+    )})
+  }
+})
 
-  writeHTML = function(dir, file, config, context) {
-    writeFile(dir + file + '.html', htmlBoilerplate.replace(placeholder,
-      config.render(wrapper({
-        content: config.component(config.getProps(context))})) +
-      (config.externalScripts || '')))
-  },
+var pipe = _.curry(function(pipeline, x) {return x.pipe(pipeline())})
 
-  getData = function(route, yield) {
-    var data,
-      writer = concat(function(buffer) {data = buffer.toString()})
+returnArray(readDir('/'))
+  .map(pipe(parseJSON))
+  .map(function(s) {return s.map(makeComponents)})
+  .reduce(concat)
+  .errors(handleError)
+  .toArray(function(xs) {
+    xs[0].forEach(function(x) {done(x.name)})
+    console.log('Done')
+  })
 
-    route.fetch(function(res) {res.pipe(writer)})
-    writer.on('finish', function() {
-      yield(null, _.omit(JSON.parse(data), 'meta'))})
-  },
 
-  makeParent = function(route, index, yield) {
-    writeHTML(outputDir + route.out, 'index', route.parent, index)
-    yield(null, route, index)
-  },
 
-  makeChildren = function(route, index, yield) {
-    index[route.out].results.forEach(function(file) {
-      writeHTML(outputDir + route.out, file.id, route.child, file)})
-    yield(null, route, index)
-  },
+// helper functions
 
-  makeLoader = function(route, index, yield) {
-    if (route.makeLoader) route.makeLoader(index)
-    yield(null, route)
-  },
-
-  makeBundle = function(route, yield) {
-    webpack(webpackConfig, function(error) {
-      if (error) handleError(error)
-      else yield(null, route)
-    })
-  },
-
-  done = function(route) {
-    console.log(
-      'route:', blueColor + route.out,
-      greenColor + 'OK', resetColor)
+function done(route) {
+    console.log(blueColor + route, greenColor + 'OK', resetColor)
   }
 
-async.parallel(_.map(routes, function(route) {
-  return _.partial(getData, route)
-}), function(err, data) {
-  var index = _.reduceRight(data.concat({}), function(result, value, i) {
-    return Object.defineProperty(result, routes[i].out, {
-      enumerable: true,
-      value: value
-    })
-  })
+function handleError(error, push) {
+  console.log(redColor + 'Conversion failed', resetColor)
+  push(error)
+}
 
-  _.forEach(routes, function(route) {
-    fs.removeSync(outputDir + route.out)
 
-    async.seq(
-      _.partial(makeParent, route, index),
-      makeChildren,
-      makeLoader,
-      makeBundle,
-      done
-    )()
-  })
-})
+function rednerComponents(c) {
+  return _.isArray(c)? c.map(rednerComponents) : render(c)
+}
+
+function writeFile(x) {
+  fs.mkdirsSync(c.outputDir + x.name.split('/').slice(0, -1).join('/'))
+  x.data.pipe(fs.createWriteStream(c.outputDir + x.name + '.html'))
+  return x
+}
+
+function concat(x, y) {return x.concat(y)}
+
+function makeComponents(data) {
+  return _(data.results)
+    .map(rednerComponents)
+    .flatten()
+    .map(writeFile)
+    .value()
+}
+
+function parseJSON() {
+  return hl.pipeline(
+    hl.map(function(x) {return x.toString()}),
+    hl.reduce1(concat),
+    hl.map(JSON.parse)
+  )
+}
+
+function returnArray(x) {return [].slice.call(arguments)}
+

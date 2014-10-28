@@ -1,6 +1,7 @@
 ---
 title: Popular science: eHealth trends w/ Dr. Ogan Gurel, March 16
 date: 2014-03-09
+poster: {{images}}/ehealth-poster.jpeg
 ---
 
 RSVP <http://www.meetup.com/seoul-tech-society/events/169900682/>

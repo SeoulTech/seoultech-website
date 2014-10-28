@@ -1,11 +1,10 @@
 ---
 title: Seoul Hack'n'Te­ll night #2Feb 19
 date: 2014-02-20
+poster: {{images}}/hack-tell-2.jpg
 ---
 
 RSVP <http://www.meetup.com/seoul-tech-society/events/165322992/>
-
-![event poster]({{images}}/hack-tell-2.jpg)
 
 {{fold}}
 

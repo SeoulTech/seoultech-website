@@ -1,11 +1,8 @@
 ---
 title: Promotion: TechTalk & Networking vol.2 @Platoon, Feb 19
 date: 2014-02-17
+poster: {{images}}/techtalk-networking-poster.png
 ---
-
-![event poster]({{images}}/techtalk-networking-poster.png)
-
-{{fold}}
 
 **Agenda**
 

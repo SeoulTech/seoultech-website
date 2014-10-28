@@ -1,8 +1,9 @@
 var React = require('react/addons')
 var $ = React.DOM
 var _ = require('lodash')
-var url = require('../../builder/config').url
+var url = require('../../../builder/config').url
 var List = require('../List/main')
+var Social = require('../Social/main')
 
 var Top = React.createClass({
   displayName: 'Top',
@@ -24,30 +25,8 @@ var Nav = React.createClass({
               $.a({href: url}, 'home'),
               $.a({href: url + 'events/'}, 'events'),
               $.a({href: url + 'news/'}, 'news'),
-              $.a({href: url + 'projects/'}, 'projects'),
+              // $.a({href: url + 'projects/'}, 'projects'),
               $.a({href: url + 'about/'}, 'about')
-            ]
-          }
-        })
-      )
-    )
-  }
-})
-
-var Social = React.createClass({
-  displayName: 'Social',
-  render: function() {
-    return (
-      $.footer(
-        this.props,
-        List({
-          parent: this.props,
-          children: {
-            data: [
-              $.a({href: 'instagram.com'}, 'Instagram'),
-              $.a({href: 'twitter.com'}, 'Twitter'),
-              $.a({href: 'facebook.com'}, 'Facebook'),
-              $.a({href: 'meetup.com'}, 'Meetup')
             ]
           }
         })

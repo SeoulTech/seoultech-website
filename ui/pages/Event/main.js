@@ -22,10 +22,10 @@ module.exports = React.createClass({
     var href = event.path.replace('/events/', './') + '.html'
 
     return $.div({className: 'event'}, [
-      Poster({className: 'event-image', src: this.props.poster}),
+      (title && href) && $.a({className: 'event-title', href: href}, title),
       time && $.label({className: 'event-date'}, time),
-      venue && $.label({className: 'event-venue'}, venue),
-      (title && href) && $.a({className: 'event-title', href: href}, title)
+      // venue && $.label({className: 'event-venue'}, venue),
+      Poster({className: 'event-image', src: this.props.poster})
     ])
   }
 })

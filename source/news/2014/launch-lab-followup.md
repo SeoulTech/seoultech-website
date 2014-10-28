@@ -11,9 +11,10 @@ Brief presentations were followed by inspirational discussions that
 varied between highly technical to philosophical implications about the
 ideas presented.
 
-![image followup-1]({{images}}/launchlab-followup-1.jpg)
 
 {{fold}}
+
+![image followup-1]({{images}}/launchlab-followup-1.jpg)
 
 Mobile malware analysis plugin
 

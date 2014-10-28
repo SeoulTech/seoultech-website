@@ -1,7 +1,8 @@
 var React = require('react')
 var $ = React.DOM
-var url = require('../../builder/config').home
+var url = require('../../../builder/config').home
 var Menu = require('../Menu/main')
+var Social = require('../Social/main')
 
 module.exports = React.createClass({
   render: function() {
@@ -35,7 +36,8 @@ module.exports = React.createClass({
         $.div({
           key: 'content',
           className: 'content',
-          role: 'main'}, content)
+          role: 'main'}, content),
+        Social({className: 'menu-footer'})
       ])
     )
 }})

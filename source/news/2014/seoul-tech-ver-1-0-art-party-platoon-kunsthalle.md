@@ -1,11 +1,10 @@
 ---
 title: SEOUL TECH VER 1.0 + ART PARTY 파티 @Platoon Kunsthalle
 date: 2014-03-15
+poster: {{images}}/birthday-party-poster.jpg
 ---
 
 RSVP <http://www.meetup.com/seoul-tech-society/events/169162582/>
-
-![event poster]({{images}}/birthday-party-poster.jpg)
 
 {{fold}}
 

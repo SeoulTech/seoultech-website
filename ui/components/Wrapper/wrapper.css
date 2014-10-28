@@ -5,27 +5,7 @@
   width: 100%;
   max-width: 800px;
 }
-/*
-.wrapper--nav {
-  height: 3em;
-  line-height: 4em;
-  text-align: center;
-  vertical-align: middle;
-}
 
-.wrapper--nav--link {
-  font-size: 1.2em;
-  margin: 0 0.4em;
-  text-decoration: none;
-  color: #000;
-  font-family: Futura, 'Questrial', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-
-.wrapper--nav--link:hover {
-  color: #666;
-}
-*/
 .wrapper-logo {
   width: 100%;
   height: auto;
@@ -34,6 +14,7 @@
 
 
 /*** hamburger ***/
+
 /* Fix Android */
 body {
   -webkit-animation: bugfix infinite 1s;
@@ -54,10 +35,10 @@ body {
 .wrapper-hamburger {
   cursor: pointer;
   user-select: none;
-  position: fixed;
+  position: absolute;
   top: 2%;
   right: 2%;
-  font-size: 3em;
+  font-size: 2em;
   z-index: 5000;
 
   -moz-user-select: none;

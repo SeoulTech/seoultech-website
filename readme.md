@@ -31,7 +31,7 @@ The purpose of builder is to convert markdown sources to HTML. Build modules are
 + `siteTemplate`: HTML skeleton used to build pages.
 
 ###Components
-UI is defined as components, completely decoupled from the backend.
+`UI` folder holds components and pages, completely decoupled from the backend.
 
 ###Testing
 [Jest](http://facebook.github.io/jest/) is used for testing. Tests must be located in `__tests__` directories. Run `npm test`.

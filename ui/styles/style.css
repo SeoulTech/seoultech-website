@@ -2,11 +2,15 @@
 @import url('./content.css');
 @import url('./home.css');
 
-@import url('../components/Events/events.css');
-@import url('../components/Event/event.css');
-@import url('../components/News/news.css');
+@import url('../pages/Events/events.css');
+@import url('../pages/Event/event.css');
+@import url('../pages/News/news.css');
+
 @import url('../components/Wrapper/wrapper.css');
 @import url('../components/Menu/menu.css');
+@import url('../components/Timeline/style.css');
+@import url('../components/Timeline/Entry/style.css');
+@import url('../components/Timeline/Entry/Poster/style.css');
 
 *, *:before, *:after {
   box-sizing: border-box;

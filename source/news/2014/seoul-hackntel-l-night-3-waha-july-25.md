@@ -1,10 +1,8 @@
 ---
 title: Seoul Hack'n'Tel­l night #3 @WAHA, July 25
 date: 2014-07-11
+poster: {{images}}/hack-tell-3.jpeg
 ---
-
-![event poster]({{images}}/hack-tell-3.jpeg)
-
 
 If you’ve ever visited [Hacker News](http://news.ycombinator.com/),
 you’ve almost certainly seen the “Show HN” or “Ask HN” posts. Well, it’s

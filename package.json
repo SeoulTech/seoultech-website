@@ -1,23 +1,25 @@
 {
   "name": "STS",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "SeoulTech Homepage",
   "private": true,
   "dependencies": {
     "fs-extra": "^0.10.0",
+    "file": "^0.2.2",
     "lodash": "~2.4.1",
     "marked": "latest",
     "react": "latest",
     "highland": "latest"
   },
   "devDependencies": {
-    "file": "^0.2.2",
-    "jest-cli": "^0.1.18"
+    "jest-cli": "^0.1.18",
+    "react-tools": "^0.11.2"
   },
   "scripts": {
     "test": "jest"
   },
   "jest": {
+    "scriptPreprocessor": "builder/jsxPreprocessor",
     "unmockedModulePathPatterns": [
       "react",
       "react/addons",

@@ -1,3 +1,5 @@
+require('node-jsx').install({extension: '.jsx', harmony: true})
+
 var React = require('react')
 var Router = require('react-router-component')
 
@@ -5,9 +7,10 @@ var c = require('./config')
 
 var Wrapper = require(c.componentsDir + 'Wrapper/main')
 var Static = require(c.componentsDir + 'Static/main')
-var Home = require(c.componentsDir + 'Home/main')
-var Events = require(c.componentsDir + 'Events/main')
-var News = require(c.componentsDir + 'News/main')
+var Home = require(c.pagesDir + 'Home/main')
+var Events = require(c.pagesDir + 'Events/main')
+var News = require(c.pagesDir + 'News/main')
+var About = require(c.pagesDir + 'About/main')
 
 var Routes = React.createClass({
   render: function() {
@@ -36,7 +39,7 @@ var Routes = React.createClass({
             __html: this.props.description}),
           Router.Location({
             path: '/about',
-            handler: Static,
+            handler: About,
             __html: this.props.description})
         )
       ])

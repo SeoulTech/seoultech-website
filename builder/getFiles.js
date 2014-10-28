@@ -3,7 +3,7 @@ var stream = require('stream').Readable()
 var c = require('./config')
 var siteUrl = c.home
 var toMarkdown = require('marked')
-var get = require('../scripts/util').get
+var get = require(c.scriptDir + 'util').get
 var _ = require('lodash')
 var makeIndex = require('./makeIndex')
 

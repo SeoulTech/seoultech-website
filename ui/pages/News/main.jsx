@@ -13,7 +13,7 @@ module.exports = React.createClass({
 function getData(props) {
   return {
     title: null,
-    entries: _.reverse(props.results).map(makeLinkToPost)
+    entries: _.reverse(_.sortBy(props.results, 'time')).map(makeLinkToPost)
   }
 }
 

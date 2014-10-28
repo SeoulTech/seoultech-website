@@ -37,8 +37,8 @@ module.exports = React.createClass({
   }
 })
 
-function getData(props, title, length) {
-  var entries = _.reverse(props)
+function getData(results, title, length) {
+  var entries = _.reverse(_.sortBy(results, 'time'))
     .filter(byDate(title))
     .map(makeLinkToPost)
 

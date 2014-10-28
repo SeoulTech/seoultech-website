@@ -8,7 +8,8 @@ var util = {
   },
   reverse: function(arr) {
     return arr.slice(0).reverse()
-  }
+  },
+  sortBy: _.sortBy
 }
 
 module.exports = util

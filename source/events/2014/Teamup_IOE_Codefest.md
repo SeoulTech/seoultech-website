@@ -4,8 +4,10 @@ date: 2014-10-14
 ---
 Hey techies, let's make teams and participate in the hackathon on the Internet of Everything (IoE): play with sensors, data, APIs.
 
+
 This one is run by CISCO to hack on social and environmental problems this fall in Sondo.
 
+{{fold}}
 The plan is to have ideation session: get together, bringing your ideas and cross-cultural experience and throw them on a table in front of other members.
 
 Agenda

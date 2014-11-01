@@ -7,6 +7,7 @@ var readDir = require('./getFiles')
 var Routes = require('./routes')
 
 var c = require('./config')
+var url = c.url
 
 var contentPlaceholder = '<!--{{content}}-->'
 var urlPlaceholder = /\{\{home\}\}/g
@@ -23,7 +24,7 @@ var render = _.curry(function(c) {
     data: hl(function(push) {push(null,
       siteTemplate.replace(
         contentPlaceholder,
-        React.renderComponentToStaticMarkup(Routes(c))
+        React.renderComponentToStaticMarkup(Routes(c, url))
       )
     )})
   }

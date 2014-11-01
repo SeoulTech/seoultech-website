@@ -19,6 +19,13 @@ Use `{{fold}}` in the markdown source to create post previews for `news` view.
 To build the website run `node builder/build.js`.
 It will convert local markdown files to HTML pages.
 
+##Develop
+To start the development server run `node builder/dev.js`.
+Then, open a browser at `localhost:8080`. Any changes in markdown sources or css will be reloaded automatically.
+
+##Test
+[Jest](http://facebook.github.io/jest/) is used for testing. Tests must be located in `__tests__` directories. Run `npm test`.
+
 ##Internals
 Any HTTP server could be used to serve the site (a collection of directories containing HTML files).
 
@@ -33,5 +40,3 @@ The purpose of builder is to convert markdown sources to HTML. Build modules are
 ###Components
 `UI` folder holds components and pages, completely decoupled from the backend.
 
-###Testing
-[Jest](http://facebook.github.io/jest/) is used for testing. Tests must be located in `__tests__` directories. Run `npm test`.

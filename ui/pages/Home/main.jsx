@@ -53,8 +53,8 @@ function byDate(title) {
   return function(x) {
     return (
       title == headers.upcoming?
-        Date.parse(x.time) > Date.now()
-      : Date.parse(x.time) <= Date.now()
+        x.time > Date.now()
+      : x.time <= Date.now()
     )
   }
 }

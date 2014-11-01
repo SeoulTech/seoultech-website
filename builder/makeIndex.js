@@ -1,8 +1,8 @@
-// default index structure: [top path, [contents]]
-var index = [['/', []]]
 var isMarkdown = RegExp.prototype.test.bind(/^.+\.(md|markdown)$/)
 
 module.exports = function(rootDir) {
+// default index structure: [top path, [contents]]
+  var index = [[rootDir, []]]
   require('file').walkSync(rootDir, function(dir, dirs, files) {
     var markdownOnly = files.filter(isMarkdown)
 

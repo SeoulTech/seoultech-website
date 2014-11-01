@@ -4,6 +4,7 @@ var React = require('react')
 var Router = require('react-router-component')
 
 var c = require('./config')
+var rootUrl = c.home
 
 var Wrapper = require(c.componentsDir + 'Wrapper/main')
 var Static = require(c.componentsDir + 'Static/main')
@@ -47,6 +48,6 @@ var Routes = React.createClass({
   }
 })
 
-module.exports = function(c) {
-  return Wrapper({content: Routes(c)})
+module.exports = function(c, url) {
+  return Wrapper({url: url, rootUrl: rootUrl, content: Routes(c)})
 }

@@ -6,7 +6,7 @@ poster: {{images}}/techtalk-networking-poster.png
 
 **Agenda**
 
-7pm - 8pm   : get beer (FIFO) and mingle w/ techies
+7pm — 8pm   : get beer (FIFO) and mingle w/ techies
 
 8pm - 11pm : start of DrinkEntrepreneurs social networking event w/
 college startup societies, Seoul Tech Society and Israeli VCs.

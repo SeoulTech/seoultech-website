@@ -4,16 +4,20 @@
   "description": "SeoulTech Homepage",
   "private": true,
   "dependencies": {
-    "fs-extra": "^0.10.0",
     "file": "^0.2.2",
+    "fs-extra": "^0.10.0",
+    "highland": "latest",
     "lodash": "~2.4.1",
     "marked": "latest",
-    "react": "latest",
-    "highland": "latest"
+    "react": "^0.11.2",
+    "react-router-component": "^0.22.0"
   },
   "devDependencies": {
+    "express": "^4.10.1",
+    "fsmonitor": "^0.2.4",
     "jest-cli": "^0.1.18",
-    "react-tools": "^0.11.2"
+    "react-tools": "^0.11.2",
+    "socket.io": "^1.2.0"
   },
   "scripts": {
     "test": "jest"

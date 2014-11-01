@@ -1,6 +1,5 @@
 var React = require('react')
 var $ = React.DOM
-var url = require('../../../builder/config').home
 var Menu = require('../Menu/main')
 var Social = require('../Social/main')
 
@@ -24,12 +23,12 @@ module.exports = React.createClass({
           htmlFor: 'wrapper-hidden-input',
           id: 'hamburger',
           'onclick': ''}, 'E'),
-        Menu(),
+        Menu({url: this.props.url}),
         $.img({
           key: 'image',
           className: 'wrapper-logo',
           id: 'seoultech-logo',
-          src: url + 'source/images/banner.svg',
+          src: this.props.rootUrl + 'source/images/banner.svg',
           alt: 'Seoul Tech Society Banner',
           width: '800px',
           height: '364px'}),

@@ -23,6 +23,7 @@ function getData(props, title) {
   var entries = _.reverse(_.sortBy(props.results, 'time'))
     .filter(byDate(title))
     .map(makeLinkToPost)
+
   return {
     title: entries.length > 0? title : null,
     entries: entries
@@ -33,8 +34,8 @@ function byDate(title) {
   return function(x) {
     return (
       title == headers.upcoming?
-        Date.parse(x.time) > Date.now()
-      : Date.parse(x.time) <= Date.now()
+        x.time > Date.now()
+      : x.time <= Date.now()
     )
   }
 }

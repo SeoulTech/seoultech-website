@@ -1,7 +1,6 @@
 var React = require('react/addons')
 var $ = React.DOM
 var _ = require('lodash')
-var url = require('../../../builder/config').url
 var List = require('../List/main')
 var Social = require('../Social/main')
 
@@ -22,11 +21,11 @@ var Nav = React.createClass({
           parent: this.props,
           children: {
             data: [
-              $.a({href: url}, 'home'),
-              $.a({href: url + 'events/'}, 'events'),
-              $.a({href: url + 'news/'}, 'news'),
-              // $.a({href: url + 'projects/'}, 'projects'),
-              $.a({href: url + 'about/'}, 'about')
+              $.a({href: this.props.url}, 'home'),
+              $.a({href: this.props.url + 'events/'}, 'events'),
+              $.a({href: this.props.url + 'news/'}, 'news'),
+              // $.a({href: this.props.url + 'projects/'}, 'projects'),
+              $.a({href: this.props.url + 'about/'}, 'about')
             ]
           }
         })
@@ -41,7 +40,7 @@ module.exports = React.createClass({
     return (
       $.div({className: 'menu'}, [
         Top({key: 1, className: 'menu-header'}),
-        Nav({key: 2, className: 'menu-nav'}),
+        Nav({key: 2, className: 'menu-nav', url: this.props.url}),
         Social({key: 3, className: 'menu-footer'})
       ])
     )

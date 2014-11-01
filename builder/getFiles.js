@@ -1,20 +1,12 @@
-var fs = require('fs-extra')
 var stream = require('stream').Readable()
 var c = require('./config')
-var siteUrl = c.home
-var toMarkdown = require('marked')
 var get = require(c.scriptDir + 'util').get
 var _ = require('lodash')
 var makeIndex = require('./makeIndex')
+var parseFile = require('./parseFile')
 
-var secondParam = /\/(\w+)/
-var imagePlaceholder = /\{\{images\}\}/g
-var dateVal = /date:\s*(.*)/
-var titleVal = /title:\s*(.*)/
-var posterVal = /poster:\s*(.*)/
 var filename = /^.+\/(.+).md|markdown$/
-var isMarkdown = /^.+\.(md|markdown)$/
-
+var secondParam = /\/(\w+)/
 var samePath = _.curry(function(y, z) {return y == z[0]})
 
 module.exports = function(dir) {
@@ -34,56 +26,13 @@ module.exports = function(dir) {
 
 function extract(x, y) {return get(x.match(y), 1)}
 
-function changeDashesToSlashes(x) {return x.replace(/-/g, '/')}
+function isFile(x) {return filename.test(x)}
 
-function getFileDir(x) {return x.split('/').slice(0, -1).join('/')}
-
-function getPathToImages(x) {
-  return siteUrl + getFileDir(x).replace('source', 'source/images')
-}
-
-function splitOnFold(x) {return x? x.split('{{fold}}') : ''}
-
-function getPath(path, date) {
-  return [
-    '/',
-    extract(path, secondParam),
-    changeDashesToSlashes(date),
-    '/',
-    extract(path, filename)
-  ].join('')
-}
-
-function parseFile(file) {
-  var content = fs.readFileSync(file, 'utf-8')
-    .replace(imagePlaceholder, getPathToImages(file))
-
-  var hasMetadata = /^---/.test(content)
-
-  var date = extract(content, dateVal) || ''
-  var title = extract(content, titleVal)
-  var poster = extract(content, posterVal)
-  var article = hasMetadata? content.split('---')[2] : content
-
-  return {
-    id: changeDashesToSlashes(date) + '/' + extract(file, filename),
-    path: getPath(file, date? '/' + date : date),
-    filename: getPath(file, date? '/' + date : date),
-    title: title,
-    time: date,
-    poster: poster,
-    excerpt: toMarkdown(splitOnFold(article)[0] || ''),
-    description: toMarkdown(splitOnFold(article).join(''))
-  }
-}
+function mergeDirs(y, z) {return [y[0], y[1].concat(z[1])]}
 
 function normalizeRouteName(x) {
   return '/'.concat(extract(x, secondParam) || '')
 }
-
-function isFile(x) {return filename.test(x)}
-
-function mergeDirs(y, z) {return [y[0], y[1].concat(z[1])]}
 
 function handlePages(x) {
   x.path = x.id

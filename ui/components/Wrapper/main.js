@@ -22,7 +22,7 @@ module.exports = React.createClass({
           className: 'wrapper-hamburger',
           htmlFor: 'wrapper-hidden-input',
           id: 'hamburger',
-          'onclick': ''}, 'E'),
+          'onclick': ''}),
         Menu({url: this.props.url}),
         $.img({
           key: 'image',

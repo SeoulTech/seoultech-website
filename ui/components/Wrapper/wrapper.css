@@ -51,6 +51,10 @@ body {
    display: block;
 }
 
-#wrapper-hidden-input:checked ~ .wrapper-hamburger {
-   /* change icon to X here */
+#wrapper-hidden-input ~ .wrapper-hamburger::before {
+   content: '='
+}
+
+#wrapper-hidden-input:checked ~ .wrapper-hamburger::before {
+    content: '×'
 }

@@ -46,15 +46,8 @@ body {
   -ms-user-select: none;
 }
 
-/* checked */
-#wrapper-hidden-input:checked ~ .menu {
-   display: block;
-}
-
-#wrapper-hidden-input ~ .wrapper-hamburger::before {
+.wrapper-hamburger::before {
    content: '='
 }
 
-#wrapper-hidden-input:checked ~ .wrapper-hamburger::before {
-    content: '×'
-}
+

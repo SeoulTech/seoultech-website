@@ -15,7 +15,7 @@
 }
 
   .menu-header {text-align: center;}
-  .menu-header > * {display: inline;}
+  /*.menu-header > * {display: inline;}*/
 
   .menu-nav {
     text-align: center;

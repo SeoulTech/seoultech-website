@@ -10,6 +10,7 @@
     "lodash": "~2.4.1",
     "marked": "latest",
     "react": "^0.11.2",
+    "node-jsx": "^0.11.0",
     "react-router-component": "^0.22.0"
   },
   "devDependencies": {

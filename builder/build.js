@@ -3,6 +3,8 @@ var _ = require('lodash')
 var hl = require('highland')
 var React = require('react')
 
+var compressor = require('node-minify')
+
 var readDir = require('./getFiles')
 var Routes = require('./routes')
 
@@ -38,17 +40,29 @@ returnArray(readDir('/'))
   .reduce(concat)
   .errors(handleError)
   .toArray(function(xs) {
+    minifyCSS()
     xs[0].forEach(function(x) {done(x.name)})
     console.log('Done')
   })
 
 
-
 // helper functions
 
+function minifyCSS() {
+  new compressor.minify({
+    type: 'clean-css',
+    fileIn: __dirname + '/../ui/styles/style.css',
+    fileOut: __dirname + '/../out/style.min.css',
+    callback: function(err, min) {
+      if (err) console.log(err)
+      done('Minify CSS')
+    }
+  })
+}
+
 function done(route) {
-    console.log(blueColor + route, greenColor + 'OK', resetColor)
-  }
+  console.log(blueColor + route, greenColor + 'OK', resetColor)
+}
 
 function handleError(error, push) {
   console.log(redColor + 'Conversion failed', resetColor)

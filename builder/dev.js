@@ -21,6 +21,7 @@ var urlPlaceholder = /\{\{home\}\}/g
 var contentPlaceholder = '<!--{{content}}-->'
 var siteTemplate = fs.readFileSync('./builder/siteTemplate.html', 'utf-8')
   .replace(urlPlaceholder, '/../')
+  .replace('out/style.min.css', 'ui/styles/style.css')
   .replace('</body>', [
     '<script src="/socket.io/socket.io.js"></script>',
     '<script>',
@@ -30,7 +31,7 @@ var siteTemplate = fs.readFileSync('./builder/siteTemplate.html', 'utf-8')
     '})',
     'socket.on("css", function() {',
     'var link = [].filter.call(document.querySelectorAll("link"),',
-    'function(x) {return x.href.match(/style.css/)})[0]',
+    'function(x) {return x.href.match(/\.css/)})[0]',
     'newLink = document.createElement("link")',
     'newLink.rel = "stylesheet"',
     'newLink.href = link.href',
@@ -42,9 +43,9 @@ var siteTemplate = fs.readFileSync('./builder/siteTemplate.html', 'utf-8')
     '</body>'
   ].join('\n'))
 
-// for banner page and styles
+  
+// static assets
 app.use(express.static(assetsDir))
-
 
 /* routes */
 

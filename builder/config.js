@@ -1,7 +1,7 @@
 var out = 'out/'
 
-var url = 'http://seoultech.github.io/seoultech-website/'
-// var url = 'http://localhost:8080/'
+// var url = 'http://seoultech.github.io/seoultech-website/'
+var url = 'http://localhost:8080/'
 module.exports = {
   home: url,
   inputDir: 'source/',

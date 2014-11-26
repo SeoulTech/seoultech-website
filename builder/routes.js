@@ -9,8 +9,8 @@ var rootUrl = c.home
 var Wrapper = require(c.componentsDir + 'Wrapper/main')
 var Static = require(c.componentsDir + 'Static/main')
 var Home = require(c.pagesDir + 'Home/main')
-var Events = require(c.pagesDir + 'Events/main')
 var News = require(c.pagesDir + 'News/main')
+var Events = require(c.pagesDir + 'Events/main')
 var About = require(c.pagesDir + 'About/main')
 
 var Routes = React.createClass({
@@ -27,11 +27,19 @@ var Routes = React.createClass({
             handler: Events,
             results: this.props.data}),
           Router.Location({
+            path: '/events/:y',
+            handler: Events,
+            results: this.props.data}),
+          Router.Location({
             path: '/events/:y/:m/:d/:id',
             handler: Static,
             __html: this.props.description}),
           Router.Location({
             path: '/news',
+            handler: News,
+            results: this.props.data}),
+          Router.Location({
+            path: '/news/:y',
             handler: News,
             results: this.props.data}),
           Router.Location({
@@ -48,6 +56,6 @@ var Routes = React.createClass({
   }
 })
 
-module.exports = function(c, url) {
-  return Wrapper({url: url, rootUrl: rootUrl, content: Routes(c)})
+module.exports = function(component, url) {
+  return Wrapper({url: url, rootUrl: rootUrl, content: Routes(component)})
 }

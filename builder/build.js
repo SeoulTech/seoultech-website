@@ -34,7 +34,8 @@ var render = _.curry(function(c) {
 
 var pipe = _.curry(function(pipeline, x) {return x.pipe(pipeline())})
 
-returnArray(readDir('/'))
+
+returnArray(readDir(c.inputDir))
   .map(pipe(parseJSON))
   .map(function(s) {return s.map(makeComponents)})
   .reduce(concat)
@@ -45,8 +46,15 @@ returnArray(readDir('/'))
     console.log('Done')
   })
 
+  function returnArray(x) {return [].slice.call(arguments)}
 
-// helper functions
+  function parseJSON() {
+    return hl.pipeline(
+      hl.map(function(x) {return x.toString()}),
+      hl.reduce1(concat),
+      hl.map(JSON.parse)
+    )
+  }
 
 function minifyCSS() {
   new compressor.minify({
@@ -76,7 +84,8 @@ function rednerComponents(c) {
 
 function writeFile(x) {
   fs.mkdirsSync(c.outputDir + x.name.split('/').slice(0, -1).join('/'))
-  x.data.pipe(fs.createWriteStream(c.outputDir + x.name + '.html'))
+  x.data.pipe(fs.createWriteStream(c.outputDir + x.name))
+  // x.data.pipe(fs.createWriteStream(c.outputDir + x.name + '.html'))
   return x
 }
 
@@ -90,13 +99,4 @@ function makeComponents(data) {
     .value()
 }
 
-function parseJSON() {
-  return hl.pipeline(
-    hl.map(function(x) {return x.toString()}),
-    hl.reduce1(concat),
-    hl.map(JSON.parse)
-  )
-}
-
-function returnArray(x) {return [].slice.call(arguments)}
 

@@ -22,11 +22,13 @@ module.exports = function(file) {
   var title = extract(content, titleVal)
   var poster = extract(content, posterVal)
   var article = hasMetadata? content.split('---')[2] : content
-
+  var path = getPath(file, date? '/' + date : date)
+  
+  
   return {
     id: changeDashesToSlashes(date) + '/' + extract(file, filename),
-    path: getPath(file, date? '/' + date : date),
-    filename: getPath(file, date? '/' + date : date),
+    path: path,
+    filename: path + '.html',
     title: title,
     time: Date.parse(date),
     poster: poster,

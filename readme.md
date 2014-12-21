@@ -23,7 +23,7 @@ It will convert local markdown files to HTML pages.
 To deploy final results:
   - edit builder/config.js by setting ```var url``` to the absolute URL of the deployment terget
   - build a the website, as above
-  - ```mkdir out/sources && cp -R source/images out/source/images``` as a workaround for #1
+  - ```mkdir out/source && cp -R source/images out/source/images``` as a workaround for #1
 
 ##Develop
 To start the development server run `node builder/dev.js`.

@@ -19,6 +19,12 @@ Use `{{fold}}` in the markdown source to create post previews for `news` view.
 To build the website run `node builder/build.js`.
 It will convert local markdown files to HTML pages.
 
+##Deploy
+To deploy final results:
+  - edit builder/config.js by setting ```var url``` to the absolute URL of the deployment terget
+  - build a the website, as above
+  - ```mkdir out/sources && cp -R source/images out/source/images``` as a workaround for #1
+
 ##Develop
 To start the development server run `node builder/dev.js`.
 Then, open a browser at `localhost:8080`. Any changes in markdown sources or css will be reloaded automatically.

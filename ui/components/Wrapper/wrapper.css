@@ -1,0 +1,53 @@
+/**** wrapper ****/
+
+.wrapper {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 800px;
+}
+
+.wrapper-logo {
+  width: 100%;
+  height: auto;
+  max-width: 800px;
+}
+
+
+/*** hamburger ***/
+
+/* Fix Android */
+body {
+  -webkit-animation: bugfix infinite 1s;
+}
+@-webkit-keyframes bugfix {
+  from {padding:0;}
+  to {padding:0;}
+}
+
+/* Hide checkbox */
+#wrapper-hidden-input {
+   position: absolute;
+   top: -9999px;
+   left: -9999px;
+}
+
+/* Like a link would behave */
+.wrapper-hamburger {
+  cursor: pointer;
+  user-select: none;
+  position: absolute;
+  top: 2%;
+  right: 2%;
+  font-size: 2em;
+  z-index: 5000;
+
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.wrapper-hamburger::before {
+   content: '='
+}
+
+

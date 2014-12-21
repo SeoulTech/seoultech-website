@@ -1,0 +1,40 @@
+.content {
+  margin: 0 auto;
+  width: 90%;
+  max-width: 720px;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 1.2em;
+  color: #444;
+}
+
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6 {
+  /*font-family: Futura, sans-serif;*/
+}
+
+.content ul {
+  list-style: none;
+  padding: 0;
+}
+
+.content a {
+  color: #000;
+  text-decoration: none;
+}
+
+.content a:hover {
+  color: #666;
+}
+
+/****** PHONE ******/
+@media screen and (max-width: 568px) {
+
+  .content {font-size: 0.8em}
+  .content h1 {font-size: 1.2em}
+
+}
+

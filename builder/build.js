@@ -1,61 +1,102 @@
-// TODO: create directories that don't exist
+var fs = require('fs-extra')
+var _ = require('lodash')
+var hl = require('highland')
+var React = require('react')
 
-var fs = require('fs'),
-  convertDir = require('./parse'),
+var compressor = require('node-minify')
 
-  inputDir = 'client/content/source/',
-  outputDir = 'client/content/target/',
+var readDir = require('./getFiles')
+var Routes = require('./routes')
 
-  isMarkdown = RegExp.prototype.test.bind(/^.+\.(md|markdown)$/),
+var c = require('./config')
+var url = c.url
 
-  getFiles = function(dir) {
-    return fs.readdirSync(dir).filter(isMarkdown).map(function(file) {
-      return file.split('.').slice(0, -1).join('')
-    })
-  },
+var contentPlaceholder = '<!--{{content}}-->'
+var urlPlaceholder = /\{\{home\}\}/g
+var resetColor = '\x1b[39m'
+var blueColor = '\x1b[34m'
+var greenColor = '\x1b[32m'
+var redColor = '\x1b[31m'
+var siteTemplate = fs.readFileSync('./builder/siteTemplate.html', 'utf-8')
+    .replace(urlPlaceholder, c.home)
 
-  getDirectories = function(dir) {
-    return fs.readdirSync(dir).filter(function(file) {
-      return fs.statSync(dir + file).isDirectory()
-    })
-  },
-
-  getIndex = function(path, inputIndex, outputIndex) {
-    inputIndex = inputIndex || {}
-    outputIndex = outputIndex || {}
-    // FIXME: factor out these filthy mutations
-    getDirectories(path).forEach(function(dir) {
-      var inputPath = path + dir + '/',
-        outputPath = inputPath.replace('source', 'target')
-      if (getFiles(path + dir + '/').length > 0) {
-        inputIndex[inputPath] = getFiles(inputPath)
-        outputIndex[outputPath] = getFiles(inputPath)
-      }
-      getIndex(inputPath, inputIndex, outputIndex)
-    })
-    return [inputIndex, outputIndex]
-  },
-
-  log = function(file, _) {
-    console.log(file, '\x1b[32m', 'OK', '\x1b[39m')
+var render = _.curry(function(c) {
+  return {
+    name: c.filename,
+    data: hl(function(push) {push(null,
+      siteTemplate.replace(
+        contentPlaceholder,
+        React.renderComponentToStaticMarkup(Routes(c, url))
+      )
+    )})
   }
+})
 
-try {
-  var index = getIndex(inputDir),
-  inputIndex = index[0],
-  outputIndex = index[1]
+var pipe = _.curry(function(pipeline, x) {return x.pipe(pipeline())})
 
-  fs.writeFileSync(outputDir + 'index.js',
-    'module.exports = ' + JSON.stringify(outputIndex))
 
-  Object.keys(inputIndex).map(function(_, i) {
-    return [Object.keys(inputIndex)[i], Object.keys(outputIndex)[i]]
-  }).forEach(function(args) {
-    convertDir.apply(null, args)
+returnArray(readDir(c.inputDir))
+  .map(pipe(parseJSON))
+  .map(function(s) {return s.map(makeComponents)})
+  .reduce(concat)
+  .errors(handleError)
+  .toArray(function(xs) {
+    minifyCSS()
+    xs[0].forEach(function(x) {done(x.name)})
+    console.log('Done')
   })
 
-  console.log('\x1b[32m' + 'Done', '\x1b[39m')
-} catch (e) {
-  console.error(e.stack)
-  console.log('\x1b[31m', 'Conversion failed', '\x1b[39m')
+  function returnArray(x) {return [].slice.call(arguments)}
+
+  function parseJSON() {
+    return hl.pipeline(
+      hl.map(function(x) {return x.toString()}),
+      hl.reduce1(concat),
+      hl.map(JSON.parse)
+    )
+  }
+
+function minifyCSS() {
+  new compressor.minify({
+    type: 'clean-css',
+    fileIn: __dirname + '/../ui/styles/style.css',
+    fileOut: __dirname + '/../out/style.min.css',
+    callback: function(err, min) {
+      if (err) console.log(err)
+      done('Minify CSS')
+    }
+  })
 }
+
+function done(route) {
+  console.log(blueColor + route, greenColor + 'OK', resetColor)
+}
+
+function handleError(error, push) {
+  console.log(redColor + 'Conversion failed', resetColor)
+  push(error)
+}
+
+
+function rednerComponents(c) {
+  return _.isArray(c)? c.map(rednerComponents) : render(c)
+}
+
+function writeFile(x) {
+  fs.mkdirsSync(c.outputDir + x.name.split('/').slice(0, -1).join('/'))
+  x.data.pipe(fs.createWriteStream(c.outputDir + x.name))
+  // x.data.pipe(fs.createWriteStream(c.outputDir + x.name + '.html'))
+  return x
+}
+
+function concat(x, y) {return x.concat(y)}
+
+function makeComponents(data) {
+  return _(data.results)
+    .map(rednerComponents)
+    .flatten()
+    .map(writeFile)
+    .value()
+}
+
+
